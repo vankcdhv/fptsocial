@@ -45,5 +45,25 @@ namespace FPTSocialService.DAO
 
             return userList;
         }
+
+        public Account getAccountByUsernameAndPass(String username, String password)
+        {
+            Account account = null;
+
+            String query = "EXEC GetAccountByUsernameAndPass @username , @password";
+            DataTable data = DataProvider.Instance.excuteQuery(query, new object[] { username, password });
+
+            foreach (DataRow dr in data.Rows)
+            {
+                int id = (int)dr["id"];
+                String user = dr["username"].ToString();
+                String pass = dr["password"].ToString();
+                String mail = dr["mail"].ToString();
+                bool status = bool.Parse(dr["status"].ToString());
+                account = new Account(id, user, pass, mail, status);
+            }
+
+            return (account != null ? account : null);
+        }
     }
 }

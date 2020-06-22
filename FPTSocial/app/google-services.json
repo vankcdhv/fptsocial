@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "382973392241",
+    "firebase_url": "https://fptsocial.firebaseio.com",
+    "project_id": "fptsocial",
+    "storage_bucket": "fptsocial.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:382973392241:android:ab77a49a16841e6f6bb2d0",
+        "android_client_info": {
+          "package_name": "fu.is1304.dv.fptsocial"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "382973392241-8n76mrsur2n93kcil37g9vrs346t7muo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "fu.is1340.dv.fptsocial",
+            "certificate_hash": "3ae5d091e6fe495befe9fd4b99e26d7e04b66b3c"
+          }
+        },
+        {
+          "client_id": "382973392241-12vvrmtkidn72jg3ovjiusj2bl8flprk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvK8Dm6KSvsUXdHLtyu1MY6K_6mZ2XJ2E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "382973392241-12vvrmtkidn72jg3ovjiusj2bl8flprk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
