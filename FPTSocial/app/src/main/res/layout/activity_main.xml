@@ -52,4 +52,14 @@
         android:text="add"
         app:layout_constraintStart_toStartOf="@+id/txtAge"
         app:layout_constraintTop_toBottomOf="@+id/txtAge" />
+
+    <ImageView
+        android:id="@+id/imgTest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/btnLogout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnAdd"
+        tools:srcCompat="@tools:sample/avatars" />
 </androidx.constraintlayout.widget.ConstraintLayout>
