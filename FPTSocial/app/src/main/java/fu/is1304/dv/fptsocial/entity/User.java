@@ -2,8 +2,6 @@ package fu.is1304.dv.fptsocial.entity;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
-import java.util.Date;
-
 
 @IgnoreExtraProperties
 public class User {
@@ -15,13 +13,13 @@ public class User {
     private int course;
     private String department;
     private String avatar;
-    private String coder;
+    private String cover;
     private String startDate;
 
     public User() {
     }
 
-    public User(String UID, String firstName, String lastName, boolean gender, String dob, int course, String department, String avatar, String coder, String startDate) {
+    public User(String UID, String firstName, String lastName, boolean gender, String dob, int course, String department, String avatar, String cover, String startDate) {
         this.UID = UID;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -30,7 +28,7 @@ public class User {
         this.course = course;
         this.department = department;
         this.avatar = avatar;
-        this.coder = coder;
+        this.cover = cover;
         this.startDate = startDate;
     }
 
@@ -98,12 +96,12 @@ public class User {
         this.avatar = avatar;
     }
 
-    public String getCoder() {
-        return coder;
+    public String getCover() {
+        return cover;
     }
 
-    public void setCoder(String coder) {
-        this.coder = coder;
+    public void setCover(String cover) {
+        this.cover = cover;
     }
 
     public String getStartDate() {

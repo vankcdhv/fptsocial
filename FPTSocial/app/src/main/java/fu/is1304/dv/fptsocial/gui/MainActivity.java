@@ -1,17 +1,20 @@
 package fu.is1304.dv.fptsocial.gui;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -20,10 +23,16 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -37,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseDatabase firebaseDatabase;
     private FirebaseStorage firebaseStorage;
     private StorageReference storageReference;
+    private FirebaseFirestore firebaseFirestore;
 
 
     private EditText txtName, txtAge;
@@ -54,11 +64,10 @@ public class MainActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
 
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        dbReference = firebaseDatabase.getReference();
-
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference();
+
+        firebaseFirestore = FirebaseFirestore.getInstance();
 
         if (firebaseUser == null) openLoginActivity();
 
@@ -66,27 +75,7 @@ public class MainActivity extends AppCompatActivity {
         txtName = findViewById(R.id.txtName);
         txtAge = findViewById(R.id.txtAge);
 
-
-        dbReference.child("users").child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                try {
-                    String key = snapshot.getKey();
-                    Gson gson = new Gson();
-                    User user = gson.fromJson(gson.toJson(snapshot.getValue()), User.class);
-                    txtName.setText(user.getFirstName() + " " + user.getLastName());
-                    txtAge.setText(((new Date()).getYear() - (new SimpleDateFormat("dd/MM/yyyy").parse(user.getDob()).getYear())) + "");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
+        //Get data from storage
         storageReference.child("images/4.JPG").getBytes(1024 * 1024 * 20)
                 .addOnSuccessListener(new OnSuccessListener<byte[]>() {
                     @Override
@@ -94,6 +83,31 @@ public class MainActivity extends AppCompatActivity {
                         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
                         imgTest.setImageBitmap(bitmap);
+                    }
+                });
+        //Get data from firestore (real time)
+        firebaseFirestore.collection("users").document(firebaseUser.getUid())
+                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.w("Errorrr", "fail", e);
+                            return;
+                        } else {
+                            if (documentSnapshot != null && documentSnapshot.exists()) {
+                                Log.d("Data", "Current data: " + documentSnapshot.getData());
+                                Gson gson = new Gson();
+                                User user = gson.fromJson(gson.toJson(documentSnapshot.getData()), User.class);
+                                txtName.setText(user.getFirstName() + " " + user.getLastName());
+                                try {
+                                    txtAge.setText(((new Date()).getYear() - (new SimpleDateFormat("dd/MM/yyyy").parse(user.getDob()).getYear())) + "");
+                                } catch (ParseException ex) {
+                                    ex.printStackTrace();
+                                }
+                            } else {
+                                Log.w("Errorrr", "Data null");
+                            }
+                        }
                     }
                 });
     }
@@ -116,11 +130,24 @@ public class MainActivity extends AppCompatActivity {
         User user = null;
         try {
             user = new User(firebaseUser.getUid(), "Lê Thiện", "Văn", true, "18/02/1999", 13,
-                    "Kỹ Thuật Phần Mềm", null, null,"24/06/2020");
+                    "Kỹ Thuật Phần Mềm", null, null, "24/06/2020");
         } catch (Exception e) {
             e.printStackTrace();
         }
-        dbReference.child("users").child(firebaseUser.getUid()).setValue(user);
+        firebaseFirestore.collection("users").document(firebaseUser.getUid())
+                .set(user)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("Done", "DocumentSnapshot successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("Loiii", "Error writing document", e);
+                    }
+                });
     }
 
 }
