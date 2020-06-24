@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/loginBGImage"
     tools:context=".gui.LoginActivity">
 
     <EditText
@@ -12,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="200dp"
         android:ems="10"
-        android:hint="Email"
+        android:hint="@string/email"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,13 +31,15 @@
 
     <ImageButton
         android:id="@+id/btnLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="107dp"
+        android:layout_height="77dp"
         android:layout_marginTop="24dp"
         android:background="#00000000"
         android:onClick="btnLoginOnClick"
+        android:scaleType="centerInside"
+        android:src="@drawable/btnLoginImage"
+        app:layout_constraintEnd_toEndOf="@+id/txtPassword"
         app:layout_constraintStart_toStartOf="@+id/txtPassword"
-        app:layout_constraintTop_toBottomOf="@+id/txtPassword"
-        app:srcCompat="@drawable/common_google_signin_btn_icon_light" />
+        app:layout_constraintTop_toBottomOf="@+id/txtPassword" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
