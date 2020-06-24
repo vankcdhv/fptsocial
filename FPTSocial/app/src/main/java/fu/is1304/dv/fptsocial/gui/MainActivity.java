@@ -24,6 +24,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import fu.is1304.dv.fptsocial.R;
 import fu.is1304.dv.fptsocial.entity.User;
 
@@ -67,13 +70,15 @@ public class MainActivity extends AppCompatActivity {
         dbReference.child("users").child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                String key = snapshot.getKey();
-                Gson gson = new Gson();
-                User user = gson.fromJson(gson.toJson(snapshot.getValue()), User.class);
-                txtName.setText(user.getName());
-                txtAge.setText(user.getAge() + "");
-
+                try {
+                    String key = snapshot.getKey();
+                    Gson gson = new Gson();
+                    User user = gson.fromJson(gson.toJson(snapshot.getValue()), User.class);
+                    txtName.setText(user.getFirstName() + " " + user.getLastName());
+                    txtAge.setText(((new Date()).getYear() - (new SimpleDateFormat("dd/MM/yyyy").parse(user.getDob()).getYear())) + "");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -108,7 +113,13 @@ public class MainActivity extends AppCompatActivity {
     public void btnAddOnClick(View v) {
         String name = txtName.getText().toString();
         int age = Integer.parseInt(txtAge.getText().toString().trim());
-        User user = new User(name, age);
+        User user = null;
+        try {
+            user = new User(firebaseUser.getUid(), "Lê Thiện", "Văn", true, "18/02/1999", 13,
+                    "Kỹ Thuật Phần Mềm", null, null,"24/06/2020");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         dbReference.child("users").child(firebaseUser.getUid()).setValue(user);
     }
 
