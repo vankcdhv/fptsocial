@@ -11,13 +11,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -27,14 +26,17 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import fu.is1304.dv.fptsocial.R;
+import fu.is1304.dv.fptsocial.business.AuthController;
+import fu.is1304.dv.fptsocial.common.DatabaseUtils;
+import fu.is1304.dv.fptsocial.dao.StorageDAO;
+import fu.is1304.dv.fptsocial.dao.callback.FirestorageGetByteCallback;
+import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
 import fu.is1304.dv.fptsocial.dao.UserDAO;
+import fu.is1304.dv.fptsocial.dao.callback.FirestoreSetCallback;
 import fu.is1304.dv.fptsocial.entity.User;
 
 public class MainActivity extends AppCompatActivity {
-    private FirebaseAuth firebaseAuth;
-    private FirebaseUser firebaseUser;
-    private DatabaseReference dbReference;
-    private FirebaseDatabase firebaseDatabase;
+
     private FirebaseStorage firebaseStorage;
     private StorageReference storageReference;
     private FirebaseFirestore firebaseFirestore;
@@ -52,57 +54,48 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initComponents() {
-        firebaseAuth = FirebaseAuth.getInstance();
-        firebaseUser = firebaseAuth.getCurrentUser();
-
-        firebaseStorage = FirebaseStorage.getInstance();
-        storageReference = firebaseStorage.getReference();
-
-        firebaseFirestore = FirebaseFirestore.getInstance();
-
-        if (firebaseUser == null) openLoginActivity();
-
+        //Init components
         imgTest = findViewById(R.id.imgTest);
         txtName = findViewById(R.id.txtName);
         txtAge = findViewById(R.id.txtAge);
 
-        //Get data from storage
-        storageReference.child("images/4.JPG").getBytes(1024 * 1024 * 20)
-                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                    @Override
-                    public void onSuccess(byte[] bytes) {
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                        imgTest.setImageBitmap(bitmap);
-                    }
-                });
-//        firebaseFirestore.collection("users").document(firebaseUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                if (task.isSuccessful()) {
-//                    Gson gson = new Gson();
-//                    User user = gson.fromJson(gson.toJson(task.getResult().getData()), User.class);
-//                    txtName.setText(user.getFirstName() + " " + user.getLastName());
-//                    try {
-//                        txtAge.setText(((new Date()).getYear() - (new SimpleDateFormat("dd/MM/yyyy").parse(user.getDob()).getYear())) + "");
-//                    } catch (ParseException ex) {
-//                        ex.printStackTrace();
-//                    }
-//                }
-//            }
-//        });
-        User user = UserDAO.getInstance().getCurrentUser();
-        txtName.setText(user.getFirstName() + " " + user.getLastName());
-        try {
-            txtAge.setText(((new Date()).getYear() - (new SimpleDateFormat("dd/MM/yyyy").parse(user.getDob()).getYear())) + "");
-        } catch (ParseException ex) {
-            ex.printStackTrace();
-        }
+        firebaseStorage = FirebaseStorage.getInstance();
+        storageReference = firebaseStorage.getReference();
 
+        if (AuthController.getInstance().getCurrentUser() == null) openLoginActivity();
+
+        //Get data from storage
+        StorageDAO.getInstance().getImage("images/4.JPG", new FirestorageGetByteCallback() {
+            @Override
+            public void onComplete(byte[] bytes) {
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                imgTest.setImageBitmap(bitmap);
+            }
+        });
+
+        UserDAO.getInstance().getUserRealtime(AuthController.getInstance().getUID(), new FirestoreGetCallback() {
+            @Override
+            public void onComplete(DocumentSnapshot documentSnapshot) {
+                User user = DatabaseUtils.convertDocumentSnapshotToUser(documentSnapshot);
+                txtName.setText(user.getFirstName() + " " + user.getLastName());
+                try {
+                    txtAge.setText(((new Date()).getYear() - (new SimpleDateFormat("dd/MM/yyyy").parse(user.getDob()).getYear())) + "");
+                } catch (ParseException ex) {
+                    ex.printStackTrace();
+                }
+                Toast.makeText(MainActivity.this, "Lấy thông tin thành công", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(MainActivity.this, "Lấy thông tin thất bại", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 
     public void btnLogoutClick(View v) {
-        firebaseAuth.signOut();
+        AuthController.getInstance().signOut();
         openLoginActivity();
     }
 
@@ -113,33 +106,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btnAddOnClick(View v) {
-        String name = txtName.getText().toString();
-        int age = Integer.parseInt(txtAge.getText().toString().trim());
-        User user = null;
-        try {
-            user = new User(firebaseUser.getUid(), "Lê Thiện", "Văn", true, "18/02/1999", 13,
-                    "Kỹ Thuật Phần Mềm", null, null, "24/06/2020");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        firebaseFirestore.collection("users").document(firebaseUser.getUid())
-                .set(user)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("Done", "DocumentSnapshot successfully written!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("Loiii", "Error writing document", e);
-                    }
-                });
+        User user = new User(AuthController.getInstance().getCurrentUser().getUid(), "Lê Thiện", "Văn", true, "18/02/1999", 13,
+                "Kỹ Thuật Phần Mềm", null, null, "24/06/2020");
+
+        UserDAO.getInstance().updateUserData(user, new FirestoreSetCallback() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(MainActivity.this, "Update thông tin thành công", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(MainActivity.this, "Update thông tin thất bại", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-
-    public void viewProfile(View view){
+    public void viewProfile(View view) {
         Intent intent = new Intent(this, ProfileActivity.class);
         startActivity(intent);
         finish();

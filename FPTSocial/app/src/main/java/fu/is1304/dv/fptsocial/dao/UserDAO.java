@@ -1,21 +1,22 @@
 package fu.is1304.dv.fptsocial.dao;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.gson.Gson;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
-import java.util.HashMap;
-import java.util.concurrent.CountDownLatch;
 
+import fu.is1304.dv.fptsocial.business.AuthController;
 import fu.is1304.dv.fptsocial.common.Const;
+import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
+import fu.is1304.dv.fptsocial.dao.callback.FirestoreSetCallback;
 import fu.is1304.dv.fptsocial.entity.User;
 
 public class UserDAO {
@@ -27,33 +28,82 @@ public class UserDAO {
     }
 
 
-    public User getUserByUID(String uid) {
-        final User[] user = new User[1];
-        final CountDownLatch done = new CountDownLatch(1);
-        DocumentReference reference = DataProvider.getInstance().getDatabase().collection(Const.USER_COLLECTION).document(uid);
-        reference.get()
+    /*
+     * Get information of user from Firebase cloudstore by uid
+     * Callback is handler of result
+     */
+    public void getUserByUID(String uid, final FirestoreGetCallback callback) {
+
+        DataProvider.getInstance().getDatabase()
+                .collection(Const.USER_COLLECTION)
+                .document(uid)
+                .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
-                            Gson gson = new Gson();
-                            user[0] = gson.fromJson(gson.toJson(task.getResult().getData()), User.class);
-
+                            callback.onComplete(task.getResult());
+                        } else {
+                            callback.onFailure(task.getException());
                         }
-                        done.countDown();
                     }
-
                 });
-        try {
-            done.await();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return user[0];
     }
 
-    public User getCurrentUser() {
-        User user = getUserByUID(DataProvider.getInstance().getCurrentUser().getUid());
-        return user;
+    /*
+     * Get information of current user
+     * Callback is handler of result
+     */
+    public void getCurrentUser(FirestoreGetCallback callback) {
+        getUserByUID(AuthController.getInstance().getCurrentUser().getUid(), callback);
     }
+
+    /*
+     * set information for user
+     * Callback is handler of result
+     */
+    public void setUserData(String uid, User user, final FirestoreSetCallback firestoreSetCallback) {
+        DataProvider.getInstance()
+                .getDatabase()
+                .collection(Const.USER_COLLECTION)
+                .document(uid)
+                .set(user)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        firestoreSetCallback.onSuccess();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        firestoreSetCallback.onFailure(e);
+                    }
+                });
+    }
+
+    /*
+     * set information for current user
+     * Callback is handler of result
+     */
+    public void updateUserData(User user, FirestoreSetCallback firestoreSetCallback) {
+        setUserData(AuthController.getInstance().getUID(), user, firestoreSetCallback);
+    }
+
+    public void getUserRealtime(String uid, final FirestoreGetCallback firestoreGetCallback) {
+        DataProvider.getInstance().getDatabase()
+                .collection(Const.USER_COLLECTION)
+                .document(uid)
+                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException e) {
+                        if (e == null) {
+                            firestoreGetCallback.onComplete(snapshot);
+                        } else {
+                            firestoreGetCallback.onFailure(e);
+                        }
+                    }
+                });
+    }
+
 }
