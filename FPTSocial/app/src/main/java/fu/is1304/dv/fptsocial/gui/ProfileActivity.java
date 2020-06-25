@@ -1,4 +1,4 @@
-package fu.is1304.dv.fptsocial;
+package fu.is1304.dv.fptsocial.gui;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +24,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import fu.is1304.dv.fptsocial.R;
 import fu.is1304.dv.fptsocial.entity.User;
 import fu.is1304.dv.fptsocial.gui.LoginActivity;
 

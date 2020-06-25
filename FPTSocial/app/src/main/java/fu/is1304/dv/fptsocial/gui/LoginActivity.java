@@ -2,9 +2,12 @@ package fu.is1304.dv.fptsocial.gui;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.AsyncListUtil;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -28,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        requestPermissions();
         initComponents();
     }
 
@@ -51,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                            if(task.isSuccessful()){
+                            if (task.isSuccessful()) {
                                 loginComplete();
                             } else {
                                 Toast.makeText(LoginActivity.this, "Email và mật khẩu không đúng", Toast.LENGTH_SHORT).show();
@@ -65,12 +68,20 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-
     private void loginComplete() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
     }
 
+    private void requestPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED) {
+            return;
+        } else if (shouldShowRequestPermissionRationale(Manifest.permission.INTERNET)) {
+
+        } else {
+            requestPermissions(new String[]{Manifest.permission.INTERNET}, 1000);
+        }
+    }
 
 }
