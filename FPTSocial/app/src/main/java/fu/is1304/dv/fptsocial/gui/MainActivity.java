@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -36,6 +37,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import fu.is1304.dv.fptsocial.ProfileActivity;
 import fu.is1304.dv.fptsocial.R;
 import fu.is1304.dv.fptsocial.entity.User;
 
@@ -150,4 +152,10 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+
+    public void viewProfile(View view){
+        Intent intent = new Intent(this, ProfileActivity.class);
+        startActivity(intent);
+        finish();
+    }
 }
