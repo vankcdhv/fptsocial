@@ -27,12 +27,31 @@ public class AuthController {
         firebaseAuth.signOut();
     }
 
-    public void loginByUsernameAndPass(String email, String pass, final FirebaseAuthCallback firebaseAuthCallback) {
+    public void loginByEmailAndPass(String email, String pass, final FirebaseAuthCallback firebaseAuthCallback) {
         firebaseAuth.signInWithEmailAndPassword(email, pass)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        firebaseAuthCallback.onComplete(task);
+                        if (task.isSuccessful()) {
+                            firebaseAuthCallback.onComplete(task.getResult());
+                        } else {
+                            firebaseAuthCallback.onFailure(task.getException());
+                        }
+                    }
+                });
+
+    }
+
+    public void registerByEmailAndPass(String email, String pass, final FirebaseAuthCallback callback) {
+        firebaseAuth.createUserWithEmailAndPassword(email, pass)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            callback.onComplete(task.getResult());
+                        } else {
+                            callback.onFailure(task.getException());
+                        }
                     }
                 });
 

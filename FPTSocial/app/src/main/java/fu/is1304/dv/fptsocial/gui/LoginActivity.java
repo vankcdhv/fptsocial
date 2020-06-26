@@ -11,13 +11,18 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 import fu.is1304.dv.fptsocial.R;
 import fu.is1304.dv.fptsocial.business.AuthController;
+import fu.is1304.dv.fptsocial.common.Const;
+import fu.is1304.dv.fptsocial.common.DatabaseUtils;
+import fu.is1304.dv.fptsocial.dao.UserDAO;
 import fu.is1304.dv.fptsocial.dao.callback.FirebaseAuthCallback;
+import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
+import fu.is1304.dv.fptsocial.entity.User;
 
 public class LoginActivity extends AppCompatActivity {
     private EditText txtEmail;
@@ -38,7 +43,7 @@ public class LoginActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
 
         if (firebaseAuth.getCurrentUser() != null) {
-            loginComplete();
+            checkUserInformationExisted();
         }
     }
 
@@ -46,14 +51,15 @@ public class LoginActivity extends AppCompatActivity {
         String email = txtEmail.getText().toString();
         String password = txtPassword.getText().toString();
         if (!email.isEmpty() && !password.isEmpty()) {
-            AuthController.getInstance().loginByUsernameAndPass(email, password, new FirebaseAuthCallback() {
+            AuthController.getInstance().loginByEmailAndPass(email, password, new FirebaseAuthCallback() {
                 @Override
-                public void onComplete(Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-                        loginComplete();
-                    } else {
-                        Toast.makeText(LoginActivity.this, "Email or password is uncorrect", Toast.LENGTH_SHORT).show();
-                    }
+                public void onComplete(AuthResult result) {
+                    checkUserInformationExisted();
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Toast.makeText(LoginActivity.this, "Email or password is uncorrect", Toast.LENGTH_SHORT).show();
                 }
             });
         } else {
@@ -62,8 +68,47 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    public void btnRegisterClick(View view) {
+        moveToRegister();
+    }
+
+    private void checkUserInformationExisted() {
+
+        UserDAO.getInstance().getCurrentUser(new FirestoreGetCallback() {
+            @Override
+            public void onComplete(DocumentSnapshot documentSnapshot) {
+                User user = DatabaseUtils.convertDocumentSnapshotToUser(documentSnapshot);
+                if (user != null) {
+                    loginComplete();
+                } else {
+                    moveToProfile();
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(LoginActivity.this, "Đăng nhập không thành công", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private void loginComplete() {
         Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void moveToRegister() {
+        Intent intent = new Intent(this, RegisterActivity.class);
+        intent.putExtra("email", txtEmail.getText().toString());
+        intent.putExtra("password", txtPassword.getText().toString());
+        startActivity(intent);
+    }
+
+    private void moveToProfile() {
+        Intent intent = new Intent(this, ProfileActivity.class);
+        intent.putExtra("mode", Const.MODE_CREATE_PROFILE);
+        intent.putExtra("uid", AuthController.getInstance().getUID());
         startActivity(intent);
         finish();
     }

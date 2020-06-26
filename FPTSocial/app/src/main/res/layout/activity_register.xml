@@ -27,4 +27,25 @@
         android:inputType="textPassword"
         app:layout_constraintStart_toStartOf="@+id/txtRegEmail"
         app:layout_constraintTop_toBottomOf="@+id/txtRegEmail" />
+
+    <EditText
+        android:id="@+id/txtRegRePass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:ems="10"
+        android:inputType="textPassword"
+        app:layout_constraintStart_toStartOf="@+id/txtRegPassord"
+        app:layout_constraintTop_toBottomOf="@+id/txtRegPassord" />
+
+    <Button
+        android:id="@+id/btnRegister_register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:onClick="btnRegisterOnClick"
+        android:text="@string/btn_register"
+        app:layout_constraintEnd_toEndOf="@+id/txtRegRePass"
+        app:layout_constraintStart_toStartOf="@+id/txtRegRePass"
+        app:layout_constraintTop_toBottomOf="@+id/txtRegRePass" />
 </androidx.constraintlayout.widget.ConstraintLayout>
