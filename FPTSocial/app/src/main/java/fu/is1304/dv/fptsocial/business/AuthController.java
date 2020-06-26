@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import fu.is1304.dv.fptsocial.dao.callback.FirebaseAuthCallback;
+import fu.is1304.dv.fptsocial.dao.callback.FirebaseAuthActionCallBack;
 
 public class AuthController {
     private static AuthController instance;
@@ -67,5 +68,31 @@ public class AuthController {
 
     public String getUID() {
         return firebaseAuth.getCurrentUser().getUid();
+    }
+
+    public void sendVerifyEmail(final FirebaseAuthActionCallBack callBack) {
+        getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    callBack.onComplete();
+                } else {
+                    callBack.onFailure(task.getException());
+                }
+            }
+        });
+    }
+
+    public void removeCurrentUser(final FirebaseAuthActionCallBack callBack) {
+        getCurrentUser().delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    callBack.onComplete();
+                } else {
+                    callBack.onFailure(task.getException());
+                }
+            }
+        });
     }
 }

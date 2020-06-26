@@ -43,6 +43,7 @@ public class LoginActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
 
         if (firebaseAuth.getCurrentUser() != null) {
+
             checkUserInformationExisted();
         }
     }
@@ -73,7 +74,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void checkUserInformationExisted() {
-
+        if (!AuthController.getInstance().getCurrentUser().isEmailVerified()) {
+            Toast.makeText(this, "Email chưa được xác thực", Toast.LENGTH_LONG).show();
+            return;
+        }
         UserDAO.getInstance().getCurrentUser(new FirestoreGetCallback() {
             @Override
             public void onComplete(DocumentSnapshot documentSnapshot) {

@@ -23,6 +23,7 @@ import java.util.Date;
 
 import fu.is1304.dv.fptsocial.R;
 import fu.is1304.dv.fptsocial.business.AuthController;
+import fu.is1304.dv.fptsocial.common.Const;
 import fu.is1304.dv.fptsocial.common.DatabaseUtils;
 import fu.is1304.dv.fptsocial.dao.StorageDAO;
 import fu.is1304.dv.fptsocial.dao.callback.FirestorageGetByteCallback;
@@ -32,11 +33,6 @@ import fu.is1304.dv.fptsocial.dao.callback.FirestoreSetCallback;
 import fu.is1304.dv.fptsocial.entity.User;
 
 public class MainActivity extends AppCompatActivity {
-
-    private FirebaseStorage firebaseStorage;
-    private StorageReference storageReference;
-    private FirebaseFirestore firebaseFirestore;
-
 
     private EditText txtName, txtAge;
     private ImageView imgTest;
@@ -55,11 +51,10 @@ public class MainActivity extends AppCompatActivity {
         txtName = findViewById(R.id.txtName);
         txtAge = findViewById(R.id.txtAge);
 
-        firebaseStorage = FirebaseStorage.getInstance();
-        storageReference = firebaseStorage.getReference();
-
         if (AuthController.getInstance().getCurrentUser() == null) openLoginActivity();
-
+        if (!AuthController.getInstance().getCurrentUser().isEmailVerified()) {
+            openLoginActivity();
+        }
         //Get data from storage
         StorageDAO.getInstance().getImage("images/4.JPG", new FirestorageGetByteCallback() {
             @Override
@@ -123,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void viewProfile(View view) {
         Intent intent = new Intent(this, ProfileActivity.class);
+        intent.putExtra("mode", Const.MODE_UPDATE_PROFILE);
         startActivity(intent);
 
     }

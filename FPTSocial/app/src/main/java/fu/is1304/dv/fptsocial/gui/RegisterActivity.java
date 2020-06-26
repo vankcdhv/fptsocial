@@ -15,6 +15,7 @@ import fu.is1304.dv.fptsocial.business.AuthController;
 import fu.is1304.dv.fptsocial.common.Const;
 import fu.is1304.dv.fptsocial.common.DatabaseUtils;
 import fu.is1304.dv.fptsocial.dao.callback.FirebaseAuthCallback;
+import fu.is1304.dv.fptsocial.dao.callback.FirebaseAuthActionCallBack;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -68,8 +69,29 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onComplete(AuthResult result) {
                 Toast.makeText(RegisterActivity.this, "Đăng ký thành công", Toast.LENGTH_SHORT).show();
-                AuthController.getInstance().signOut();
-                finish();
+                AuthController.getInstance().sendVerifyEmail(new FirebaseAuthActionCallBack() {
+                    @Override
+                    public void onComplete() {
+                        Toast.makeText(RegisterActivity.this, "Kiểm tra mail và xác thực địa chỉ email của bạn", Toast.LENGTH_LONG).show();
+                        moveToProfile();
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Toast.makeText(RegisterActivity.this, "Email không đúng, thử lại bằng email khác", Toast.LENGTH_LONG).show();
+                        AuthController.getInstance().removeCurrentUser(new FirebaseAuthActionCallBack() {
+                            @Override
+                            public void onComplete() {
+                                
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+
+                            }
+                        });
+                    }
+                });
             }
 
             @Override
@@ -77,5 +99,13 @@ public class RegisterActivity extends AppCompatActivity {
                 Toast.makeText(RegisterActivity.this, "Đăng ký không thành công", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void moveToProfile() {
+        Intent intent = new Intent(this, ProfileActivity.class);
+        intent.putExtra("mode", Const.MODE_CREATE_PROFILE);
+        intent.putExtra("uid", AuthController.getInstance().getUID());
+        startActivity(intent);
+        finish();
     }
 }
