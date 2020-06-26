@@ -65,9 +65,10 @@
         android:id="@+id/btnRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="btnRegisterClick"
         android:text="@string/btn_register"
+        app:layout_constraintBottom_toBottomOf="@+id/btnLogin"
         app:layout_constraintEnd_toEndOf="@+id/txtPassword"
-        app:layout_constraintStart_toEndOf="@id/btnLogin"
-        tools:layout_editor_absoluteY="352dp" />
+        app:layout_constraintStart_toEndOf="@id/btnLogin" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

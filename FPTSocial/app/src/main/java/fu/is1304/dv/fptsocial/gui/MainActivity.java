@@ -73,11 +73,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onComplete(DocumentSnapshot documentSnapshot) {
                 User user = DatabaseUtils.convertDocumentSnapshotToUser(documentSnapshot);
-                txtName.setText(user.getFirstName() + " " + user.getLastName());
-                try {
-                    txtAge.setText(((new Date()).getYear() - (new SimpleDateFormat("dd/MM/yyyy").parse(user.getDob()).getYear())) + "");
-                } catch (ParseException ex) {
-                    ex.printStackTrace();
+                if (user != null) {
+                    txtName.setText(user.getFirstName() + " " + user.getLastName());
+                    try {
+                        txtAge.setText(((new Date()).getYear() - (new SimpleDateFormat("dd/MM/yyyy").parse(user.getDob()).getYear())) + "");
+                    } catch (ParseException ex) {
+                        ex.printStackTrace();
+                    }
+                    Toast.makeText(MainActivity.this, "Lấy thông tin thành công", Toast.LENGTH_SHORT).show();
                 }
             }
 

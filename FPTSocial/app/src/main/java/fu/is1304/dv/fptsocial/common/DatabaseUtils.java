@@ -13,4 +13,15 @@ public class DatabaseUtils {
         User user = gson.fromJson(gson.toJson(result.getData()), User.class);
         return user;
     }
+
+    public static String validateEmailAndPass(String email, String password, String repass) {
+        if (email.isEmpty() || password.isEmpty() || repass.isEmpty()) {
+            return Const.VALIDATE_CODE_EMPTY;
+        }
+        if (!password.equals(repass)) {
+            return Const.VALIDATE_CODE_NOT_MATCH;
+        }
+
+        return Const.VALIDATE_CODE_CORRECT;
+    }
 }
