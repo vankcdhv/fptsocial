@@ -8,7 +8,7 @@ public class User {
     private String UID;
     private String firstName;
     private String lastName;
-    private boolean gender;
+    private String gender;
     private String dob;
     private int course;
     private String department;
@@ -19,7 +19,7 @@ public class User {
     public User() {
     }
 
-    public User(String UID, String firstName, String lastName, boolean gender, String dob, int course, String department, String avatar, String cover, String startDate) {
+    public User(String UID, String firstName, String lastName, String gender, String dob, int course, String department, String avatar, String cover, String startDate) {
         this.UID = UID;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -56,11 +56,11 @@ public class User {
         this.lastName = lastName;
     }
 
-    public boolean isGender() {
+    public String getGender() {
         return gender;
     }
 
-    public void setGender(boolean gender) {
+    public void setGender(String gender) {
         this.gender = gender;
     }
 

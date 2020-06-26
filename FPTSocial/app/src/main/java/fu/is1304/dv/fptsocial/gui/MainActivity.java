@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btnAddOnClick(View v) {
-        User user = new User(AuthController.getInstance().getCurrentUser().getUid(), "Lê Thiện", "Văn", true, "18/02/1999", 13,
+        User user = new User(AuthController.getInstance().getCurrentUser().getUid(), "Lê Thiện", "Văn", "Nam", "18/02/1999", 13,
                 "Kỹ Thuật Phần Mềm", null, null, "24/06/2020");
 
         UserDAO.getInstance().updateUserData(user, new FirestoreSetCallback() {
