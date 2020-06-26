@@ -79,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
                 } catch (ParseException ex) {
                     ex.printStackTrace();
                 }
-                Toast.makeText(MainActivity.this, "Lấy thông tin thành công", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -103,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btnAddOnClick(View v) {
-        User user = new User(AuthController.getInstance().getCurrentUser().getUid(), "Lê Thiện", "Văn", "Nam", "18/02/1999", 13,
+        User user = new User(AuthController.getInstance().getCurrentUser().getUid(), "Lê Thiện", "Văn", "nam", "18/02/1999", 13,
                 "Kỹ Thuật Phần Mềm", null, null, "24/06/2020");
 
         UserDAO.getInstance().updateUserData(user, new FirestoreSetCallback() {
@@ -122,6 +121,6 @@ public class MainActivity extends AppCompatActivity {
     public void viewProfile(View view) {
         Intent intent = new Intent(this, ProfileActivity.class);
         startActivity(intent);
-        finish();
+
     }
 }

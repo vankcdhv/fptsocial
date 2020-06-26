@@ -44,4 +44,12 @@
     <string name="label_forget_pass">Forgot password</string>
     <string name="btn_register">Register</string>
 
+    <string name="course">Course</string>
+    <string name="full_name">Full Name</string>
+    <string name="major">Major</string>
+    <string name="dob">Date of birth</string>
+    <string name="dateofbirth">DOB</string>
+    <string name="save">Save</string>
+    <string name="back">Back</string>
+
 </resources>
