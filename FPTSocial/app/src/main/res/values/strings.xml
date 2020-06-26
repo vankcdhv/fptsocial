@@ -36,7 +36,12 @@
     <string name="btn_sign_out">Sign Out</string>
     <string name="lbl_forgot_password">Forgot password?</string>
     <string name="forgot_password_msg">We just need your registered Email Id to sent you password reset instructions.</string>
+
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
     <string name="gender">Gender</string>
+
+    <string name="label_forget_pass">Forgot password</string>
+    <string name="btn_register">Register</string>
+
 </resources>

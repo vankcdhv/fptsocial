@@ -14,7 +14,7 @@
         android:layout_marginTop="200dp"
         android:ems="10"
         android:hint="@string/email"
-        android:inputType="textPersonName"
+        android:inputType="textPersonName|textEmailSubject|textWebPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -29,17 +29,45 @@
         app:layout_constraintStart_toStartOf="@+id/txtEmail"
         app:layout_constraintTop_toBottomOf="@+id/txtEmail" />
 
-    <ImageButton
+    <TextView
+        android:id="@+id/labelForgetPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/btn_forgot_password"
+        app:layout_constraintEnd_toStartOf="@id/labelResetPassword"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
+
+    <TextView
+        android:id="@+id/labelResetPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="@string/btn_reset_password"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/labelForgetPassword"
+        app:layout_constraintTop_toTopOf="@+id/labelForgetPassword" />
+
+    <Button
         android:id="@+id/btnLogin"
-        android:layout_width="107dp"
-        android:layout_height="77dp"
-        android:layout_marginTop="24dp"
-        android:background="#00000000"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:onClick="btnLoginOnClick"
-        android:scaleType="centerInside"
-        android:src="@drawable/btn_login_image"
-        app:layout_constraintEnd_toEndOf="@+id/txtPassword"
+        android:text="@string/btn_login"
+        app:layout_constraintEnd_toStartOf="@+id/btnRegister"
         app:layout_constraintStart_toStartOf="@+id/txtPassword"
         app:layout_constraintTop_toBottomOf="@+id/txtPassword" />
+
+    <Button
+        android:id="@+id/btnRegister"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_register"
+        app:layout_constraintEnd_toEndOf="@+id/txtPassword"
+        app:layout_constraintStart_toEndOf="@id/btnLogin"
+        tools:layout_editor_absoluteY="352dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
