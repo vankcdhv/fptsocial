@@ -1,11 +1,13 @@
 package fu.is1304.dv.fptsocial.gui;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +18,7 @@ import android.widget.Toast;
 
 
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.storage.UploadTask;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -27,6 +30,7 @@ import fu.is1304.dv.fptsocial.common.DatabaseUtils;
 import fu.is1304.dv.fptsocial.dao.StorageDAO;
 import fu.is1304.dv.fptsocial.dao.UserDAO;
 import fu.is1304.dv.fptsocial.dao.callback.FirestorageGetByteCallback;
+import fu.is1304.dv.fptsocial.dao.callback.FirestorageUploadCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreSetCallback;
 import fu.is1304.dv.fptsocial.entity.User;
@@ -42,6 +46,7 @@ public class ProfileActivity extends AppCompatActivity {
     private ImageView imgAvatar;
     private String mode;
     private Button btnBack;
+    private Uri ava;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +128,14 @@ public class ProfileActivity extends AppCompatActivity {
         User user = new User(UID, firstName, lastName, gender, dob, course,
                 department, avatar, cover, startDate);
 
+        if (ava != null) {
+            uploadImage(user);
+        } else {
+            saveInfomation(user);
+        }
+    }
+
+    private void saveInfomation(User user) {
         UserDAO.getInstance().updateUserData(user, new FirestoreSetCallback() {
             @Override
             public void onSuccess() {
@@ -139,6 +152,20 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    private void uploadImage(final User user) {
+        StorageDAO.getInstance().upImage(currentUser.getAvatar(), ava, new FirestorageUploadCallback() {
+            @Override
+            public void onComplete(UploadTask.TaskSnapshot taskSnapshot) {
+                saveInfomation(user);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(ProfileActivity.this, "Update your avatar failed, your new profile is not update", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
     private void moveToMain() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
@@ -149,4 +176,22 @@ public class ProfileActivity extends AppCompatActivity {
         finish();
     }
 
+    public void changeAvatar(View view) {
+        Intent myIntent = new Intent(Intent.ACTION_GET_CONTENT, null);
+        myIntent.setType("image/*");
+        startActivityForResult(myIntent, Const.REQUEST_CODE_CHOSE_AVA);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Const.REQUEST_CODE_CHOSE_AVA) {
+            if (resultCode == RESULT_OK) {
+                ava = data.getData();
+                imgAvatar.setImageURI(ava);
+                currentUser.setAvatar("images/avatar/" + AuthController.getInstance().getCurrentUser().getUid() + "/" + ava.getLastPathSegment());
+            }
+        }
+    }
 }

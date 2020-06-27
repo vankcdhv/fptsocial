@@ -24,6 +24,7 @@
         android:layout_width="232dp"
         android:layout_height="203dp"
         android:layout_marginTop="8dp"
+        android:onClick="changeAvatar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

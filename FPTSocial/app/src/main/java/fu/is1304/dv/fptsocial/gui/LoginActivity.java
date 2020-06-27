@@ -76,6 +76,7 @@ public class LoginActivity extends AppCompatActivity {
     private void checkUserInformationExisted() {
         if (!AuthController.getInstance().getCurrentUser().isEmailVerified()) {
             Toast.makeText(this, "Email chưa được xác thực", Toast.LENGTH_LONG).show();
+            AuthController.getInstance().signOut();
             return;
         }
         UserDAO.getInstance().getCurrentUser(new FirestoreGetCallback() {
