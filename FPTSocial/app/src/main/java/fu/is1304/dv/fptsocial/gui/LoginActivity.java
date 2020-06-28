@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -33,19 +34,20 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        requestPermissions();
+        checkLogin();
         initComponents();
+        requestPermissions();
+    }
+
+    private void checkLogin() {
+        if (AuthController.getInstance().getCurrentUser() != null) {
+            checkUserInformationExisted();
+        }
     }
 
     private void initComponents() {
         txtEmail = findViewById(R.id.txtEmail);
         txtPassword = findViewById(R.id.txtPassword);
-        firebaseAuth = FirebaseAuth.getInstance();
-
-        if (firebaseAuth.getCurrentUser() != null) {
-
-            checkUserInformationExisted();
-        }
     }
 
     public void btnLoginOnClick(View view) {

@@ -3,6 +3,7 @@
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
+    <color name="colorActionBar">#f27323</color>
 
     <color name="bg_login">#26ae90</color>
     <color name="bg_register">#2e3237</color>

@@ -1,16 +1,20 @@
 package fu.is1304.dv.fptsocial.gui;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.View;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 
@@ -21,18 +25,12 @@ import java.util.Date;
 import fu.is1304.dv.fptsocial.R;
 import fu.is1304.dv.fptsocial.business.AuthController;
 import fu.is1304.dv.fptsocial.common.Const;
-import fu.is1304.dv.fptsocial.common.DatabaseUtils;
-import fu.is1304.dv.fptsocial.dao.StorageDAO;
-import fu.is1304.dv.fptsocial.dao.callback.FirestorageGetByteCallback;
-import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
 import fu.is1304.dv.fptsocial.dao.UserDAO;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreSetCallback;
 import fu.is1304.dv.fptsocial.entity.User;
 
 public class MainActivity extends AppCompatActivity {
-
-    private EditText txtName, txtAge;
-    private ImageView imgTest;
+    ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,47 +41,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initComponents() {
+        setToolbar();
         //Init components
-        imgTest = findViewById(R.id.imgTest);
-        txtName = findViewById(R.id.txtName);
-        txtAge = findViewById(R.id.txtAge);
 
         if (AuthController.getInstance().getCurrentUser() == null) openLoginActivity();
         if (!AuthController.getInstance().getCurrentUser().isEmailVerified()) {
             openLoginActivity();
         }
-        //Get data from storage
-        StorageDAO.getInstance().getImage("images/4.JPG", new FirestorageGetByteCallback() {
-            @Override
-            public void onComplete(byte[] bytes) {
-                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                imgTest.setImageBitmap(bitmap);
-            }
-        });
-
-        UserDAO.getInstance().getUserRealtime(AuthController.getInstance().getUID(), new FirestoreGetCallback() {
-            @Override
-            public void onComplete(DocumentSnapshot documentSnapshot) {
-                User user = DatabaseUtils.convertDocumentSnapshotToUser(documentSnapshot);
-                if (user != null) {
-                    txtName.setText(user.getFirstName() + " " + user.getLastName());
-                    try {
-                        txtAge.setText(((new Date()).getYear() - (new SimpleDateFormat("dd/MM/yyyy").parse(user.getDob()).getYear())) + "");
-                    } catch (ParseException ex) {
-                        ex.printStackTrace();
-                    }
-                    //Toast.makeText(MainActivity.this, "Lấy thông tin thành công", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                Toast.makeText(MainActivity.this, "Lấy thông tin thất bại", Toast.LENGTH_SHORT).show();
-            }
-        });
 
     }
 
+    private void setToolbar() {
+        actionBar = getSupportActionBar();
+        actionBar.hide();
+    }
 
     public void btnLogoutClick(View v) {
         AuthController.getInstance().signOut();
