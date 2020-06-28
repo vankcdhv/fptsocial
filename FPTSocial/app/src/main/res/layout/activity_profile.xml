@@ -63,18 +63,6 @@
         app:layout_constraintVertical_bias="0.664" />
 
     <EditText
-        android:id="@+id/etGender"
-        android:layout_width="243dp"
-        android:layout_height="49dp"
-        android:layout_marginStart="24dp"
-        android:ems="10"
-        android:hint="@string/gender"
-        android:inputType="textPersonName"
-        app:layout_constraintBottom_toBottomOf="@+id/textView"
-        app:layout_constraintStart_toEndOf="@+id/textView2"
-        app:layout_constraintTop_toTopOf="@+id/textView" />
-
-    <EditText
         android:id="@+id/etCourse"
         android:layout_width="131dp"
         android:layout_height="41dp"
@@ -171,4 +159,13 @@
         app:layout_constraintBottom_toBottomOf="@+id/textView7"
         app:layout_constraintStart_toEndOf="@+id/textView2"
         app:layout_constraintTop_toTopOf="@+id/textView7" />
+
+    <Spinner
+        android:id="@+id/spinnerGender"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView"
+        app:layout_constraintStart_toEndOf="@+id/textView2"
+        app:layout_constraintTop_toTopOf="@+id/textView" />
 </androidx.constraintlayout.widget.ConstraintLayout>

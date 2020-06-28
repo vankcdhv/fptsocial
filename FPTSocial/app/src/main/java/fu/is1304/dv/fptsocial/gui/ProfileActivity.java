@@ -10,9 +10,11 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,7 +41,7 @@ public class ProfileActivity extends AppCompatActivity {
     private EditText etFirstname;
     private EditText etLastname;
     private EditText etCourse;
-    private EditText etGender;
+    private Spinner spinnerGender;
     private EditText edMajor;
     private EditText etDob;
     private User currentUser;
@@ -47,6 +49,7 @@ public class ProfileActivity extends AppCompatActivity {
     private String mode;
     private Button btnBack;
     private Uri ava;
+    private ArrayAdapter<String> genderAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +68,7 @@ public class ProfileActivity extends AppCompatActivity {
         etFirstname = findViewById(R.id.etFirstname);
         etLastname = findViewById(R.id.etLastname);
         etCourse = findViewById(R.id.etCourse);
-        etGender = findViewById(R.id.etGender);
+        spinnerGender = findViewById(R.id.spinnerGender);
         edMajor = findViewById(R.id.edMajor);
         etDob = findViewById(R.id.etDob);
         imgAvatar = findViewById(R.id.imgAvatar);
@@ -77,6 +80,9 @@ public class ProfileActivity extends AppCompatActivity {
             btnBack.setVisibility(View.INVISIBLE);
             edMajor.setEnabled(true);
         }
+
+        genderAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, new String[]{getString(R.string.male), getString(R.string.female)});
+        spinnerGender.setAdapter(genderAdapter);
     }
 
     public void setData() {
@@ -87,7 +93,11 @@ public class ProfileActivity extends AppCompatActivity {
                 etCourse.setText(currentUser.getCourse() + "");
                 etFirstname.setText(currentUser.getFirstName());
                 etLastname.setText(currentUser.getLastName());
-                etGender.setText(currentUser.getGender());
+                if (currentUser.getGender().equals(getString(R.string.male))) {
+                    spinnerGender.setSelection(0);
+                } else {
+                    spinnerGender.setSelection(1);
+                }
                 edMajor.setText(currentUser.getDepartment());
                 etDob.setText(currentUser.getDob());
                 if (currentUser.getAvatar() != null && !currentUser.getAvatar().isEmpty()) {
@@ -117,7 +127,7 @@ public class ProfileActivity extends AppCompatActivity {
         String UID = AuthController.getInstance().getUID();
         String firstName = etFirstname.getText().toString();
         String lastName = etLastname.getText().toString();
-        String gender = etGender.getText().toString();
+        String gender = spinnerGender.getSelectedItem().toString();
         String dob = etDob.getText().toString();
         int course = Integer.parseInt(etCourse.getText().toString());
         String department = edMajor.getText().toString();
