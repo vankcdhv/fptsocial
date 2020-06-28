@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
                     } catch (ParseException ex) {
                         ex.printStackTrace();
                     }
-                    Toast.makeText(MainActivity.this, "Lấy thông tin thành công", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MainActivity.this, "Lấy thông tin thành công", Toast.LENGTH_SHORT).show();
                 }
             }
 
