@@ -6,27 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".gui.MainActivity">
 
-    <Button
-        android:id="@+id/btnLogout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginBottom="16dp"
-        android:onClick="btnLogoutClick"
-        android:text="Logout"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:onClick="viewProfile"
-        android:text="Profile"
-        app:layout_constraintBottom_toBottomOf="@+id/btnLogout"
-        app:layout_constraintStart_toEndOf="@+id/btnLogout" />
-
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbarNewsActivity"
         android:layout_width="0dp"
@@ -57,27 +36,46 @@
         android:hint="Search"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="@+id/toolbarNewsActivity"
-        app:layout_constraintEnd_toStartOf="@+id/btnSearch"
+        app:layout_constraintEnd_toStartOf="@+id/imageButton"
         app:layout_constraintStart_toEndOf="@+id/imgHome"
         app:layout_constraintTop_toTopOf="@+id/toolbarNewsActivity" />
 
-    <Button
-        android:id="@+id/btnSearch"
-        android:layout_width="wrap_content"
+    <fragment
+        android:id="@+id/fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:defaultNavHost="true"
+        app:layout_constraintBottom_toTopOf="@+id/navigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarNewsActivity"
+        app:navGraph="@navigation/main_nav_layout" />
+
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:text="Search"
+        android:layout_marginEnd="32dp"
+        android:background="#00FFFFFF"
         app:layout_constraintBottom_toBottomOf="@+id/toolbarNewsActivity"
-        app:layout_constraintEnd_toEndOf="@+id/toolbarNewsActivity"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/toolbarNewsActivity"
+        app:srcCompat="@drawable/ic_action_search" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigationView"
-        android:layout_width="409dp"
-        android:layout_height="40dp"
+        android:id="@+id/navigation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="?android:attr/windowBackground"
+        android:foreground="?attr/selectableItemBackground"
+        app:itemBackground="@color/colorActionBar"
+        app:itemIconTint="@android:color/white"
+        app:itemTextColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/navigation" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

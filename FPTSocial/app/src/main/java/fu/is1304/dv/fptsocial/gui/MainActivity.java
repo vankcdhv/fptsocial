@@ -1,43 +1,33 @@
 package fu.is1304.dv.fptsocial.gui;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.Toast;
 
-import androidx.appcompat.widget.Toolbar;
-
-import com.google.firebase.firestore.DocumentSnapshot;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import fu.is1304.dv.fptsocial.R;
 import fu.is1304.dv.fptsocial.business.AuthController;
 import fu.is1304.dv.fptsocial.common.Const;
-import fu.is1304.dv.fptsocial.dao.UserDAO;
-import fu.is1304.dv.fptsocial.dao.callback.FirestoreSetCallback;
-import fu.is1304.dv.fptsocial.entity.User;
+import fu.is1304.dv.fptsocial.gui.viewmodel.MainActivityViewModel;
 
 public class MainActivity extends AppCompatActivity {
-    ActionBar actionBar;
+    private ActionBar actionBar;
+    private MainActivityViewModel viewModel;
+    private BottomNavigationView navigation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initComponents();
-
     }
 
     private void initComponents() {
@@ -48,17 +38,36 @@ public class MainActivity extends AppCompatActivity {
         if (!AuthController.getInstance().getCurrentUser().isEmailVerified()) {
             openLoginActivity();
         }
+        viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
+        navigation = findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
 
     }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.navigation_profile:
+                    viewProfile();
+                    return true;
+                case R.id.navigation_shop:
+                    //viewProfile();
+                    return true;
+                case R.id.navigation_gifts:
+                    //viewProfile();
+                    return true;
+                case R.id.navigation_cart:
+                    //viewProfile();
+                    return true;
+            }
+            return false;
+        }
+    };
 
     private void setToolbar() {
         actionBar = getSupportActionBar();
         actionBar.hide();
-    }
-
-    public void btnLogoutClick(View v) {
-        AuthController.getInstance().signOut();
-        openLoginActivity();
     }
 
     private void openLoginActivity() {
@@ -67,27 +76,14 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
-    public void btnAddOnClick(View v) {
-        User user = new User(AuthController.getInstance().getCurrentUser().getUid(), "Lê Thiện", "Văn", "nam", "18/02/1999", 13,
-                "Kỹ Thuật Phần Mềm", null, null, "24/06/2020");
-
-        UserDAO.getInstance().updateUserData(user, new FirestoreSetCallback() {
-            @Override
-            public void onSuccess() {
-                Toast.makeText(MainActivity.this, "Update thông tin thành công", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                Toast.makeText(MainActivity.this, "Update thông tin thất bại", Toast.LENGTH_SHORT).show();
-            }
-        });
+    public void btnLogoutClick(View v) {
+        AuthController.getInstance().signOut();
+        openLoginActivity();
     }
 
-    public void viewProfile(View view) {
+    public void viewProfile() {
         Intent intent = new Intent(this, ProfileActivity.class);
         intent.putExtra("mode", Const.MODE_UPDATE_PROFILE);
         startActivity(intent);
-
     }
 }
