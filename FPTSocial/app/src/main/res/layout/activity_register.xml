@@ -24,6 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:ems="10"
+        android:hint="@string/password"
         android:inputType="textPassword"
         app:layout_constraintStart_toStartOf="@+id/txtRegEmail"
         app:layout_constraintTop_toBottomOf="@+id/txtRegEmail" />
@@ -34,6 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:ems="10"
+        android:hint="@string/retype_password"
         android:inputType="textPassword"
         app:layout_constraintStart_toStartOf="@+id/txtRegPassord"
         app:layout_constraintTop_toBottomOf="@+id/txtRegPassord" />

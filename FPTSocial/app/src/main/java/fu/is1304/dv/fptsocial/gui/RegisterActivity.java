@@ -74,7 +74,7 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onComplete() {
                         Toast.makeText(RegisterActivity.this, "Kiểm tra mail và xác thực địa chỉ email của bạn", Toast.LENGTH_LONG).show();
-                        moveToProfile();
+                        moveToLogin();
                     }
 
                     @Override
@@ -106,6 +106,12 @@ public class RegisterActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ProfileActivity.class);
         intent.putExtra("mode", Const.MODE_CREATE_PROFILE);
         intent.putExtra("uid", AuthController.getInstance().getUID());
+        startActivity(intent);
+        finish();
+    }
+
+    private void moveToLogin(){
+        Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         finish();
     }
