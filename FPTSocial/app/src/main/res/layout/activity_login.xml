@@ -4,71 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/login_bg_image"
+    android:background="@drawable/background"
     tools:context=".gui.LoginActivity">
 
-    <EditText
-        android:id="@+id/txtEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="200dp"
-        android:ems="10"
-        android:hint="@string/email"
-        android:inputType="textEmailAddress"
+
+    <FrameLayout
+        android:id="@+id/loginFragmentContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <EditText
-        android:id="@+id/txtPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:ems="10"
-        android:inputType="textPassword"
-        app:layout_constraintStart_toStartOf="@+id/txtEmail"
-        app:layout_constraintTop_toBottomOf="@+id/txtEmail" />
-
-    <TextView
-        android:id="@+id/labelForgetPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
-        android:text="@string/btn_forgot_password"
-        app:layout_constraintEnd_toStartOf="@id/labelResetPassword"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
-
-    <TextView
-        android:id="@+id/labelResetPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:text="@string/btn_reset_password"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/labelForgetPassword"
-        app:layout_constraintTop_toTopOf="@+id/labelForgetPassword" />
-
-    <Button
-        android:id="@+id/btnLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:onClick="btnLoginOnClick"
-        android:text="@string/btn_login"
-        app:layout_constraintEnd_toStartOf="@+id/btnRegister"
-        app:layout_constraintStart_toStartOf="@+id/txtPassword"
-        app:layout_constraintTop_toBottomOf="@+id/txtPassword" />
-
-    <Button
-        android:id="@+id/btnRegister"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="btnRegisterClick"
-        android:text="@string/btn_register"
-        app:layout_constraintBottom_toBottomOf="@+id/btnLogin"
-        app:layout_constraintEnd_toEndOf="@+id/txtPassword"
-        app:layout_constraintStart_toEndOf="@id/btnLogin" />
-
+    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

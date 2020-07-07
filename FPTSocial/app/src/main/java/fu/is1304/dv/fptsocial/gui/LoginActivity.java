@@ -1,7 +1,10 @@
 package fu.is1304.dv.fptsocial.gui;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.content.Intent;
@@ -25,35 +28,42 @@ import fu.is1304.dv.fptsocial.dao.UserDAO;
 import fu.is1304.dv.fptsocial.dao.callback.FirebaseAuthCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
 import fu.is1304.dv.fptsocial.entity.User;
+import fu.is1304.dv.fptsocial.gui.fragment.LoginFragment;
 
 public class LoginActivity extends AppCompatActivity {
-    private EditText txtEmail;
-    private EditText txtPassword;
-    private FirebaseAuth firebaseAuth;
+    private ActionBar actionBar;
+    private LoginFragment loginFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        checkLogin();
-        initComponents();
         requestPermissions();
+        initComponents();
+        checkLogin();
     }
 
     private void checkLogin() {
         if (AuthController.getInstance().getCurrentUser() != null) {
             checkUserInformationExisted();
+        } else {
+            loadFragment(loginFragment);
         }
     }
 
     private void initComponents() {
-        txtEmail = findViewById(R.id.txtEmail);
-        txtPassword = findViewById(R.id.txtPassword);
+        setToolbar();
+        loginFragment = new LoginFragment();
+    }
+
+    private void setToolbar() {
+        actionBar = getSupportActionBar();
+        actionBar.hide();
     }
 
     public void btnLoginOnClick(View view) {
-        String email = txtEmail.getText().toString();
-        String password = txtPassword.getText().toString();
+        String email = loginFragment.getEmail();
+        String password = loginFragment.getPassword();
         if (!email.isEmpty() && !password.isEmpty()) {
             AuthController.getInstance().loginByEmailAndPass(email, password, new FirebaseAuthCallback() {
                 @Override
@@ -108,8 +118,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private void moveToRegister() {
         Intent intent = new Intent(this, RegisterActivity.class);
-        intent.putExtra("email", txtEmail.getText().toString());
-        intent.putExtra("password", txtPassword.getText().toString());
+        intent.putExtra("email", loginFragment.getEmail());
+        intent.putExtra("password", loginFragment.getPassword());
         startActivity(intent);
     }
 
@@ -129,6 +139,13 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             requestPermissions(new String[]{Manifest.permission.INTERNET}, 1000);
         }
+    }
+
+    private void loadFragment(Fragment fragment) {
+        // load fragment
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.loginFragmentContainer, fragment);
+        transaction.commit();
     }
 
 }

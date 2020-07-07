@@ -31,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
     private ActionBar actionBar;
     private MainActivityViewModel viewModel;
     private BottomNavigationView navigation;
+    private NewfeedFragment newfeedFragment;
+    private MessengerFragment messengerFragment;
+    private NotificationFragment notificationFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initComponents() {
+        newfeedFragment = new NewfeedFragment();
+        messengerFragment = new MessengerFragment();
+        notificationFragment = new NotificationFragment();
         setToolbar();
         //Init components
 
@@ -50,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
-        loadFragment(new NewfeedFragment());
+        loadFragment(newfeedFragment);
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -58,13 +64,13 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_shop:
-                    loadFragment(new NewfeedFragment());
+                    loadFragment(newfeedFragment);
                     return true;
                 case R.id.navigation_gifts:
-                    loadFragment(new MessengerFragment());
+                    loadFragment(messengerFragment);
                     return true;
                 case R.id.navigation_cart:
-                    loadFragment(new NotificationFragment());
+                    loadFragment(notificationFragment);
                     //viewProfile();
                     return true;
                 case R.id.navigation_profile:
@@ -100,10 +106,13 @@ public class MainActivity extends AppCompatActivity {
     private void loadFragment(Fragment fragment) {
         // load fragment
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.frame_container, fragment);
-        transaction.addToBackStack(null);
+        transaction.replace(R.id.frame_container, fragment, "CURRENT_FRAGMENT");
+//        transaction.addToBackStack(null);
         transaction.commit();
     }
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 }
