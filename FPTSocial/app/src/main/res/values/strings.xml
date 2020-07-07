@@ -58,10 +58,10 @@
     <string name="title_message">Message</string>
     <string name="title_notification">Notification</string>
     <string name="title_profile">Profile</string>
-<<<<<<< Updated upstream
+
     <string name="password">Password</string>
     <string name="retype_password">Retype Password</string>
-=======
+
     <!-- TODO: Remove or change this placeholder text -->
 >>>>>>> Stashed changes
 </resources>
