@@ -3,8 +3,14 @@ package fu.is1304.dv.fptsocial.gui;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.NavController;
+import androidx.navigation.NavDirections;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +22,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import fu.is1304.dv.fptsocial.R;
 import fu.is1304.dv.fptsocial.business.AuthController;
 import fu.is1304.dv.fptsocial.common.Const;
+import fu.is1304.dv.fptsocial.gui.fragment.MessengerFragment;
+import fu.is1304.dv.fptsocial.gui.fragment.NewfeedFragment;
+import fu.is1304.dv.fptsocial.gui.fragment.NotificationFragment;
 import fu.is1304.dv.fptsocial.gui.viewmodel.MainActivityViewModel;
 
 public class MainActivity extends AppCompatActivity {
@@ -41,24 +50,25 @@ public class MainActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
-
+        loadFragment(new NewfeedFragment());
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.navigation_profile:
-                    viewProfile();
-                    return true;
                 case R.id.navigation_shop:
-                    //viewProfile();
+                    loadFragment(new NewfeedFragment());
                     return true;
                 case R.id.navigation_gifts:
-                    //viewProfile();
+                    loadFragment(new MessengerFragment());
                     return true;
                 case R.id.navigation_cart:
+                    loadFragment(new NotificationFragment());
                     //viewProfile();
+                    return true;
+                case R.id.navigation_profile:
+                    viewProfile();
                     return true;
             }
             return false;
@@ -86,4 +96,14 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("mode", Const.MODE_UPDATE_PROFILE);
         startActivity(intent);
     }
+
+    private void loadFragment(Fragment fragment) {
+        // load fragment
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.frame_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+
 }

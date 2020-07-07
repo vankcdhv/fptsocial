@@ -9,5 +9,14 @@
         android:id="@+id/newfeedFragment"
         android:name="fu.is1304.dv.fptsocial.gui.fragment.NewfeedFragment"
         android:label="fragment_newfeed"
-        tools:layout="@layout/fragment_newfeed" />
+        tools:layout="@layout/fragment_newfeed" >
+        <action
+            android:id="@+id/action_newfeedFragment_to_messengerFragment"
+            app:destination="@id/messengerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/messengerFragment"
+        android:name="fu.is1304.dv.fptsocial.gui.fragment.MessengerFragment"
+        android:label="fragment_messenger"
+        tools:layout="@layout/fragment_messenger" />
 </navigation>

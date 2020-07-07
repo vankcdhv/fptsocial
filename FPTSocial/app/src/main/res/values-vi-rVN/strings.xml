@@ -50,8 +50,8 @@
     <string name="female">Nữ</string>
     <string name="choseYourImage">Chọn ảnh của bạn</string>
     <string name="logout">Đăng xuất</string>
-    <string name="title_shop">Cửa hàng</string>
-    <string name="title_gifts">Quà tặng</string>
-    <string name="title_cart">Giỏ hàng</string>
+    <string name="title_newfeed">Bảng tin</string>
+    <string name="title_message">Tin nhắn</string>
+    <string name="title_notification">Thông báo</string>
     <string name="title_profile">Thông tin</string>
 </resources>
