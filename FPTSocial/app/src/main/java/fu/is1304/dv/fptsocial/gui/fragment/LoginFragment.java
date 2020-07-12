@@ -1,5 +1,7 @@
 package fu.is1304.dv.fptsocial.gui.fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,9 +9,11 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 import fu.is1304.dv.fptsocial.R;
+import fu.is1304.dv.fptsocial.common.Const;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,6 +24,7 @@ public class LoginFragment extends Fragment {
 
     private EditText txtEmail;
     private EditText txtPassword;
+    private CheckBox cbRemember;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -75,6 +80,8 @@ public class LoginFragment extends Fragment {
 
         txtEmail = view.findViewById(R.id.txtEmail);
         txtPassword = view.findViewById(R.id.txtPassword);
+        cbRemember = view.findViewById(R.id.cbRememberMe);
+        loadPassword();
     }
 
     public String getEmail() {
@@ -83,5 +90,44 @@ public class LoginFragment extends Fragment {
 
     public String getPassword() {
         return txtPassword.getText().toString();
+    }
+
+    public Boolean rememberIsChecked() {
+        return cbRemember.isChecked();
+    }
+
+    public void setTxtEmail(String email) {
+        txtEmail.setText(email);
+    }
+
+    public void setPasswrod(String passwrod) {
+        txtPassword.setText(passwrod);
+    }
+
+    public void setCbRemember(Boolean isChecked) {
+        cbRemember.setChecked(isChecked);
+    }
+
+    public void savePassword() {
+        SharedPreferences preferences = this.getActivity().getSharedPreferences(Const.LOGIN_INFO_REFERENCE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        if (rememberIsChecked()) {
+            editor.putString("email", getEmail()).putString("password", getPassword()).putBoolean("checkbox", rememberIsChecked());
+            editor.commit();
+        } else {
+            editor.clear();
+        }
+    }
+
+    private void loadPassword() {
+        SharedPreferences preferences = this.getActivity().getSharedPreferences(Const.LOGIN_INFO_REFERENCE, Context.MODE_PRIVATE);
+        if (preferences != null) {
+            String email = preferences.getString("email", "");
+            String password = preferences.getString("password", "");
+            Boolean checked = preferences.getBoolean("checkbox", false);
+            setTxtEmail(email);
+            setPasswrod(password);
+            setCbRemember(checked);
+        }
     }
 }

@@ -7,7 +7,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
@@ -68,6 +70,7 @@ public class LoginActivity extends AppCompatActivity {
             AuthController.getInstance().loginByEmailAndPass(email, password, new FirebaseAuthCallback() {
                 @Override
                 public void onComplete(AuthResult result) {
+                    loginFragment.savePassword();
                     checkUserInformationExisted();
                 }
 
@@ -147,5 +150,6 @@ public class LoginActivity extends AppCompatActivity {
         transaction.replace(R.id.loginFragmentContainer, fragment);
         transaction.commit();
     }
+
 
 }

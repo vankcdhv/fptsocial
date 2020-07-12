@@ -18,5 +18,6 @@ public class Const {
     public static final String VALIDATE_CODE_PASS_INCORRECT = "PASSWORD_INCORRECT";
     public static final String VALIDATE_CODE_CORRECT = "CORRECT";
 
+    public static final String LOGIN_INFO_REFERENCE = "LOGIN_INFO";
 
 }

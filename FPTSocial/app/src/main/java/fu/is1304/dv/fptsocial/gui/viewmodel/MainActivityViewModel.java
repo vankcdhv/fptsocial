@@ -7,4 +7,5 @@ public class MainActivityViewModel extends ViewModel {
     protected void onCleared() {
         super.onCleared();
     }
+
 }
