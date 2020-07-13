@@ -38,6 +38,7 @@ import fu.is1304.dv.fptsocial.dao.callback.FirestoreSetCallback;
 import fu.is1304.dv.fptsocial.entity.User;
 import fu.is1304.dv.fptsocial.gui.MainActivity;
 import fu.is1304.dv.fptsocial.gui.ProfileActivity;
+import fu.is1304.dv.fptsocial.gui.fragmentcallback.ProfileCallBack;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -59,9 +60,12 @@ public class ProfileFragment extends Fragment {
     private User currentUser;
     private ImageView imgAvatar;
     private String mode;
-    private Button btnBack;
+    private Button btnBack, btnSave;
     private Uri ava;
     private ArrayAdapter genderAdapter;
+
+    private ProfileCallBack callBack;
+
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -117,11 +121,24 @@ public class ProfileFragment extends Fragment {
         edMajor = view.findViewById(R.id.edMajor);
         etDob = view.findViewById(R.id.etDob);
         imgAvatar = view.findViewById(R.id.imgAvatar);
-        btnBack = view.findViewById(R.id.btnBackProfile);
+        btnSave = view.findViewById(R.id.btnProfileSave);
         mode = Const.MODE_CREATE_PROFILE;
         edMajor.setEnabled(false);
-        genderAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, new String[]{getString(R.string.male), getString(R.string.female)});
+        genderAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, new String[]{getString(R.string.male), getString(R.string.female)});
         spinnerGender.setAdapter(genderAdapter);
+
+        setEvent();
+
+        setData();
+    }
+
+    private void setEvent() {
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                save(v);
+            }
+        });
     }
 
     public void setData() {

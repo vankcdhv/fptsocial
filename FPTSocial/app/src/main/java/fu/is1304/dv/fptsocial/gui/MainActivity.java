@@ -25,6 +25,7 @@ import fu.is1304.dv.fptsocial.common.Const;
 import fu.is1304.dv.fptsocial.gui.fragment.MessengerFragment;
 import fu.is1304.dv.fptsocial.gui.fragment.NewfeedFragment;
 import fu.is1304.dv.fptsocial.gui.fragment.NotificationFragment;
+import fu.is1304.dv.fptsocial.gui.fragment.ProfileFragment;
 import fu.is1304.dv.fptsocial.gui.viewmodel.MainActivityViewModel;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private NewfeedFragment newfeedFragment;
     private MessengerFragment messengerFragment;
     private NotificationFragment notificationFragment;
+    private ProfileFragment profileFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         newfeedFragment = new NewfeedFragment();
         messengerFragment = new MessengerFragment();
         notificationFragment = new NotificationFragment();
+        profileFragment = new ProfileFragment();
         setToolbar();
         //Init components
 
@@ -74,7 +77,8 @@ public class MainActivity extends AppCompatActivity {
                     //viewProfile();
                     return true;
                 case R.id.navigation_profile:
-                    viewProfile();
+                    //viewProfile();
+                    loadFragment(profileFragment);
                     return true;
             }
             return false;

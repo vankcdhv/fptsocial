@@ -115,7 +115,7 @@ public class LoginFragment extends Fragment {
             editor.putString("email", getEmail()).putString("password", getPassword()).putBoolean("checkbox", rememberIsChecked());
             editor.commit();
         } else {
-            editor.clear();
+            editor.clear().commit();
         }
     }
 
