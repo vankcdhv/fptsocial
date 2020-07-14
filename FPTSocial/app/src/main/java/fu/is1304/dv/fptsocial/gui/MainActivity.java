@@ -1,6 +1,7 @@
 package fu.is1304.dv.fptsocial.gui;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -101,12 +102,6 @@ public class MainActivity extends AppCompatActivity {
         openLoginActivity();
     }
 
-    public void viewProfile() {
-        Intent intent = new Intent(this, ProfileActivity.class);
-        intent.putExtra("mode", Const.MODE_UPDATE_PROFILE);
-        startActivity(intent);
-    }
-
     private void loadFragment(Fragment fragment) {
         // load fragment
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -116,7 +111,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case Const.REQUEST_CODE_CHOSE_AVA:
+                profileFragment.changeAvatar(resultCode, data);
+                break;
+        }
     }
 }

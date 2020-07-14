@@ -36,8 +36,6 @@ import fu.is1304.dv.fptsocial.dao.callback.FirestorageUploadCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreSetCallback;
 import fu.is1304.dv.fptsocial.entity.User;
-import fu.is1304.dv.fptsocial.gui.MainActivity;
-import fu.is1304.dv.fptsocial.gui.ProfileActivity;
 import fu.is1304.dv.fptsocial.gui.fragmentcallback.ProfileCallBack;
 
 /**
@@ -59,7 +57,6 @@ public class ProfileFragment extends Fragment {
     private EditText etDob;
     private User currentUser;
     private ImageView imgAvatar;
-    private String mode;
     private Button btnBack, btnSave;
     private Uri ava;
     private ArrayAdapter genderAdapter;
@@ -122,7 +119,6 @@ public class ProfileFragment extends Fragment {
         etDob = view.findViewById(R.id.etDob);
         imgAvatar = view.findViewById(R.id.imgAvatar);
         btnSave = view.findViewById(R.id.btnProfileSave);
-        mode = Const.MODE_CREATE_PROFILE;
         edMajor.setEnabled(false);
         genderAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, new String[]{getString(R.string.male), getString(R.string.female)});
         spinnerGender.setAdapter(genderAdapter);
@@ -137,6 +133,12 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 save(v);
+            }
+        });
+        imgAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectAvatar(v);
             }
         });
     }
@@ -230,23 +232,17 @@ public class ProfileFragment extends Fragment {
     }
 
 
-    public void changeAvatar(View view) {
+    public void selectAvatar(View view) {
         Intent myIntent = new Intent(Intent.ACTION_GET_CONTENT, null);
         myIntent.setType("image/*");
-        startActivityForResult(myIntent, Const.REQUEST_CODE_CHOSE_AVA);
-
+        getActivity().startActivityForResult(myIntent, Const.REQUEST_CODE_CHOSE_AVA);
     }
 
-//    @Override
-//    void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == Const.REQUEST_CODE_CHOSE_AVA) {
-//            if (resultCode == getActivity().RESULT_OK) {
-//                ava = data.getData();
-//                imgAvatar.setImageURI(ava);
-//                currentUser.setAvatar("images/avatar/" + AuthController.getInstance().getCurrentUser().getUid() + "/" + ava.getLastPathSegment());
-//            }
-//        }
-//    }
-
+    public void changeAvatar(int resultCode, @Nullable Intent data) {
+        if (resultCode == getActivity().RESULT_OK) {
+            ava = data.getData();
+            imgAvatar.setImageURI(ava);
+            currentUser.setAvatar("images/avatar/" + AuthController.getInstance().getCurrentUser().getUid() + "/" + ava.getLastPathSegment());
+        }
+    }
 }
