@@ -105,49 +105,18 @@ public class NewfeedFragment extends Fragment {
     }
 
     private void getAllPost() {
-        PostDAO.getInstance().getAllUid(new FirebaseGetCollectionCallback() {
+        PostDAO.getInstance().getAllPost(new FirebaseGetCollectionCallback() {
             @Override
             public void onComplete(List<QueryDocumentSnapshot> documentSnapshots) {
-                List<String> listUID = DatabaseUtils.convertListDocSnapToListUID(documentSnapshots);
-                for (final String uid : listUID) {
-                    UserDAO.getInstance().getUserByUID(uid, new FirestoreGetCallback() {
-                        @Override
-                        public void onComplete(DocumentSnapshot documentSnapshot) {
-                            User user = DatabaseUtils.convertDocumentSnapshotToUser(documentSnapshot);
-                            String name = user.getFirstName() + " " + user.getLastName();
-                            getPostByUID(uid, name);
-                        }
-
-                        @Override
-                        public void onFailure(Exception e) {
-
-                        }
-                    });
-                }
+                List<Post> list = DatabaseUtils.convertListDocSnapToListPost(documentSnapshots);
+                newFeedAdapter.addAll(list);
             }
 
             @Override
             public void onFailed(Exception e) {
-                Toast.makeText(getContext(), "Tải bảng tin không thành công", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "Có lỗi xảy ra", Toast.LENGTH_LONG).show();
             }
         });
     }
 
-    private void getPostByUID(final String uid, final String name) {
-        List<Post> list = new ArrayList<>();
-        PostDAO.getInstance().getAllPostByUid(uid, new FirebaseGetCollectionCallback() {
-            @Override
-            public void onComplete(List<QueryDocumentSnapshot> queryDocumentSnapshots) {
-                if (listPost == null) {
-                    newFeedAdapter.addAll(DatabaseUtils.convertListDocSnapToListPost(uid, name, queryDocumentSnapshots));
-                } else {
-                    newFeedAdapter.addAll(DatabaseUtils.convertListDocSnapToListPost(uid, name, queryDocumentSnapshots));
-                }
-            }
-
-            @Override
-            public void onFailed(Exception e) {
-            }
-        });
-    }
 }

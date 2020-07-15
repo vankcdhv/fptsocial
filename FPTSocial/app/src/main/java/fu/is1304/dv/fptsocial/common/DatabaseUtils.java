@@ -23,7 +23,7 @@ public class DatabaseUtils {
         return user;
     }
 
-    public static Post convertDocumentSnapshotToPost(String uid, String author, DocumentSnapshot result) {
+    public static Post convertDocumentSnapshotToPost(DocumentSnapshot result) {
         Post post;
 
         String id = result.getId();
@@ -31,17 +31,16 @@ public class DatabaseUtils {
         String content = (String) result.getData().get("content");
         String image = (String) result.getData().get("image");
         Date postDate = ((Timestamp) result.getData().get("postDate")).toDate();
-
-        post = new Post(id, uid, author, title, content, image, postDate);
+        String uid = (String) result.getData().get("uid");
+        post = new Post(id, uid, title, content, image, postDate);
 
         return post;
     }
 
-    public static List<Post> convertListDocSnapToListPost(final String uid, String name, List<QueryDocumentSnapshot> documentSnapshots) {
+    public static List<Post> convertListDocSnapToListPost(List<QueryDocumentSnapshot> documentSnapshots) {
         final List<Post> list = new ArrayList<>();
         for (final QueryDocumentSnapshot snapshot : documentSnapshots) {
-            list.add(convertDocumentSnapshotToPost(uid, name, snapshot));
-
+            list.add(convertDocumentSnapshotToPost(snapshot));
         }
 
         return list;

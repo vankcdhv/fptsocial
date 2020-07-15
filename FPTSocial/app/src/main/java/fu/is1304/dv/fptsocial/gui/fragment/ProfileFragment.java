@@ -1,5 +1,6 @@
 package fu.is1304.dv.fptsocial.gui.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.storage.UploadTask;
 
@@ -162,7 +164,7 @@ public class ProfileFragment extends Fragment {
                     StorageDAO.getInstance().getImage(currentUser.getAvatar(), new FirestorageGetByteCallback() {
                         @Override
                         public void onStart() {
-
+                            Glide.with(getActivity()).load(getActivity().getDrawable(R.drawable.loading)).into(imgAvatar);
                         }
 
                         @Override

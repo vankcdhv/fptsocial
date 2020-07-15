@@ -26,30 +26,8 @@ public class PostDAO {
     public PostDAO() {
     }
 
-    public void getAllPostByUid(String uid, final FirebaseGetCollectionCallback callback) {
+    public void getAllPost(final FirebaseGetCollectionCallback callback) {
 
-        DataProvider.getInstance().getDatabase()
-                .collection(Const.POST_COLLECTION)
-                .document(uid)
-                .collection(Const.POST_COLLECTION)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            List<QueryDocumentSnapshot> list = new ArrayList<>();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                list.add(document);
-                            }
-                            callback.onComplete(list);
-                        } else {
-                            callback.onFailed(task.getException());
-                        }
-                    }
-                });
-    }
-
-    public void getAllUid(final FirebaseGetCollectionCallback callback) {
         DataProvider.getInstance().getDatabase()
                 .collection(Const.POST_COLLECTION)
                 .get()

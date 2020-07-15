@@ -18,10 +18,9 @@ public class Post implements Serializable {
     public Post() {
     }
 
-    public Post(String id, String uid, String author, String title, String content, String image, Date postDate) {
+    public Post(String id, String uid, String title, String content, String image, Date postDate) {
         this.id = id;
         this.uid = uid;
-        this.author = author;
         this.title = title;
         this.content = content;
         this.image = image;
@@ -34,15 +33,6 @@ public class Post implements Serializable {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
     }
 
     public String getTitle() {

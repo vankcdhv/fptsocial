@@ -24,6 +24,7 @@ public class StorageDAO {
     }
 
     public void getImage(String path, final FirestorageGetByteCallback callback) {
+        callback.onStart();
         DataProvider.getInstance()
                 .getStorage()
                 .getReference()
