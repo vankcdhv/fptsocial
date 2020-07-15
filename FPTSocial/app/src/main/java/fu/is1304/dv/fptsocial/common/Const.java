@@ -8,6 +8,8 @@ public class Const {
 
 
     public static final String USER_COLLECTION = "users";
+    public static final String POST_COLLECTION = "posts";
+
 
     public static final String MODE_CREATE_PROFILE = "CREATE_PROFILE";
     public static final String MODE_UPDATE_PROFILE = "UPDATE_PROFILE";
