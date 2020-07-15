@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import fu.is1304.dv.fptsocial.dao.UserDAO;
+import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
 import fu.is1304.dv.fptsocial.entity.Post;
 import fu.is1304.dv.fptsocial.entity.User;
 
@@ -21,7 +23,7 @@ public class DatabaseUtils {
         return user;
     }
 
-    public static Post convertDocumentSnapshotToPost(DocumentSnapshot result) {
+    public static Post convertDocumentSnapshotToPost(String uid, String author, DocumentSnapshot result) {
         Post post;
 
         String id = result.getId();
@@ -30,16 +32,18 @@ public class DatabaseUtils {
         String image = (String) result.getData().get("image");
         Date postDate = ((Timestamp) result.getData().get("postDate")).toDate();
 
-        post = new Post(id, title, content, image, postDate);
+        post = new Post(id, uid, author, title, content, image, postDate);
 
         return post;
     }
 
-    public static List<Post> convertListDocSnapToListPost(List<QueryDocumentSnapshot> documentSnapshots) {
-        List<Post> list = new ArrayList<>();
-        for (QueryDocumentSnapshot snapshot : documentSnapshots) {
-            list.add(convertDocumentSnapshotToPost(snapshot));
+    public static List<Post> convertListDocSnapToListPost(final String uid, String name, List<QueryDocumentSnapshot> documentSnapshots) {
+        final List<Post> list = new ArrayList<>();
+        for (final QueryDocumentSnapshot snapshot : documentSnapshots) {
+            list.add(convertDocumentSnapshotToPost(uid, name, snapshot));
+
         }
+
         return list;
     }
 
@@ -52,5 +56,14 @@ public class DatabaseUtils {
         }
 
         return Const.VALIDATE_CODE_CORRECT;
+    }
+
+    public static List<String> convertListDocSnapToListUID(List<QueryDocumentSnapshot> documentSnapshots) {
+        List<String> res = new ArrayList<>();
+        for (QueryDocumentSnapshot snapshot : documentSnapshots) {
+            res.add(snapshot.getId());
+        }
+        return res;
+
     }
 }

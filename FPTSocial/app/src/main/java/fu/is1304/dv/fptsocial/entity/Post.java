@@ -8,6 +8,8 @@ import java.util.Date;
 
 public class Post implements Serializable {
     private String id;
+    private String uid;
+    private String author;
     private String title;
     private String content;
     private String image;
@@ -16,8 +18,10 @@ public class Post implements Serializable {
     public Post() {
     }
 
-    public Post(String id, String title, String content, String image, Date postDate) {
+    public Post(String id, String uid, String author, String title, String content, String image, Date postDate) {
         this.id = id;
+        this.uid = uid;
+        this.author = author;
         this.title = title;
         this.content = content;
         this.image = image;
@@ -30,6 +34,15 @@ public class Post implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
     public String getTitle() {
@@ -62,5 +75,13 @@ public class Post implements Serializable {
 
     public void setPostDate(Date postDate) {
         this.postDate = postDate;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }

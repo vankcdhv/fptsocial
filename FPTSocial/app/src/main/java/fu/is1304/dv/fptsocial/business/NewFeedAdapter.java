@@ -71,6 +71,7 @@ public class NewFeedAdapter extends ArrayAdapter<Post> {
             res = LayoutInflater.from(context).inflate(R.layout.listview_newfeed_layout, parent, false);
         }
         Post newFeed = list.get(position);
+        TextView txtAuthor = res.findViewById(R.id.txtNewfeedAuthor);
         TextView txtTitle = res.findViewById(R.id.txtNewfeedTitle);
         TextView txtContent = res.findViewById(R.id.txtNewfeedContent);
         final ImageView imgNewfeedImage = res.findViewById(R.id.imgNewfeedImage);
@@ -78,15 +79,26 @@ public class NewFeedAdapter extends ArrayAdapter<Post> {
         txtTitle.setText(newFeed.getTitle());
         txtContent.setText(newFeed.getContent());
         txtTime.setText(new SimpleDateFormat("dd/MM/yyyy - hh:mm:ss").format(newFeed.getPostDate()));
+        txtAuthor.setText(newFeed.getAuthor());
         if (newFeed.getImage() == null) {
             imgNewfeedImage.setVisibility(View.INVISIBLE);
             imgNewfeedImage.setMaxHeight(0);
         } else {
             StorageDAO.getInstance().getImage(newFeed.getImage(), new FirestorageGetByteCallback() {
                 @Override
+                public void onStart() {
+
+                }
+
+                @Override
                 public void onComplete(byte[] bytes) {
                     Bitmap bitmap = StorageUtils.bytesToBitMap(bytes);
                     imgNewfeedImage.setImageBitmap(bitmap);
+                }
+
+                @Override
+                public void onFailed(Exception e) {
+
                 }
             });
         }

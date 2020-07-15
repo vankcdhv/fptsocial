@@ -161,9 +161,19 @@ public class ProfileFragment extends Fragment {
                 if (currentUser.getAvatar() != null && !currentUser.getAvatar().isEmpty()) {
                     StorageDAO.getInstance().getImage(currentUser.getAvatar(), new FirestorageGetByteCallback() {
                         @Override
+                        public void onStart() {
+
+                        }
+
+                        @Override
                         public void onComplete(byte[] bytes) {
                             Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                             imgAvatar.setImageBitmap(bitmap);
+                        }
+
+                        @Override
+                        public void onFailed(Exception e) {
+
                         }
                     });
                 } else {

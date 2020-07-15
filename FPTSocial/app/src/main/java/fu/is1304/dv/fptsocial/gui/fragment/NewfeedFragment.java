@@ -16,6 +16,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import fu.is1304.dv.fptsocial.R;
@@ -97,28 +98,55 @@ public class NewfeedFragment extends Fragment {
     private void init(View v) {
 
         lvNewFeed = v.findViewById(R.id.listNewFeed);
+        listPost = new ArrayList<>();
+        newFeedAdapter = new NewFeedAdapter(getContext(), 0, listPost);
+        lvNewFeed.setAdapter(newFeedAdapter);
+        getAllPost();
+    }
 
-        PostDAO.getInstance().getAllPostByUid(AuthController.getInstance().getUID(), new FirebaseGetCollectionCallback() {
-//            @Override
-//            public void onComplete(DocumentSnapshot documentSnapshot) {
-//                Toast.makeText(getContext(), "Get thanh cong", Toast.LENGTH_LONG).show();
-//            }
-//
-//            @Override
-//            public void onFailure(Exception e) {
-//
-//            }
-
+    private void getAllPost() {
+        PostDAO.getInstance().getAllUid(new FirebaseGetCollectionCallback() {
             @Override
-            public void onComplete(List<QueryDocumentSnapshot> queryDocumentSnapshots) {
-                listPost = DatabaseUtils.convertListDocSnapToListPost(queryDocumentSnapshots);
-                newFeedAdapter = new NewFeedAdapter(getContext(), 0, listPost);
-                lvNewFeed.setAdapter(newFeedAdapter);
+            public void onComplete(List<QueryDocumentSnapshot> documentSnapshots) {
+                List<String> listUID = DatabaseUtils.convertListDocSnapToListUID(documentSnapshots);
+                for (final String uid : listUID) {
+                    UserDAO.getInstance().getUserByUID(uid, new FirestoreGetCallback() {
+                        @Override
+                        public void onComplete(DocumentSnapshot documentSnapshot) {
+                            User user = DatabaseUtils.convertDocumentSnapshotToUser(documentSnapshot);
+                            String name = user.getFirstName() + " " + user.getLastName();
+                            getPostByUID(uid, name);
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+
+                        }
+                    });
+                }
             }
 
             @Override
             public void onFailed(Exception e) {
                 Toast.makeText(getContext(), "Tải bảng tin không thành công", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void getPostByUID(final String uid, final String name) {
+        List<Post> list = new ArrayList<>();
+        PostDAO.getInstance().getAllPostByUid(uid, new FirebaseGetCollectionCallback() {
+            @Override
+            public void onComplete(List<QueryDocumentSnapshot> queryDocumentSnapshots) {
+                if (listPost == null) {
+                    newFeedAdapter.addAll(DatabaseUtils.convertListDocSnapToListPost(uid, name, queryDocumentSnapshots));
+                } else {
+                    newFeedAdapter.addAll(DatabaseUtils.convertListDocSnapToListPost(uid, name, queryDocumentSnapshots));
+                }
+            }
+
+            @Override
+            public void onFailed(Exception e) {
             }
         });
     }
