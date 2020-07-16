@@ -97,10 +97,6 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
-    public void btnLogoutClick(View v) {
-        AuthController.getInstance().signOut();
-        openLoginActivity();
-    }
 
     private void loadFragment(Fragment fragment) {
         // load fragment
@@ -116,6 +112,9 @@ public class MainActivity extends AppCompatActivity {
         switch (requestCode) {
             case Const.REQUEST_CODE_CHOSE_AVA:
                 profileFragment.changeAvatar(resultCode, data);
+                break;
+            case Const.REQUEST_CODE_CHOSE_STATUS_IMAGE:
+                newfeedFragment.changeImage(resultCode, data);
                 break;
         }
     }

@@ -9,9 +9,11 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -90,11 +92,17 @@ public class NewFeedAdapter extends ArrayAdapter<Post> {
         UserDAO.getInstance().getUserByUID(newFeed.getUid(), new FirestoreGetCallback() {
             @Override
             public void onComplete(DocumentSnapshot documentSnapshot) {
-                User user = DatabaseUtils.convertDocumentSnapshotToUser(documentSnapshot);
+                final User user = DatabaseUtils.convertDocumentSnapshotToUser(documentSnapshot);
                 txtTitle.setText(newFeed.getTitle());
                 txtContent.setText(newFeed.getContent());
                 txtTime.setText(new SimpleDateFormat("dd/MM/yyyy - hh:mm:ss").format(newFeed.getPostDate()));
                 txtAuthor.setText(user.getFirstName() + " " + user.getLastName());
+                txtAuthor.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(context, user.getFirstName() + " " + user.getLastName(), Toast.LENGTH_LONG).show();
+                    }
+                });
                 if (newFeed.getImage() == null) {
                     imgNewfeedImage.setVisibility(View.INVISIBLE);
                     imgNewfeedImage.setMaxHeight(0);

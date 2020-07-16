@@ -17,12 +17,13 @@ import fu.is1304.dv.fptsocial.entity.Post;
 import fu.is1304.dv.fptsocial.entity.User;
 
 public class DatabaseUtils {
+    //Convert document snapshot to User
     public static User convertDocumentSnapshotToUser(DocumentSnapshot result) {
         Gson gson = new Gson();
         User user = gson.fromJson(gson.toJson(result.getData()), User.class);
         return user;
     }
-
+    //Convert document snapshot to Post
     public static Post convertDocumentSnapshotToPost(DocumentSnapshot result) {
         Post post;
 
@@ -36,7 +37,7 @@ public class DatabaseUtils {
 
         return post;
     }
-
+    //Convert list Query document snapshot to list post
     public static List<Post> convertListDocSnapToListPost(List<QueryDocumentSnapshot> documentSnapshots) {
         final List<Post> list = new ArrayList<>();
         for (final QueryDocumentSnapshot snapshot : documentSnapshots) {
@@ -46,6 +47,7 @@ public class DatabaseUtils {
         return list;
     }
 
+    //Validate email and password login and register
     public static String validateEmailAndPass(String email, String password, String repass) {
         if (email.isEmpty() || password.isEmpty() || repass.isEmpty()) {
             return Const.VALIDATE_CODE_EMPTY;

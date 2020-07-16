@@ -1,7 +1,5 @@
 package fu.is1304.dv.fptsocial.entity;
 
-import com.google.firebase.Timestamp;
-
 import java.io.Serializable;
 import java.util.Date;
 
@@ -9,7 +7,6 @@ import java.util.Date;
 public class Post implements Serializable {
     private String id;
     private String uid;
-    private String author;
     private String title;
     private String content;
     private String image;
@@ -20,6 +17,14 @@ public class Post implements Serializable {
 
     public Post(String id, String uid, String title, String content, String image, Date postDate) {
         this.id = id;
+        this.uid = uid;
+        this.title = title;
+        this.content = content;
+        this.image = image;
+        this.postDate = postDate;
+    }
+
+    public Post(String uid, String title, String content, String image, Date postDate) {
         this.uid = uid;
         this.title = title;
         this.content = content;

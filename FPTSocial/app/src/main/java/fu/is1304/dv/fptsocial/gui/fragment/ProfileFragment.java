@@ -164,7 +164,7 @@ public class ProfileFragment extends Fragment {
                     StorageDAO.getInstance().getImage(currentUser.getAvatar(), new FirestorageGetByteCallback() {
                         @Override
                         public void onStart() {
-                            Glide.with(getActivity()).load(getActivity().getDrawable(R.drawable.loading)).into(imgAvatar);
+                            Glide.with(getActivity()).load(getActivity().getDrawable(R.drawable.loading_spin)).into(imgAvatar);
                         }
 
                         @Override

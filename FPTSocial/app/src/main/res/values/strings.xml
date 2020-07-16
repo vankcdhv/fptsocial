@@ -62,6 +62,8 @@
     <string name="password">Password</string>
     <string name="retype_password">Retype Password</string>
     <string name="remember_me">Remember me</string>
+    <string name="post_title">Title</string>
+    <string name="post_content">Content</string>
 
     <!-- TODO: Remove or change this placeholder text -->
 >>>>>>> Stashed changes
