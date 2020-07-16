@@ -14,6 +14,8 @@ public class Const {
 
     public static final String MODE_CREATE_PROFILE = "CREATE_PROFILE";
     public static final String MODE_UPDATE_PROFILE = "UPDATE_PROFILE";
+    public static final int MODE_CREATE_STATUS = 0;
+    public static final int MODE_UPDATE_STATUS = 1;
 
     public static final String VALIDATE_CODE_EMPTY = "REQUIRED_FIELD_EMPTY";
     public static final String VALIDATE_CODE_NOT_MATCH = "NOT_MATCH";

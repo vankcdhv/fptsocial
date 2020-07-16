@@ -1,12 +1,19 @@
 package fu.is1304.dv.fptsocial.gui.fragment;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,13 +21,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.firestore.DocumentSnapshot;
+import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
@@ -29,21 +34,18 @@ import java.util.List;
 
 import fu.is1304.dv.fptsocial.R;
 import fu.is1304.dv.fptsocial.business.AuthController;
-import fu.is1304.dv.fptsocial.business.NewFeedAdapter;
+import fu.is1304.dv.fptsocial.business.adapter.NewFeedRecylerAdapter;
 import fu.is1304.dv.fptsocial.common.Const;
 import fu.is1304.dv.fptsocial.common.DatabaseUtils;
+import fu.is1304.dv.fptsocial.common.StorageUtils;
 import fu.is1304.dv.fptsocial.dao.PostDAO;
 import fu.is1304.dv.fptsocial.dao.StorageDAO;
-import fu.is1304.dv.fptsocial.dao.UserDAO;
 import fu.is1304.dv.fptsocial.dao.callback.FirebaseGetCollectionCallback;
+import fu.is1304.dv.fptsocial.dao.callback.FirestorageGetByteCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestorageUploadCallback;
-import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
+import fu.is1304.dv.fptsocial.dao.callback.FirestoreDeleteDocCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreSetCallback;
 import fu.is1304.dv.fptsocial.entity.Post;
-import fu.is1304.dv.fptsocial.entity.User;
-import fu.is1304.dv.fptsocial.gui.LoginActivity;
-import fu.is1304.dv.fptsocial.gui.MainActivity;
-import fu.is1304.dv.fptsocial.gui.ProfileActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -62,10 +64,13 @@ public class NewfeedFragment extends Fragment {
     private String mParam2;
 
     //Variable of fragment
-    private NewFeedAdapter newFeedAdapter;
-    private ListView lvNewFeed;
+    private NewFeedRecylerAdapter newFeedAdapter;
+    private RecyclerView lvNewFeed;
     private TextView labelStatus;
     private List<Post> listPost;
+    private SwipeRefreshLayout refreshLayout;
+
+    private int currentPage, countPage;
 
     //Variable of dialog
     private Dialog postDialog;
@@ -117,8 +122,17 @@ public class NewfeedFragment extends Fragment {
     }
 
     private void init(View v) {
-        lvNewFeed = v.findViewById(R.id.listNewFeed);
+        lvNewFeed = v.findViewById(R.id.recyclerListPost);
         labelStatus = v.findViewById(R.id.labelStatus);
+        refreshLayout = v.findViewById(R.id.swipeRefreshNewFeed);
+
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshList();
+                refreshLayout.setRefreshing(false);
+            }
+        });
 
         labelStatus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,10 +142,61 @@ public class NewfeedFragment extends Fragment {
         });
 
         listPost = new ArrayList<>();
-        newFeedAdapter = new NewFeedAdapter(getContext(), 0, listPost);
+
+        newFeedAdapter = new NewFeedRecylerAdapter(getContext(), listPost, new NewFeedRecylerAdapter.EventListener() {
+            @Override
+            public void onClickEdit(final Post post) {
+                editPostDialog(post);
+            }
+
+            @Override
+            public void onClickDelete(final Post post) {
+                final AlertDialog.Builder confirmDialog = new AlertDialog.Builder(getContext());
+                confirmDialog.setMessage("Bạn chắc chắn muốn xóa?")
+                        .setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                PostDAO.getInstance().deleteStatus(post, new FirestoreDeleteDocCallback() {
+                                    @Override
+                                    public void onComplete() {
+                                        Toast.makeText(getActivity(), "Đã xóa!", Toast.LENGTH_SHORT).show();
+                                        refreshList();
+                                    }
+
+                                    @Override
+                                    public void onFailed(Exception e) {
+                                        Toast.makeText(getActivity(), "Xóa không thành công!", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        })
+                        .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                confirmDialog.show();
+            }
+        });
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        lvNewFeed.setLayoutManager(layoutManager);
+        lvNewFeed.setHasFixedSize(true);
+        lvNewFeed.setItemViewCacheSize(20);
         lvNewFeed.setAdapter(newFeedAdapter);
+
         initDialog();
         getAllPost();
+    }
+
+    private void refreshList() {
+        int size = listPost.size();
+        listPost.clear();
+        newFeedAdapter.notifyItemRangeRemoved(0, size);
+        newFeedAdapter.notifyDataSetChanged();
+        getAllPost();
+
     }
 
     private void initDialog() {
@@ -148,16 +213,48 @@ public class NewfeedFragment extends Fragment {
                 selectImage(v);
             }
         });
+    }
+
+    //Open post status dialog
+    private void openPostDialog() {
         btnPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 postStatus();
             }
         });
+        postDialog.show();
     }
 
-    //Open post status dialog
-    private void openPostDialog() {
+    //Open post status dialog to edit post
+    private void editPostDialog(final Post post) {
+        txtPostTitle.setText(post.getTitle());
+        txtPostContent.setText(post.getContent());
+        if (post.getImage() != null) {
+            StorageDAO.getInstance().getImage(post.getImage(), new FirestorageGetByteCallback() {
+                @Override
+                public void onStart() {
+                    Glide.with(getContext()).load(getActivity().getDrawable(R.drawable.loading)).into(imgPostImage);
+                }
+
+                @Override
+                public void onComplete(byte[] bytes) {
+                    Bitmap bitmap = StorageUtils.bytesToBitMap(bytes);
+                    imgPostImage.setImageBitmap(bitmap);
+                }
+
+                @Override
+                public void onFailed(Exception e) {
+
+                }
+            });
+        }
+        btnPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editPost(post);
+            }
+        });
         postDialog.show();
     }
 
@@ -185,18 +282,36 @@ public class NewfeedFragment extends Fragment {
         Date postDate = new Date();
         Post post = new Post(uid, title, content, statusImage, postDate);
         if (statusImage != null) {
-            uploadImage(post);
+            uploadImage(post, Const.MODE_CREATE_STATUS);
         } else {
             createStatus(post);
         }
     }
 
+    public void editPost(Post post) {
+        String oldImage = post.getImage();
+        String title = txtPostTitle.getText().toString();
+        String content = txtPostContent.getText().toString();
+        String uid = AuthController.getInstance().getUID();
+        Date postDate = post.getPostDate();
+        if (statusImage != null && statusImage != oldImage) {
+            post = new Post(post.getId(), uid, title, content, statusImage, postDate);
+            uploadImage(post, Const.MODE_UPDATE_STATUS);
+        } else {
+            post = new Post(post.getId(), uid, title, content, post.getImage(), postDate);
+            updateStatus(post);
+        }
+    }
+
     //Upload image if user selected one image
-    private void uploadImage(final Post post) {
+    private void uploadImage(final Post post, final int mode) {
         StorageDAO.getInstance().upImage(statusImage, imageUri, new FirestorageUploadCallback() {
             @Override
             public void onComplete(UploadTask.TaskSnapshot taskSnapshot) {
-                createStatus(post);
+                if (mode == Const.MODE_CREATE_STATUS)
+                    createStatus(post);
+                else
+                    updateStatus(post);
             }
 
             @Override
@@ -206,11 +321,14 @@ public class NewfeedFragment extends Fragment {
         });
     }
 
+    //Create post on database
     private void createStatus(Post post) {
         PostDAO.getInstance().postStatus(post, new FirestoreSetCallback() {
             @Override
             public void onSuccess() {
                 Toast.makeText(getActivity(), "Đã đăng bài thành công", Toast.LENGTH_SHORT).show();
+                postDialog.dismiss();
+                refreshList();
             }
 
             @Override
@@ -220,14 +338,33 @@ public class NewfeedFragment extends Fragment {
         });
     }
 
+    //Update post on database
+    private void updateStatus(Post post) {
+        PostDAO.getInstance().updatePost(post, new FirestoreSetCallback() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(getActivity(), "Đã cập nhật bài thành công", Toast.LENGTH_SHORT).show();
+                postDialog.dismiss();
+                refreshList();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(getActivity(), "Có lỗi xảy ra! Vui lòng thử lại!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     //Get all post and show posts to listview
     private void getAllPost() {
         PostDAO.getInstance().getAllPost(new FirebaseGetCollectionCallback() {
             @Override
             public void onComplete(List<QueryDocumentSnapshot> documentSnapshots) {
+                int index = listPost == null ? 0 : listPost.size();
                 List<Post> list = DatabaseUtils.convertListDocSnapToListPost(documentSnapshots);
-                newFeedAdapter.addAll(list);
+                listPost.addAll(list);
+                newFeedAdapter.notifyItemRangeInserted(index, list.size());
+                newFeedAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -236,5 +373,4 @@ public class NewfeedFragment extends Fragment {
             }
         });
     }
-
 }
