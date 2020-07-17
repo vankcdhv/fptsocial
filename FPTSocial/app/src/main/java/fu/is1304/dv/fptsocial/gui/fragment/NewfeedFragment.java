@@ -234,7 +234,7 @@ public class NewfeedFragment extends Fragment {
                 countPost = (int) count;
                 countPage = (int) (count / Const.NUMBER_ITEMS_OF_NEW_FEED + (count % Const.NUMBER_ITEMS_OF_NEW_FEED == 0 ? 0 : 1));
                 labelPaging.setText(currentPage + "/" + countPage);
-                if (currentPage == countPage) btnNextPage.setVisibility(View.INVISIBLE);
+                if (currentPage >= countPage) btnNextPage.setVisibility(View.INVISIBLE);
                 else btnNextPage.setVisibility(View.VISIBLE);
                 if (currentPage <= 1) btnPrevPage.setVisibility(View.INVISIBLE);
                 else btnPrevPage.setVisibility(View.VISIBLE);
