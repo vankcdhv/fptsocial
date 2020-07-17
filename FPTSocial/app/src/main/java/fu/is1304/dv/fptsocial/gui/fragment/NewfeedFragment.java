@@ -25,12 +25,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import fu.is1304.dv.fptsocial.R;
 import fu.is1304.dv.fptsocial.business.AuthController;
@@ -38,6 +41,7 @@ import fu.is1304.dv.fptsocial.business.adapter.NewFeedRecylerAdapter;
 import fu.is1304.dv.fptsocial.common.Const;
 import fu.is1304.dv.fptsocial.common.DatabaseUtils;
 import fu.is1304.dv.fptsocial.common.StorageUtils;
+import fu.is1304.dv.fptsocial.dao.CountDAO;
 import fu.is1304.dv.fptsocial.dao.PostDAO;
 import fu.is1304.dv.fptsocial.dao.StorageDAO;
 import fu.is1304.dv.fptsocial.dao.callback.FirebaseGetCollectionCallback;
@@ -70,7 +74,11 @@ public class NewfeedFragment extends Fragment {
     private List<Post> listPost;
     private SwipeRefreshLayout refreshLayout;
 
-    private int currentPage, countPage;
+    private int currentPage, countPage, countPost;
+    private Map<Integer, DocumentSnapshot> position;
+
+    private TextView btnNextPage, btnPrevPage, labelPaging;
+
 
     //Variable of dialog
     private Dialog postDialog;
@@ -124,6 +132,9 @@ public class NewfeedFragment extends Fragment {
     private void init(View v) {
         lvNewFeed = v.findViewById(R.id.recyclerListPost);
         labelStatus = v.findViewById(R.id.labelStatus);
+        btnNextPage = v.findViewById(R.id.labelNextNewfeedPage);
+        btnPrevPage = v.findViewById(R.id.labelPreNewfeedPage);
+        labelPaging = v.findViewById(R.id.labelPagingNewfeed);
         refreshLayout = v.findViewById(R.id.swipeRefreshNewFeed);
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -160,6 +171,8 @@ public class NewfeedFragment extends Fragment {
                                     @Override
                                     public void onComplete() {
                                         Toast.makeText(getActivity(), "Đã xóa!", Toast.LENGTH_SHORT).show();
+                                        countPost--;
+                                        CountDAO.getInstance().setCount(Const.POST_COLLECTION, countPost);
                                         refreshList();
                                     }
 
@@ -187,16 +200,62 @@ public class NewfeedFragment extends Fragment {
         lvNewFeed.setAdapter(newFeedAdapter);
 
         initDialog();
-        getAllPost();
+
+        //Add event and init paging
+        currentPage = 1;
+        position = new HashMap<>();
+        position.put(1, null);
+        btnPrevPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clearListPost();
+                getAllPost(Const.PREV_PAGE_CASE);
+            }
+        });
+        btnNextPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clearListPost();
+                getAllPost(Const.NEXT_PAGE_CASE);
+            }
+        });
+        initPaging();
+
+        //Get list post the first time (page 1)
+        getAllPost(Const.RELOAD_PAGE_CASE);
+    }
+
+    private void initPaging() {
+        CountDAO.getInstance().getCount(Const.POST_COLLECTION, new CountDAO.GetCountCallback() {
+            @Override
+            public void onComplete(long count) {
+                countPost = (int) count;
+                countPage = (int) (count / Const.NUMBER_ITEMS_OF_NEW_FEED + (count % Const.NUMBER_ITEMS_OF_NEW_FEED == 0 ? 0 : 1));
+                labelPaging.setText(currentPage + "/" + countPage);
+                if (currentPage == countPage) btnNextPage.setVisibility(View.INVISIBLE);
+                else btnNextPage.setVisibility(View.VISIBLE);
+                if (currentPage <= 1) btnPrevPage.setVisibility(View.INVISIBLE);
+                else btnPrevPage.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onFailed(Exception e) {
+                Toast.makeText(getContext(), "False", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void changePaging(){
+        labelPaging.setText(currentPage + "/" + countPage);
+        if (currentPage == countPage) btnNextPage.setVisibility(View.INVISIBLE);
+        else btnNextPage.setVisibility(View.VISIBLE);
+        if (currentPage <= 1) btnPrevPage.setVisibility(View.INVISIBLE);
+        else btnPrevPage.setVisibility(View.VISIBLE);
     }
 
     private void refreshList() {
-        int size = listPost.size();
-        listPost.clear();
-        newFeedAdapter.notifyItemRangeRemoved(0, size);
-        newFeedAdapter.notifyDataSetChanged();
-        getAllPost();
-
+        clearListPost();
+        getAllPost(Const.RELOAD_PAGE_CASE);
     }
 
     private void initDialog() {
@@ -328,7 +387,10 @@ public class NewfeedFragment extends Fragment {
             public void onSuccess() {
                 Toast.makeText(getActivity(), "Đã đăng bài thành công", Toast.LENGTH_SHORT).show();
                 postDialog.dismiss();
+                countPost++;
+                CountDAO.getInstance().setCount(Const.POST_COLLECTION, countPost);
                 refreshList();
+                initDialog();
             }
 
             @Override
@@ -346,6 +408,7 @@ public class NewfeedFragment extends Fragment {
                 Toast.makeText(getActivity(), "Đã cập nhật bài thành công", Toast.LENGTH_SHORT).show();
                 postDialog.dismiss();
                 refreshList();
+                initDialog();
             }
 
             @Override
@@ -355,22 +418,53 @@ public class NewfeedFragment extends Fragment {
         });
     }
 
-    //Get all post and show posts to listview
-    private void getAllPost() {
-        PostDAO.getInstance().getAllPost(new FirebaseGetCollectionCallback() {
-            @Override
-            public void onComplete(List<QueryDocumentSnapshot> documentSnapshots) {
-                int index = listPost == null ? 0 : listPost.size();
-                List<Post> list = DatabaseUtils.convertListDocSnapToListPost(documentSnapshots);
-                listPost.addAll(list);
-                newFeedAdapter.notifyItemRangeInserted(index, list.size());
-                newFeedAdapter.notifyDataSetChanged();
-            }
+    private void clearListPost() {
+        int size = listPost.size();
+        listPost.clear();
+        newFeedAdapter.notifyItemRangeRemoved(0, size);
+        newFeedAdapter.notifyDataSetChanged();
+    }
 
-            @Override
-            public void onFailed(Exception e) {
-                Toast.makeText(getActivity(), "Có lỗi xảy ra", Toast.LENGTH_LONG).show();
+    //Get all post and show posts to listview
+    private void getAllPost(int mode) {
+        if (countPage > 0) {
+            DocumentSnapshot lastPost = null;
+            switch (mode) {
+                case Const.NEXT_PAGE_CASE:
+                    currentPage++;
+                    break;
+                case Const.PREV_PAGE_CASE:
+                    currentPage--;
+                    break;
             }
-        });
+            if (currentPage > countPage) currentPage = 1;
+            if (currentPage < 1) currentPage = countPage;
+            lastPost = position.get(currentPage);
+            final DocumentSnapshot finalLastPost = lastPost;
+            PostDAO.getInstance().getListPost(lastPost, new FirebaseGetCollectionCallback() {
+                @Override
+                public void onComplete(List<QueryDocumentSnapshot> documentSnapshots) {
+                    initPaging();
+                    int index = listPost == null ? 0 : listPost.size();
+                    List<Post> list = DatabaseUtils.convertListDocSnapToListPost(documentSnapshots);
+                    //Set last post for next page
+                    if (currentPage < countPage) {
+                        position.put(currentPage + 1, documentSnapshots.get(list.size() - 1));
+                    }
+
+                    listPost.addAll(list);
+                    newFeedAdapter.notifyItemRangeInserted(index, list.size());
+                    newFeedAdapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onFailed(Exception e) {
+                    Toast.makeText(getActivity(), "Có lỗi xảy ra", Toast.LENGTH_LONG).show();
+                }
+            });
+        } else {
+            currentPage = 0;
+            initPaging();
+        }
     }
 }

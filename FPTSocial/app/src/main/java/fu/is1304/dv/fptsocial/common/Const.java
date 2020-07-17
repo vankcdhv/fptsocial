@@ -10,6 +10,7 @@ public class Const {
 
     public static final String USER_COLLECTION = "users";
     public static final String POST_COLLECTION = "posts";
+    public static final String COUNT_COLLECTION = "counts";
 
 
     public static final String MODE_CREATE_PROFILE = "CREATE_PROFILE";
@@ -24,5 +25,11 @@ public class Const {
     public static final String VALIDATE_CODE_CORRECT = "CORRECT";
 
     public static final String LOGIN_INFO_REFERENCE = "LOGIN_INFO";
+
+    public static final int NUMBER_ITEMS_OF_NEW_FEED = 3;
+
+    public static final int NEXT_PAGE_CASE = 1;
+    public static final int PREV_PAGE_CASE = -1;
+    public static final int RELOAD_PAGE_CASE = 0;
 
 }

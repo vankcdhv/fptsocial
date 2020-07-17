@@ -32,6 +32,7 @@ public class PostDAO {
     public PostDAO() {
     }
 
+    //Get all post of all people
     public void getAllPost(final FirebaseGetCollectionCallback callback) {
 
         DataProvider.getInstance().getDatabase()
@@ -52,6 +53,51 @@ public class PostDAO {
                         }
                     }
                 });
+    }
+
+    public void getListPost(DocumentSnapshot lastPost, final FirebaseGetCollectionCallback callback) {
+        if (lastPost != null) {
+            DataProvider.getInstance().getDatabase()
+                    .collection(Const.POST_COLLECTION)
+                    .orderBy("postDate", Query.Direction.DESCENDING)
+                    .startAfter(lastPost)
+                    .limit(Const.NUMBER_ITEMS_OF_NEW_FEED)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                List<QueryDocumentSnapshot> list = new ArrayList<>();
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    list.add(document);
+                                }
+                                callback.onComplete(list);
+                            } else {
+                                callback.onFailed(task.getException());
+                            }
+                        }
+                    });
+        } else {
+            DataProvider.getInstance().getDatabase()
+                    .collection(Const.POST_COLLECTION)
+                    .orderBy("postDate", Query.Direction.DESCENDING)
+                    .limit(Const.NUMBER_ITEMS_OF_NEW_FEED)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                List<QueryDocumentSnapshot> list = new ArrayList<>();
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    list.add(document);
+                                }
+                                callback.onComplete(list);
+                            } else {
+                                callback.onFailed(task.getException());
+                            }
+                        }
+                    });
+        }
     }
 
     public void postStatus(Post post, final FirestoreSetCallback callback) {

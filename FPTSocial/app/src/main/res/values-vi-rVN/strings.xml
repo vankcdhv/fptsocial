@@ -59,4 +59,6 @@
     <string name="remember_me">Nhớ mật khẩu</string>
     <string name="post_title">Tiêu đề</string>
     <string name="post_content">Nội dung</string>
+    <string name="prev_page"><![CDATA[<]]></string>
+    <string name="next_page"><![CDATA[>]]></string>
 </resources>
