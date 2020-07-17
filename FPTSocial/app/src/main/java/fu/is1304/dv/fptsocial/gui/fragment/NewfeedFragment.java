@@ -1,5 +1,6 @@
 package fu.is1304.dv.fptsocial.gui.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -174,6 +175,7 @@ public class NewfeedFragment extends Fragment {
                                         countPost--;
                                         CountDAO.getInstance().setCount(Const.POST_COLLECTION, countPost);
                                         refreshList();
+                                        changePaging();
                                     }
 
                                     @Override
@@ -245,9 +247,10 @@ public class NewfeedFragment extends Fragment {
         });
     }
 
-    private void changePaging(){
+    private void changePaging() {
+        countPage = countPost / Const.NUMBER_ITEMS_OF_NEW_FEED + (countPost % Const.NUMBER_ITEMS_OF_NEW_FEED == 0 ? 0 : 1);
         labelPaging.setText(currentPage + "/" + countPage);
-        if (currentPage == countPage) btnNextPage.setVisibility(View.INVISIBLE);
+        if (currentPage >= countPage) btnNextPage.setVisibility(View.INVISIBLE);
         else btnNextPage.setVisibility(View.VISIBLE);
         if (currentPage <= 1) btnPrevPage.setVisibility(View.INVISIBLE);
         else btnPrevPage.setVisibility(View.VISIBLE);
@@ -390,6 +393,7 @@ public class NewfeedFragment extends Fragment {
                 countPost++;
                 CountDAO.getInstance().setCount(Const.POST_COLLECTION, countPost);
                 refreshList();
+                changePaging();
                 initDialog();
             }
 
@@ -427,44 +431,41 @@ public class NewfeedFragment extends Fragment {
 
     //Get all post and show posts to listview
     private void getAllPost(int mode) {
-        if (countPage > 0) {
-            DocumentSnapshot lastPost = null;
-            switch (mode) {
-                case Const.NEXT_PAGE_CASE:
-                    currentPage++;
-                    break;
-                case Const.PREV_PAGE_CASE:
-                    currentPage--;
-                    break;
-            }
-            if (currentPage > countPage) currentPage = 1;
-            if (currentPage < 1) currentPage = countPage;
-            lastPost = position.get(currentPage);
-            final DocumentSnapshot finalLastPost = lastPost;
-            PostDAO.getInstance().getListPost(lastPost, new FirebaseGetCollectionCallback() {
-                @Override
-                public void onComplete(List<QueryDocumentSnapshot> documentSnapshots) {
-                    initPaging();
-                    int index = listPost == null ? 0 : listPost.size();
-                    List<Post> list = DatabaseUtils.convertListDocSnapToListPost(documentSnapshots);
-                    //Set last post for next page
-                    if (currentPage < countPage) {
-                        position.put(currentPage + 1, documentSnapshots.get(list.size() - 1));
-                    }
 
-                    listPost.addAll(list);
-                    newFeedAdapter.notifyItemRangeInserted(index, list.size());
-                    newFeedAdapter.notifyDataSetChanged();
-                }
-
-                @Override
-                public void onFailed(Exception e) {
-                    Toast.makeText(getActivity(), "Có lỗi xảy ra", Toast.LENGTH_LONG).show();
-                }
-            });
-        } else {
-            currentPage = 0;
-            initPaging();
+        DocumentSnapshot lastPost = null;
+        switch (mode) {
+            case Const.NEXT_PAGE_CASE:
+                currentPage++;
+                break;
+            case Const.PREV_PAGE_CASE:
+                currentPage--;
+                break;
         }
+        if (currentPage > countPage) currentPage = 1;
+        if (currentPage < 1) currentPage = countPage;
+        lastPost = position.get(currentPage);
+        final DocumentSnapshot finalLastPost = lastPost;
+        PostDAO.getInstance().getListPost(lastPost, new FirebaseGetCollectionCallback() {
+            @Override
+            public void onComplete(List<QueryDocumentSnapshot> documentSnapshots) {
+                initPaging();
+                int index = listPost == null ? 0 : listPost.size();
+                List<Post> list = DatabaseUtils.convertListDocSnapToListPost(documentSnapshots);
+                //Set last post for next page
+                if (currentPage < countPage) {
+                    position.put(currentPage + 1, documentSnapshots.get(list.size() - 1));
+                }
+
+                listPost.addAll(list);
+                newFeedAdapter.notifyItemRangeInserted(index, list.size());
+                newFeedAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailed(Exception e) {
+                Toast.makeText(getActivity(), "Có lỗi xảy ra", Toast.LENGTH_LONG).show();
+            }
+        });
+
     }
 }
