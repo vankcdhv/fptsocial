@@ -61,4 +61,6 @@
     <string name="post_content">Nội dung</string>
     <string name="prev_page"><![CDATA[<]]></string>
     <string name="next_page"><![CDATA[>]]></string>
+    <string name="message_send_reset_password_email_success">Chúng tôi đã gửi thư đặt lại mật khẩu đến email của ban. Hãy kiểm tra hộp thư để đặt lại mật khẩu.</string>
+    <string name="message_send_reset_password_email_failed">Đặt lại mật khẩu không thành công. Kiểm tra địa chỉ email và thử lại.</string>
 </resources>

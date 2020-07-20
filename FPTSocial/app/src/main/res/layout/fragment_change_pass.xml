@@ -56,70 +56,53 @@
 
 
             <EditText
-                android:id="@+id/txtLoginEmail"
+                android:id="@+id/txtChangeEmail"
                 android:layout_width="355dp"
                 android:layout_height="41dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="30dp"
                 android:background="@drawable/btn"
                 android:elevation="5dp"
-                android:hint="Email"
+                android:hint="@string/email"
                 android:inputType="textEmailAddress"
                 android:paddingLeft="15dp" />
 
             <EditText
-                android:id="@+id/txtLoginPassword"
+                android:id="@+id/txtChangePassword"
                 android:layout_width="355dp"
                 android:layout_height="45dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/btn"
                 android:elevation="5dp"
-                android:hint="Password"
+                android:hint="@string/password"
+                android:inputType="textPassword"
+                android:paddingLeft="15dp" />
+
+            <EditText
+                android:id="@+id/txtChangeRePassword"
+                android:layout_width="355dp"
+                android:layout_height="45dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/btn"
+                android:elevation="5dp"
+                android:hint="@string/retype_password"
                 android:inputType="textPassword"
                 android:paddingLeft="15dp" />
 
 
-            <CheckBox
-                android:id="@+id/cbRememberMe"
-                android:layout_width="355dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:text="@string/remember_me" />
-
-            <TextView
-                android:id="@+id/labelLoginForgotPass"
-                android:layout_width="355dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="15dp"
-                android:onClick="lableForgotPassClick"
-                android:text="@string/label_forget_pass"
-                android:textAlignment="textEnd"
-                tools:ignore="RtlCompat" />
-
             <Button
-                android:id="@+id/btnLogin"
+                android:id="@+id/btnChangePass"
                 android:layout_width="355dp"
                 android:layout_height="45dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="30dp"
                 android:background="@drawable/joinbtn"
                 android:onClick="btnLoginOnClick"
-                android:text="Log In"
+                android:text="@string/change_password"
                 android:textAllCaps="false"
                 android:textColor="@color/whitecolor" />
-
-            <TextView
-                android:id="@+id/labelLoginRegister"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="25dp"
-                android:onClick="btnRegisterClick"
-                android:text="No account! Register?"
-                android:textColor="@color/fullwhite" />
 
 
         </LinearLayout>

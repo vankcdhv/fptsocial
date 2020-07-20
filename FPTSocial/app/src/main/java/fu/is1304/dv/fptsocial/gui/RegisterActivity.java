@@ -31,7 +31,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void initComponents() {
         txtEmail = findViewById(R.id.txtRegEmail);
-        txtPass = findViewById(R.id.txtRegPassord);
+        txtPass = findViewById(R.id.txtRegPass);
         txtRePass = findViewById(R.id.txtRegRePass);
 
         Intent data = getIntent();

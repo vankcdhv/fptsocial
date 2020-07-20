@@ -65,9 +65,10 @@
     <string name="post_title">Title</string>
     <string name="post_content">Content</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="prev_page"><![CDATA[<]]></string>
     <string name="next_page"><![CDATA[>]]></string>
+    <string name="message_send_reset_password_email_success">We have sent an mail to you. Check your email to reset your password</string>
+    <string name="message_send_reset_password_email_failed">Not succesfuly! Check your email and try again!</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     >>>>>>> Stashed changes

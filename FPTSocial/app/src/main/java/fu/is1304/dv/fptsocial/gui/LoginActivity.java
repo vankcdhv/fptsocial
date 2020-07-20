@@ -1,5 +1,6 @@
 package fu.is1304.dv.fptsocial.gui;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -19,6 +20,8 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -31,11 +34,13 @@ import fu.is1304.dv.fptsocial.dao.UserDAO;
 import fu.is1304.dv.fptsocial.dao.callback.FirebaseAuthCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
 import fu.is1304.dv.fptsocial.entity.User;
+import fu.is1304.dv.fptsocial.gui.fragment.ChangePassFragment;
 import fu.is1304.dv.fptsocial.gui.fragment.LoginFragment;
 
 public class LoginActivity extends AppCompatActivity {
     private ActionBar actionBar;
     private LoginFragment loginFragment;
+    private ChangePassFragment changePassFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +95,26 @@ public class LoginActivity extends AppCompatActivity {
 
     public void btnRegisterClick(View view) {
         moveToRegister();
+    }
+
+    public void lableForgotPassClick(View view) {
+        String email = loginFragment.getEmail();
+        if (email != null && email.length() > 0) {
+            AuthController.getInstance().getFirebaseAuth()
+                    .sendPasswordResetEmail(email)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(LoginActivity.this, R.string.message_send_reset_password_email_success, Toast.LENGTH_LONG).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(LoginActivity.this, R.string.message_send_reset_password_email_failed, Toast.LENGTH_LONG).show();
+                        }
+                    });
+        }
     }
 
     private void checkUserInformationExisted() {
@@ -154,6 +179,7 @@ public class LoginActivity extends AppCompatActivity {
         // load fragment
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.loginFragmentContainer, fragment);
+        transaction.addToBackStack(null);
         transaction.commit();
     }
 
