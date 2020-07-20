@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -133,6 +134,12 @@ public class NewFeedRecylerAdapter extends RecyclerView.Adapter<NewFeedRecylerAd
                         Toast.makeText(context, user.getFirstName() + " " + user.getLastName(), Toast.LENGTH_LONG).show();
                     }
                 });
+                holder.txtTitle.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        eventListener.onClickTitle(post);
+                    }
+                });
                 if (user.getAvatar() == null) {
                     if (user.getGender() == (context.getString(R.string.female))) {
                         holder.imgAva.setImageDrawable(((Activity) context).getDrawable(R.drawable.nu));
@@ -168,7 +175,7 @@ public class NewFeedRecylerAdapter extends RecyclerView.Adapter<NewFeedRecylerAd
                         Bitmap bitmap = getBitmapFromMemCache(post.getUid() + "image");
                         holder.imgNewfeedImage.setImageBitmap(bitmap);
                     } else {
-                        StorageDAO.getInstance().getImage(post.getImage()+"_900x900", new FirestorageGetByteCallback() {
+                        StorageDAO.getInstance().getImage(post.getImage() + "_900x900", new FirestorageGetByteCallback() {
                             @Override
                             public void onStart() {
                                 Glide.with(context).load(((Activity) context).getDrawable(R.drawable.loading)).into(holder.imgNewfeedImage);
@@ -211,6 +218,7 @@ public class NewFeedRecylerAdapter extends RecyclerView.Adapter<NewFeedRecylerAd
         TextView txtTime;
         ImageView imgAva;
         ImageButton btnMenu;
+        ConstraintLayout layoutItem;
 
         public DataViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -221,6 +229,7 @@ public class NewFeedRecylerAdapter extends RecyclerView.Adapter<NewFeedRecylerAd
             txtTime = itemView.findViewById(R.id.txtNewfeedTime);
             imgAva = itemView.findViewById(R.id.imgSmallAva);
             btnMenu = itemView.findViewById(R.id.btnPostMenu);
+            layoutItem = itemView.findViewById(R.id.layoutNewFeedItem);
         }
     }
 
@@ -228,5 +237,7 @@ public class NewFeedRecylerAdapter extends RecyclerView.Adapter<NewFeedRecylerAd
         public void onClickEdit(Post post);
 
         public void onClickDelete(Post post);
+
+        public void onClickTitle(Post post);
     }
 }

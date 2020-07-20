@@ -77,4 +77,26 @@ public class NotificationDAO {
                     }
                 });
     }
+
+    public void createNotification(String uid, Notification notification, final FirestoreSetCallback callback) {
+        DataProvider.getInstance().getDatabase()
+                .collection(Const.NOTIFICATION_COLLECTION)
+                .document(uid)
+                .collection(Const.NOTIFICATION_COLLECTION)
+                .document()
+                .set(notification)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
+    }
+
 }

@@ -12,6 +12,7 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -43,6 +44,7 @@ import fu.is1304.dv.fptsocial.common.Const;
 import fu.is1304.dv.fptsocial.common.DatabaseUtils;
 import fu.is1304.dv.fptsocial.common.StorageUtils;
 import fu.is1304.dv.fptsocial.dao.CountDAO;
+import fu.is1304.dv.fptsocial.dao.NotificationDAO;
 import fu.is1304.dv.fptsocial.dao.PostDAO;
 import fu.is1304.dv.fptsocial.dao.StorageDAO;
 import fu.is1304.dv.fptsocial.dao.callback.FirebaseGetCollectionCallback;
@@ -50,7 +52,11 @@ import fu.is1304.dv.fptsocial.dao.callback.FirestorageGetByteCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestorageUploadCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreDeleteDocCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreSetCallback;
+import fu.is1304.dv.fptsocial.entity.Friend;
+import fu.is1304.dv.fptsocial.entity.Notification;
 import fu.is1304.dv.fptsocial.entity.Post;
+import fu.is1304.dv.fptsocial.gui.PostDetailActivity;
+import fu.is1304.dv.fptsocial.gui.viewmodel.MainActivityViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -77,6 +83,8 @@ public class NewfeedFragment extends Fragment {
 
     private int currentPage, countPage, countPost;
     private Map<Integer, DocumentSnapshot> position;
+
+    private MainActivityViewModel viewModel;
 
     private TextView btnNextPage, btnPrevPage, labelPaging;
 
@@ -131,6 +139,8 @@ public class NewfeedFragment extends Fragment {
     }
 
     private void init(View v) {
+        viewModel = new ViewModelProvider(requireActivity()).get(MainActivityViewModel.class);
+
         lvNewFeed = v.findViewById(R.id.recyclerListPost);
         labelStatus = v.findViewById(R.id.labelStatus);
         btnNextPage = v.findViewById(R.id.labelNextNewfeedPage);
@@ -192,6 +202,13 @@ public class NewfeedFragment extends Fragment {
                             }
                         });
                 confirmDialog.show();
+            }
+
+            @Override
+            public void onClickTitle(Post post) {
+                Intent intent = new Intent(getActivity(), PostDetailActivity.class);
+                intent.putExtra("post", post);
+                startActivity(intent);
             }
         });
 
@@ -395,6 +412,8 @@ public class NewfeedFragment extends Fragment {
                 refreshList();
                 changePaging();
                 initDialog();
+                makeNotify();
+
             }
 
             @Override
@@ -402,6 +421,29 @@ public class NewfeedFragment extends Fragment {
                 Toast.makeText(getActivity(), "Có lỗi xảy ra! Vui lòng thử lại!", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    //Make notification after post
+    private void makeNotify() {
+        String message = "Vừa đăng một trạng thái mới!";
+        Date time = new Date();
+        String uid = AuthController.getInstance().getUID();
+        Boolean seen = false;
+        Notification notification = new Notification(message, time, uid, seen);
+        List<Friend> list = viewModel.getListFriend();
+        for (Friend friend : list) {
+            NotificationDAO.getInstance().createNotification(friend.getUid(), notification, new FirestoreSetCallback() {
+                @Override
+                public void onSuccess() {
+
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+
+                }
+            });
+        }
     }
 
     //Update post on database

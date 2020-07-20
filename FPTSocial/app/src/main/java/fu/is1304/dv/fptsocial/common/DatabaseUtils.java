@@ -13,6 +13,7 @@ import java.util.List;
 
 import fu.is1304.dv.fptsocial.dao.UserDAO;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
+import fu.is1304.dv.fptsocial.entity.Friend;
 import fu.is1304.dv.fptsocial.entity.Notification;
 import fu.is1304.dv.fptsocial.entity.Post;
 import fu.is1304.dv.fptsocial.entity.User;
@@ -70,6 +71,27 @@ public class DatabaseUtils {
         final List<Notification> list = new ArrayList<>();
         for (final QueryDocumentSnapshot snapshot : documentSnapshots) {
             list.add(convertDocumentSnapshotToNotification(snapshot));
+        }
+
+        return list;
+    }
+
+    //Convert document snapshot to Notification
+    public static Friend convertDocumentSnapshotToFriend(DocumentSnapshot result) {
+
+        String uid = (String) result.getData().get("uid");
+        Date time = ((Timestamp) result.getData().get("time")).toDate();
+
+        Friend friend = new Friend(uid, time);
+
+        return friend;
+    }
+
+    //Convert list Query document snapshot to list notification
+    public static List<Friend> convertListDocSnapToListFriend(List<QueryDocumentSnapshot> documentSnapshots) {
+        final List<Friend> list = new ArrayList<>();
+        for (final QueryDocumentSnapshot snapshot : documentSnapshots) {
+            list.add(convertDocumentSnapshotToFriend(snapshot));
         }
 
         return list;

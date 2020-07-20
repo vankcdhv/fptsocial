@@ -12,13 +12,16 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import fu.is1304.dv.fptsocial.business.AuthController;
 import fu.is1304.dv.fptsocial.common.Const;
 import fu.is1304.dv.fptsocial.dao.callback.FirebaseGetCollectionCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreDeleteDocCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreSetCallback;
+import fu.is1304.dv.fptsocial.entity.Notification;
 import fu.is1304.dv.fptsocial.entity.Post;
 
 public class PostDAO {

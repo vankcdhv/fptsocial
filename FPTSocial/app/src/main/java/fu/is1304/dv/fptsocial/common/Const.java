@@ -13,6 +13,7 @@ public class Const {
     public static final String COUNT_COLLECTION = "counts";
     public static final String NOTIFICATION_COLLECTION = "notifications";
     public static final String MESSAGE_COLLECTION = "messages";
+    public static final String FRIEND_COLLECTION = "friends";
 
 
     public static final String MODE_CREATE_PROFILE = "CREATE_PROFILE";

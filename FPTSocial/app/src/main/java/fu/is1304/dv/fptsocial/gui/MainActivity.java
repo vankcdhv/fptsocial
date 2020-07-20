@@ -13,12 +13,20 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.List;
 
 import fu.is1304.dv.fptsocial.R;
 import fu.is1304.dv.fptsocial.business.AuthController;
 import fu.is1304.dv.fptsocial.common.Const;
+import fu.is1304.dv.fptsocial.common.DatabaseUtils;
+import fu.is1304.dv.fptsocial.dao.FriendDAO;
+import fu.is1304.dv.fptsocial.dao.callback.FirebaseGetCollectionCallback;
+import fu.is1304.dv.fptsocial.entity.Friend;
 import fu.is1304.dv.fptsocial.gui.fragment.MessengerFragment;
 import fu.is1304.dv.fptsocial.gui.fragment.NewfeedFragment;
 import fu.is1304.dv.fptsocial.gui.fragment.NotificationFragment;
@@ -39,10 +47,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initComponents();
+
     }
 
     private void initComponents() {
         viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
+        loadListFriend();
+
+
         newfeedFragment = new NewfeedFragment();
         messengerFragment = new MessengerFragment();
         notificationFragment = new NotificationFragment();
@@ -58,6 +70,21 @@ public class MainActivity extends AppCompatActivity {
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
         loadFragment(newfeedFragment);
+    }
+
+    private void loadListFriend() {
+        FriendDAO.getInstance().getAllFriendOfUser(AuthController.getInstance().getUID(), new FirebaseGetCollectionCallback() {
+            @Override
+            public void onComplete(List<QueryDocumentSnapshot> documentSnapshots) {
+                List<Friend> friendList = DatabaseUtils.convertListDocSnapToListFriend(documentSnapshots);
+                viewModel.setListFriend(friendList);
+            }
+
+            @Override
+            public void onFailed(Exception e) {
+                Toast.makeText(MainActivity.this, "Load friend fail", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
