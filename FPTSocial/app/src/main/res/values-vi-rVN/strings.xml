@@ -65,4 +65,7 @@
     <string name="message_send_reset_password_email_failed">Đặt lại mật khẩu không thành công. Kiểm tra địa chỉ email và thử lại.</string>
     <string name="add_image">Tải lên ảnh của bạn</string>
     <string name="label_notification">Thông báo</string>
+    <string name="dont_have_account">Bạn không có tài khoản! Đăng ký ngay!</string>
+    <string name="email_empty">Không được để trống Email</string>
+    <string name="email_not_verify">Email chưa xác thực! Hãy kiểm tra email của bạn!</string>
 </resources>

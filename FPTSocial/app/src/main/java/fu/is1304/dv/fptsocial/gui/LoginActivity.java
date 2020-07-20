@@ -114,13 +114,15 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.makeText(LoginActivity.this, R.string.message_send_reset_password_email_failed, Toast.LENGTH_LONG).show();
                         }
                     });
+        } else {
+            Toast.makeText(this, getString(R.string.email_empty), Toast.LENGTH_LONG).show();
         }
     }
 
     private void checkUserInformationExisted() {
         if (!AuthController.getInstance().getCurrentUser().isEmailVerified()) {
             loading(false);
-            Toast.makeText(this, "Email chưa được xác thực", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.email_not_verify), Toast.LENGTH_LONG).show();
             AuthController.getInstance().signOut();
             return;
         }
@@ -139,7 +141,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onFailure(Exception e) {
                 loading(false);
-                Toast.makeText(LoginActivity.this, "Đăng nhập không thành công", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, getString(R.string.login_failed), Toast.LENGTH_SHORT).show();
             }
         });
     }

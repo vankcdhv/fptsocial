@@ -20,7 +20,7 @@
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
     <string name="hint_name">Fullname</string>
-    <string name="btn_login">LOGIN</string>
+    <string name="btn_login">Login</string>
     <string name="btn_link_to_register">Not a member? Get registered in Firebase now!</string>
     <string name="btn_link_to_login">Already registered. Login Me!</string>
     <string name="title_activity_reset_password">ResetPasswordActivity</string>
@@ -71,6 +71,9 @@
     <string name="message_send_reset_password_email_failed">Not succesfuly! Check your email and try again!</string>
     <string name="add_image">Upload your image</string>
     <string name="label_notification">Notification</string>
+    <string name="dont_have_account">You don\'t have account! Register now!</string>
+    <string name="email_empty">Email must be not empty</string>
+    <string name="email_not_verify">Email have not verify!</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     >>>>>>> Stashed changes
