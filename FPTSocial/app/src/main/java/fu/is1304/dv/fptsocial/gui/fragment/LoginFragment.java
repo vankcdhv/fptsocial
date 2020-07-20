@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import fu.is1304.dv.fptsocial.R;
 import fu.is1304.dv.fptsocial.common.Const;
@@ -25,6 +26,7 @@ public class LoginFragment extends Fragment {
     private EditText txtEmail;
     private EditText txtPassword;
     private CheckBox cbRemember;
+    private ProgressBar pbLoading;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -76,12 +78,19 @@ public class LoginFragment extends Fragment {
     }
 
     private void initComponents(View view) {
-        //loadFragment(new LoginFragment());
-
-        txtEmail = view.findViewById(R.id.txtEmail);
-        txtPassword = view.findViewById(R.id.txtPassword);
+        txtEmail = view.findViewById(R.id.txtLoginEmail);
+        txtPassword = view.findViewById(R.id.txtLoginPassword);
         cbRemember = view.findViewById(R.id.cbRememberMe);
+        pbLoading = view.findViewById(R.id.progressBarLoginLoading);
         loadPassword();
+    }
+
+    public ProgressBar getPbLoading() {
+        return pbLoading;
+    }
+
+    public void setPbLoading(ProgressBar pbLoading) {
+        this.pbLoading = pbLoading;
     }
 
     public String getEmail() {

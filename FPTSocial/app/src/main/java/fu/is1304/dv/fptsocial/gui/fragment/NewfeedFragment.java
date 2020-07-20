@@ -431,7 +431,6 @@ public class NewfeedFragment extends Fragment {
 
     //Get all post and show posts to listview
     private void getAllPost(int mode) {
-
         DocumentSnapshot lastPost = null;
         switch (mode) {
             case Const.NEXT_PAGE_CASE:

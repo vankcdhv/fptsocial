@@ -14,6 +14,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -67,6 +68,7 @@ public class LoginActivity extends AppCompatActivity {
         String email = loginFragment.getEmail();
         String password = loginFragment.getPassword();
         if (!email.isEmpty() && !password.isEmpty()) {
+            loading(true);
             AuthController.getInstance().loginByEmailAndPass(email, password, new FirebaseAuthCallback() {
                 @Override
                 public void onComplete(AuthResult result) {
@@ -76,6 +78,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Exception e) {
+                    loading(false);
                     Toast.makeText(LoginActivity.this, "Email or password is uncorrect", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -91,6 +94,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void checkUserInformationExisted() {
         if (!AuthController.getInstance().getCurrentUser().isEmailVerified()) {
+            loading(false);
             Toast.makeText(this, "Email chưa được xác thực", Toast.LENGTH_LONG).show();
             AuthController.getInstance().signOut();
             return;
@@ -99,6 +103,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onComplete(DocumentSnapshot documentSnapshot) {
                 User user = DatabaseUtils.convertDocumentSnapshotToUser(documentSnapshot);
+                loading(false);
                 if (user != null) {
                     loginComplete();
                 } else {
@@ -108,6 +113,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Exception e) {
+                loading(false);
                 Toast.makeText(LoginActivity.this, "Đăng nhập không thành công", Toast.LENGTH_SHORT).show();
             }
         });
@@ -149,6 +155,18 @@ public class LoginActivity extends AppCompatActivity {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.loginFragmentContainer, fragment);
         transaction.commit();
+    }
+
+    public void loading(boolean isLoading) {
+        if (isLoading) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            loginFragment.getPbLoading().setVisibility(View.VISIBLE);
+        } else {
+            loginFragment.getPbLoading().setVisibility(View.INVISIBLE);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        }
+
     }
 
 

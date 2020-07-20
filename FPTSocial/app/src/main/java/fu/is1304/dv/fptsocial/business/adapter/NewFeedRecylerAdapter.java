@@ -168,7 +168,7 @@ public class NewFeedRecylerAdapter extends RecyclerView.Adapter<NewFeedRecylerAd
                         Bitmap bitmap = getBitmapFromMemCache(post.getUid() + "image");
                         holder.imgNewfeedImage.setImageBitmap(bitmap);
                     } else {
-                        StorageDAO.getInstance().getImage(post.getImage(), new FirestorageGetByteCallback() {
+                        StorageDAO.getInstance().getImage(post.getImage()+"_900x900", new FirestorageGetByteCallback() {
                             @Override
                             public void onStart() {
                                 Glide.with(context).load(((Activity) context).getDrawable(R.drawable.loading)).into(holder.imgNewfeedImage);
