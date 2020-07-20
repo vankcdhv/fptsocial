@@ -11,6 +11,8 @@ public class Const {
     public static final String USER_COLLECTION = "users";
     public static final String POST_COLLECTION = "posts";
     public static final String COUNT_COLLECTION = "counts";
+    public static final String NOTIFICATION_COLLECTION = "notifications";
+    public static final String MESSAGE_COLLECTION = "messages";
 
 
     public static final String MODE_CREATE_PROFILE = "CREATE_PROFILE";
@@ -27,6 +29,8 @@ public class Const {
     public static final String LOGIN_INFO_REFERENCE = "LOGIN_INFO";
 
     public static final int NUMBER_ITEMS_OF_NEW_FEED = 3;
+    public static final int NUMBER_ITEMS_OF_NOTIFICATION = 10;
+
 
     public static final int NEXT_PAGE_CASE = 1;
     public static final int PREV_PAGE_CASE = -1;

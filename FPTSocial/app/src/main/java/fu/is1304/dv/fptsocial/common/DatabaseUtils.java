@@ -13,6 +13,7 @@ import java.util.List;
 
 import fu.is1304.dv.fptsocial.dao.UserDAO;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
+import fu.is1304.dv.fptsocial.entity.Notification;
 import fu.is1304.dv.fptsocial.entity.Post;
 import fu.is1304.dv.fptsocial.entity.User;
 
@@ -23,6 +24,7 @@ public class DatabaseUtils {
         User user = gson.fromJson(gson.toJson(result.getData()), User.class);
         return user;
     }
+
     //Convert document snapshot to Post
     public static Post convertDocumentSnapshotToPost(DocumentSnapshot result) {
         Post post;
@@ -37,11 +39,37 @@ public class DatabaseUtils {
 
         return post;
     }
+
     //Convert list Query document snapshot to list post
     public static List<Post> convertListDocSnapToListPost(List<QueryDocumentSnapshot> documentSnapshots) {
         final List<Post> list = new ArrayList<>();
         for (final QueryDocumentSnapshot snapshot : documentSnapshots) {
             list.add(convertDocumentSnapshotToPost(snapshot));
+        }
+
+        return list;
+    }
+
+    //Convert document snapshot to Notification
+    public static Notification convertDocumentSnapshotToNotification(DocumentSnapshot result) {
+        Notification notification;
+
+        String id = result.getId();
+        String message = (String) result.getData().get("message");
+        String uid = (String) result.getData().get("uid");
+        Boolean isSeen = (Boolean) result.getData().get("seen");
+        Date time = ((Timestamp) result.getData().get("time")).toDate();
+
+        notification = new Notification(id, message, time, uid, isSeen);
+
+        return notification;
+    }
+
+    //Convert list Query document snapshot to list notification
+    public static List<Notification> convertListDocSnapToListNotification(List<QueryDocumentSnapshot> documentSnapshots) {
+        final List<Notification> list = new ArrayList<>();
+        for (final QueryDocumentSnapshot snapshot : documentSnapshots) {
+            list.add(convertDocumentSnapshotToNotification(snapshot));
         }
 
         return list;

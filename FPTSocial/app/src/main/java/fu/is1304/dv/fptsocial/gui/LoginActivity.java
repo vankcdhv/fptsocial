@@ -187,9 +187,11 @@ public class LoginActivity extends AppCompatActivity {
         if (isLoading) {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-            loginFragment.getPbLoading().setVisibility(View.VISIBLE);
+            if (loginFragment.getPbLoading() != null)
+                loginFragment.getPbLoading().setVisibility(View.VISIBLE);
         } else {
-            loginFragment.getPbLoading().setVisibility(View.INVISIBLE);
+            if (loginFragment.getPbLoading() != null)
+                loginFragment.getPbLoading().setVisibility(View.INVISIBLE);
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         }
 

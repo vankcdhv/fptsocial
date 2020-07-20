@@ -69,6 +69,8 @@
     <string name="next_page"><![CDATA[>]]></string>
     <string name="message_send_reset_password_email_success">We have sent an mail to you. Check your email to reset your password</string>
     <string name="message_send_reset_password_email_failed">Not succesfuly! Check your email and try again!</string>
+    <string name="add_image">Upload your image</string>
+    <string name="label_notification">Notification</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     >>>>>>> Stashed changes
