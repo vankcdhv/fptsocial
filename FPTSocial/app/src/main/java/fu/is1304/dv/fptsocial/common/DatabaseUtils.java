@@ -15,6 +15,7 @@ import fu.is1304.dv.fptsocial.dao.UserDAO;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
 import fu.is1304.dv.fptsocial.entity.Friend;
 import fu.is1304.dv.fptsocial.entity.Notification;
+import fu.is1304.dv.fptsocial.entity.FriendMessage;
 import fu.is1304.dv.fptsocial.entity.Post;
 import fu.is1304.dv.fptsocial.entity.User;
 
@@ -29,7 +30,6 @@ public class DatabaseUtils {
     //Convert document snapshot to Post
     public static Post convertDocumentSnapshotToPost(DocumentSnapshot result) {
         Post post;
-
         String id = result.getId();
         String title = (String) result.getData().get("title");
         String content = (String) result.getData().get("content");
@@ -48,6 +48,21 @@ public class DatabaseUtils {
             list.add(convertDocumentSnapshotToPost(snapshot));
         }
 
+        return list;
+    }
+    //Convert DocumentSnapshot To FriendMessage
+    public static FriendMessage convertDocumentSnapshotToFriendMessage(DocumentSnapshot result) {
+        FriendMessage fm;
+        String uid = result.getId();
+        fm = new FriendMessage(uid, "");
+        return fm;
+    }
+
+    public static List<FriendMessage> convertListDocSnapToListFriendMessage(List<QueryDocumentSnapshot> documentSnapshots) {
+        final List<FriendMessage> list = new ArrayList<>();
+        for (final QueryDocumentSnapshot snapshot : documentSnapshots) {
+            list.add(convertDocumentSnapshotToFriendMessage(snapshot));
+        }
         return list;
     }
 
