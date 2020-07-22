@@ -1,11 +1,15 @@
 package fu.is1304.dv.fptsocial.dao;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -67,7 +71,7 @@ public class NotificationDAO {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        callback.onSuccess();
+                        callback.onSuccess(null);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -88,15 +92,64 @@ public class NotificationDAO {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-
+                        callback.onSuccess(null);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
+                        callback.onFailure(e);
+                    }
+                });
+    }
+
+    public void getNotifyRealtime(String uid, final OnEventChangeCallBack callBack) {
+        DataProvider.getInstance().getDatabase()
+                .collection(Const.NOTIFICATION_COLLECTION)
+                .document(uid)
+                .collection(Const.NOTIFICATION_COLLECTION)
+                .orderBy("time", Query.Direction.DESCENDING)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+
+                        List<QueryDocumentSnapshot> list = new ArrayList<>();
+                        for (QueryDocumentSnapshot document : value) {
+                            list.add(document);
+                        }
+                        callBack.onChange(list);
 
                     }
                 });
+    }
+
+    public void getNotifyByUID(String uid, int limit, final FirebaseGetCollectionCallback callBack) {
+        if (limit == 0) return;
+        DataProvider.getInstance().getDatabase()
+                .collection(Const.NOTIFICATION_COLLECTION)
+                .document(uid)
+                .collection(Const.NOTIFICATION_COLLECTION)
+                .orderBy("time", Query.Direction.DESCENDING)
+                .limit(limit)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            List<QueryDocumentSnapshot> list = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                list.add(document);
+                            }
+                            callBack.onComplete(list);
+                        } else {
+                            callBack.onFailed(task.getException());
+                        }
+                    }
+                });
+    }
+
+    public interface OnEventChangeCallBack {
+        public void onChange(List<QueryDocumentSnapshot> documentSnapshots);
     }
 
 }

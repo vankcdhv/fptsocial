@@ -159,7 +159,7 @@ public class ProfileActivity extends AppCompatActivity {
     private void saveInfomation(User user) {
         UserDAO.getInstance().updateUserData(user, new FirestoreSetCallback() {
             @Override
-            public void onSuccess() {
+            public void onSuccess(String userID) {
                 Toast.makeText(ProfileActivity.this, "Update Successfully!", Toast.LENGTH_SHORT).show();
                 if (mode.equals(Const.MODE_CREATE_PROFILE)) {
                     moveToMain();

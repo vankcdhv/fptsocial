@@ -71,7 +71,7 @@ public class UserDAO {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        firestoreSetCallback.onSuccess();
+                        firestoreSetCallback.onSuccess(null);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

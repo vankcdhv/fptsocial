@@ -37,4 +37,13 @@ public class Const {
     public static final int PREV_PAGE_CASE = -1;
     public static final int RELOAD_PAGE_CASE = 0;
 
+    public static final String MESSAGE_NOTIFICATION_TITLE = "Message";
+    public static final String POST_NOTIFICATION_TITLE = "News";
+
+    public static final int POST_NOTIFY_ID = 100001;
+    public static final int MESSAGE_NOTIFY_ID = 100001;
+
+    public static final String CHANEL_NAME = "notification_chanel";
+    public static final String CHANEL_DESCRIPTION = "chanel for notification of FPTSocial";
+    public static final String CHANEL_ID = "notification_chanel";
 }

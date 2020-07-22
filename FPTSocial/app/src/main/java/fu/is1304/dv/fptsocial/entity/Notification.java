@@ -5,27 +5,41 @@ import java.util.Date;
 
 public class Notification implements Serializable {
     private String id;
+    private String title;
     private String message;
     private Date time;
     private String uid;
+    private String postID;
     private boolean seen;
 
     public Notification() {
     }
 
-    public Notification(String message, Date time, String uid, boolean isSeen) {
+    public Notification(String title, String message, Date time, String uid, boolean isSeen) {
+        this.title = title;
         this.message = message;
         this.time = time;
         this.seen = isSeen;
         this.uid = uid;
     }
 
-    public Notification(String id, String message, Date time, String uid, boolean isSeen) {
+    public Notification(String title, String message, Date time, String uid, String postID, boolean seen) {
+        this.title = title;
+        this.message = message;
+        this.time = time;
+        this.uid = uid;
+        this.postID = postID;
+        this.seen = seen;
+    }
+
+    public Notification(String id, String title, String message, Date time, String uid, String postID, boolean isSeen) {
         this.id = id;
+        this.title = title;
         this.message = message;
         this.time = time;
         this.seen = isSeen;
         this.uid = uid;
+        this.postID = postID;
     }
 
     public String getId() {
@@ -66,5 +80,21 @@ public class Notification implements Serializable {
 
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getPostID() {
+        return postID;
+    }
+
+    public void setPostID(String postID) {
+        this.postID = postID;
     }
 }

@@ -2,6 +2,7 @@ package fu.is1304.dv.fptsocial.gui;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -10,6 +11,7 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,6 +33,7 @@ import fu.is1304.dv.fptsocial.gui.fragment.MessengerFragment;
 import fu.is1304.dv.fptsocial.gui.fragment.NewfeedFragment;
 import fu.is1304.dv.fptsocial.gui.fragment.NotificationFragment;
 import fu.is1304.dv.fptsocial.gui.fragment.ProfileFragment;
+import fu.is1304.dv.fptsocial.gui.service.NotifyService;
 import fu.is1304.dv.fptsocial.gui.viewmodel.MainActivityViewModel;
 
 public class MainActivity extends AppCompatActivity {
@@ -47,13 +50,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initComponents();
-
     }
 
     private void initComponents() {
         viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
         loadListFriend();
-
 
         newfeedFragment = new NewfeedFragment();
         messengerFragment = new MessengerFragment();
@@ -70,7 +71,18 @@ public class MainActivity extends AppCompatActivity {
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
         loadFragment(newfeedFragment);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startNotifyService();
+        }
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void startNotifyService() {
+        Intent intent = new Intent(this, NotifyService.class);
+        //startService(intent);
+        startForegroundService(intent);
+    }
+
 
     private void loadListFriend() {
         FriendDAO.getInstance().getAllFriendOfUser(AuthController.getInstance().getUID(), new FirebaseGetCollectionCallback() {

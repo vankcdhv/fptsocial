@@ -56,6 +56,7 @@ import fu.is1304.dv.fptsocial.entity.Friend;
 import fu.is1304.dv.fptsocial.entity.Notification;
 import fu.is1304.dv.fptsocial.entity.Post;
 import fu.is1304.dv.fptsocial.gui.PostDetailActivity;
+import fu.is1304.dv.fptsocial.gui.service.NotifyService;
 import fu.is1304.dv.fptsocial.gui.viewmodel.MainActivityViewModel;
 
 /**
@@ -81,7 +82,7 @@ public class NewfeedFragment extends Fragment {
     private List<Post> listPost;
     private SwipeRefreshLayout refreshLayout;
 
-    private int currentPage, countPage, countPost;
+    private int currentPage, countPage, countPost, countNotification;
     private Map<Integer, DocumentSnapshot> position;
 
     private MainActivityViewModel viewModel;
@@ -404,7 +405,7 @@ public class NewfeedFragment extends Fragment {
     private void createStatus(Post post) {
         PostDAO.getInstance().postStatus(post, new FirestoreSetCallback() {
             @Override
-            public void onSuccess() {
+            public void onSuccess(String postID) {
                 Toast.makeText(getActivity(), "Đã đăng bài thành công", Toast.LENGTH_SHORT).show();
                 postDialog.dismiss();
                 countPost++;
@@ -412,8 +413,7 @@ public class NewfeedFragment extends Fragment {
                 refreshList();
                 changePaging();
                 initDialog();
-                makeNotify();
-
+                makeNotify(postID);
             }
 
             @Override
@@ -424,18 +424,33 @@ public class NewfeedFragment extends Fragment {
     }
 
     //Make notification after post
-    private void makeNotify() {
+    private void makeNotify(String postID) {
+        String title = Const.POST_NOTIFICATION_TITLE;
         String message = "Vừa đăng một trạng thái mới!";
         Date time = new Date();
         String uid = AuthController.getInstance().getUID();
         Boolean seen = false;
-        Notification notification = new Notification(message, time, uid, seen);
+
+        Notification notification = new Notification(title, message, time, uid, postID, seen);
         List<Friend> list = viewModel.getListFriend();
-        for (Friend friend : list) {
+        for (final Friend friend : list) {
             NotificationDAO.getInstance().createNotification(friend.getUid(), notification, new FirestoreSetCallback() {
                 @Override
-                public void onSuccess() {
+                public void onSuccess(String notiID) {
+                    CountDAO.getInstance().getCountNotificationByUID(friend.getUid(), new CountDAO.GetCountCallback() {
+                        @Override
+                        public void onComplete(long count) {
+                            countNotification = (int) count;
+                            countNotification++;
+                            CountDAO.getInstance().setCountNotify(friend.getUid(), countNotification);
+                        }
 
+                        @Override
+                        public void onFailed(Exception e) {
+                            countNotification = 1;
+                            CountDAO.getInstance().setCountNotify(friend.getUid(), countNotification);
+                        }
+                    });
                 }
 
                 @Override
@@ -450,7 +465,7 @@ public class NewfeedFragment extends Fragment {
     private void updateStatus(Post post) {
         PostDAO.getInstance().updatePost(post, new FirestoreSetCallback() {
             @Override
-            public void onSuccess() {
+            public void onSuccess(String postID) {
                 Toast.makeText(getActivity(), "Đã cập nhật bài thành công", Toast.LENGTH_SHORT).show();
                 postDialog.dismiss();
                 refreshList();

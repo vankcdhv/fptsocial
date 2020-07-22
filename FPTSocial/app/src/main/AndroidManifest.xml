@@ -3,7 +3,6 @@
     package="fu.is1304.dv.fptsocial">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -13,9 +12,14 @@
         android:roundIcon="@drawable/app_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service
+            android:name=".gui.service.NotifyService"
+            android:enabled="true"
+            android:exported="true"></service>
+
         <activity
             android:name=".gui.PostDetailActivity"
-            android:label="@string/title_activity_post_detail"></activity>
+            android:label="@string/title_activity_post_detail" />
         <activity android:name=".gui.RegisterActivity" />
         <activity android:name=".gui.ProfileActivity" />
         <activity android:name=".gui.MainActivity" />

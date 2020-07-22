@@ -50,6 +50,7 @@ public class DatabaseUtils {
 
         return list;
     }
+
     //Convert DocumentSnapshot To FriendMessage
     public static FriendMessage convertDocumentSnapshotToFriendMessage(DocumentSnapshot result) {
         FriendMessage fm;
@@ -75,8 +76,11 @@ public class DatabaseUtils {
         String uid = (String) result.getData().get("uid");
         Boolean isSeen = (Boolean) result.getData().get("seen");
         Date time = ((Timestamp) result.getData().get("time")).toDate();
+        String postID = (String) result.getData().get("postID");
+        String title = (String) result.getData().get("title");
 
-        notification = new Notification(id, message, time, uid, isSeen);
+
+        notification = new Notification(id,title, message, time, uid, postID, isSeen);
 
         return notification;
     }

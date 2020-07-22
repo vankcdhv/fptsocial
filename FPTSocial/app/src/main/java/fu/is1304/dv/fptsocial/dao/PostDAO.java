@@ -6,6 +6,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -104,14 +105,15 @@ public class PostDAO {
     }
 
     public void postStatus(Post post, final FirestoreSetCallback callback) {
-        DataProvider.getInstance().getDatabase()
+        final DocumentReference reference = DataProvider.getInstance().getDatabase()
                 .collection(Const.POST_COLLECTION)
-                .document()
-                .set(post)
+                .document();
+        reference.set(post)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        callback.onSuccess();
+                        String postID = reference.getId();
+                        callback.onSuccess(postID);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -130,7 +132,7 @@ public class PostDAO {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        callback.onSuccess();
+                        callback.onSuccess(null);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -156,6 +158,23 @@ public class PostDAO {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         callback.onFailed(e);
+                    }
+                });
+    }
+
+    public void getPostByID(String id, final FirestoreGetCallback callback) {
+        DataProvider.getInstance().getDatabase()
+                .collection(Const.POST_COLLECTION)
+                .document(id)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            callback.onComplete(task.getResult());
+                        } else {
+                            callback.onFailure(task.getException());
+                        }
                     }
                 });
     }

@@ -218,7 +218,7 @@ public class ProfileFragment extends Fragment {
     private void saveInfomation(User user) {
         UserDAO.getInstance().updateUserData(user, new FirestoreSetCallback() {
             @Override
-            public void onSuccess() {
+            public void onSuccess(String userID) {
                 Toast.makeText(getActivity(), "Update Successfully!", Toast.LENGTH_SHORT).show();
             }
 

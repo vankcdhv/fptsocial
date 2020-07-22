@@ -129,7 +129,7 @@ public class NotificationFragment extends Fragment {
         noti.setSeen(true);
         NotificationDAO.getInstance().updateNotification(AuthController.getInstance().getUID(), noti, new FirestoreSetCallback() {
             @Override
-            public void onSuccess() {
+            public void onSuccess(String notiID) {
                 notifications.set(notifications.indexOf(notification), noti);
                 adapter.notifyDataSetChanged();
             }
