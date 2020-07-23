@@ -13,6 +13,7 @@ import java.util.List;
 
 import fu.is1304.dv.fptsocial.dao.UserDAO;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
+import fu.is1304.dv.fptsocial.entity.Comment;
 import fu.is1304.dv.fptsocial.entity.Friend;
 import fu.is1304.dv.fptsocial.entity.Notification;
 import fu.is1304.dv.fptsocial.entity.FriendMessage;
@@ -80,7 +81,7 @@ public class DatabaseUtils {
         String title = (String) result.getData().get("title");
 
 
-        notification = new Notification(id,title, message, time, uid, postID, isSeen);
+        notification = new Notification(id, title, message, time, uid, postID, isSeen);
 
         return notification;
     }
@@ -115,6 +116,29 @@ public class DatabaseUtils {
 
         return list;
     }
+
+    //Convert document snapshot to Comment
+    public static Comment convertDocumentSnapshotToComment(DocumentSnapshot result) {
+        Comment comment;
+        String id = result.getId();
+        String content = (String) result.getData().get("content");
+        Date time = ((Timestamp) result.getData().get("time")).toDate();
+        String uid = (String) result.getData().get("uid");
+        boolean blocked = (boolean) result.getData().get("blocked");
+        comment = new Comment(id, uid, content, time, blocked);
+        return comment;
+    }
+
+    //Convert list Query document snapshot to list post
+    public static List<Comment> convertListDocSnapToListComment(List<QueryDocumentSnapshot> documentSnapshots) {
+        final List<Comment> list = new ArrayList<>();
+        for (final QueryDocumentSnapshot snapshot : documentSnapshots) {
+            list.add(convertDocumentSnapshotToComment(snapshot));
+        }
+
+        return list;
+    }
+
 
     //Validate email and password login and register
     public static String validateEmailAndPass(String email, String password, String repass) {

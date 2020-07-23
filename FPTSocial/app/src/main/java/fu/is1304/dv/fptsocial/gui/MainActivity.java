@@ -79,8 +79,8 @@ public class MainActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void startNotifyService() {
         Intent intent = new Intent(this, NotifyService.class);
-        //startService(intent);
-        startForegroundService(intent);
+        startService(intent);
+        //startForegroundService(intent);
     }
 
 

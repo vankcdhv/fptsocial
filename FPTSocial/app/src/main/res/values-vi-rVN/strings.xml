@@ -68,4 +68,6 @@
     <string name="dont_have_account">Bạn không có tài khoản! Đăng ký ngay!</string>
     <string name="email_empty">Không được để trống Email</string>
     <string name="email_not_verify">Email chưa xác thực! Hãy kiểm tra email của bạn!</string>
+    <string name="comment_is_blocked">Bình luận bị cấm hiển thị</string>
+    <string name="write_comment">Viêt bình luận của bạn</string>
 </resources>
