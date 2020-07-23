@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.firebase.auth.AuthResult;
@@ -21,6 +23,7 @@ import fu.is1304.dv.fptsocial.dao.callback.FirebaseAuthActionCallBack;
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText txtEmail, txtPass, txtRePass;
+    private ProgressBar pbLoading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +36,7 @@ public class RegisterActivity extends AppCompatActivity {
         txtEmail = findViewById(R.id.txtRegEmail);
         txtPass = findViewById(R.id.txtRegPass);
         txtRePass = findViewById(R.id.txtRegRePass);
+        pbLoading = findViewById(R.id.progressBarRegisterLoading);
 
         Intent data = getIntent();
         String email = data.getStringExtra("email");
@@ -43,6 +47,7 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     public void btnRegisterOnClick(View view) {
+        loading(true);
         String email = txtEmail.getText().toString();
         String password = txtPass.getText().toString();
         String repass = txtRePass.getText().toString();
@@ -51,15 +56,19 @@ public class RegisterActivity extends AppCompatActivity {
                 register(email, password);
                 break;
             case Const.VALIDATE_CODE_EMPTY:
+                loading(false);
                 Toast.makeText(this, "Email và mật khẩu không được để trống", Toast.LENGTH_LONG).show();
                 break;
             case Const.VALIDATE_CODE_EMAIL_INCORRECT:
+                loading(false);
                 Toast.makeText(this, "Email không hợp lệ", Toast.LENGTH_LONG).show();
                 break;
             case Const.VALIDATE_CODE_NOT_MATCH:
+                loading(false);
                 Toast.makeText(this, "Nhập lại mật khẩu không đúng", Toast.LENGTH_LONG).show();
                 break;
             case Const.VALIDATE_CODE_PASS_INCORRECT:
+                loading(false);
                 Toast.makeText(this, "Mật khẩu không hợp lệ", Toast.LENGTH_LONG).show();
                 break;
         }
@@ -69,16 +78,17 @@ public class RegisterActivity extends AppCompatActivity {
         AuthController.getInstance().registerByEmailAndPass(email, password, new FirebaseAuthCallback() {
             @Override
             public void onComplete(AuthResult result) {
-                Toast.makeText(RegisterActivity.this, "Đăng ký thành công", Toast.LENGTH_SHORT).show();
                 AuthController.getInstance().sendVerifyEmail(new FirebaseAuthActionCallBack() {
                     @Override
                     public void onComplete() {
-                        Toast.makeText(RegisterActivity.this, "Kiểm tra mail và xác thực địa chỉ email của bạn", Toast.LENGTH_LONG).show();
+                        loading(false);
+                        Toast.makeText(RegisterActivity.this, "Đăng ký thành công! Kiểm tra mail và xác thực địa chỉ email của bạn", Toast.LENGTH_LONG).show();
                         moveToLogin();
                     }
 
                     @Override
                     public void onFailure(Exception e) {
+                        loading(false);
                         Toast.makeText(RegisterActivity.this, "Email không đúng, thử lại bằng email khác", Toast.LENGTH_LONG).show();
                         AuthController.getInstance().removeCurrentUser(new FirebaseAuthActionCallBack() {
                             @Override
@@ -97,6 +107,7 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Exception e) {
+                loading(false);
                 Toast.makeText(RegisterActivity.this, "Đăng ký không thành công", Toast.LENGTH_SHORT).show();
             }
         });
@@ -110,9 +121,22 @@ public class RegisterActivity extends AppCompatActivity {
         finish();
     }
 
-    private void moveToLogin(){
+    private void moveToLogin() {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    public void loading(boolean isLoading) {
+        if (isLoading) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            pbLoading.setVisibility(View.VISIBLE);
+        } else {
+
+            pbLoading.setVisibility(View.INVISIBLE);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        }
+
     }
 }
