@@ -8,24 +8,24 @@ public class Comment implements Serializable {
     private String uid;
     private String content;
     private Date time;
-    private boolean blocked;
+    private String postID;
 
     public Comment() {
     }
 
-    public Comment(String uid, String content, Date time, boolean blocked) {
+    public Comment(String uid, String content, Date time, String postID) {
         this.uid = uid;
         this.content = content;
         this.time = time;
-        this.blocked = blocked;
+        this.postID = postID;
     }
 
-    public Comment(String id, String uid, String content, Date time, boolean blocked) {
+    public Comment(String id, String uid, String content, Date time, String postID) {
         this.id = id;
         this.uid = uid;
         this.content = content;
         this.time = time;
-        this.blocked = blocked;
+        this.postID = postID;
     }
 
     public String getId() {
@@ -60,11 +60,11 @@ public class Comment implements Serializable {
         this.time = time;
     }
 
-    public boolean isBlocked() {
-        return blocked;
+    public String getPostID() {
+        return postID;
     }
 
-    public void setBlocked(boolean blocked) {
-        this.blocked = blocked;
+    public void setPostID(String postID) {
+        this.postID = postID;
     }
 }

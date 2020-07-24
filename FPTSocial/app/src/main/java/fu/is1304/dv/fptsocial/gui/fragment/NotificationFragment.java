@@ -1,5 +1,6 @@
 package fu.is1304.dv.fptsocial.gui.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,7 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
@@ -21,11 +24,16 @@ import java.util.List;
 import fu.is1304.dv.fptsocial.R;
 import fu.is1304.dv.fptsocial.business.AuthController;
 import fu.is1304.dv.fptsocial.business.adapter.NotificationRecyclerAdapter;
+import fu.is1304.dv.fptsocial.common.Const;
 import fu.is1304.dv.fptsocial.common.DatabaseUtils;
 import fu.is1304.dv.fptsocial.dao.NotificationDAO;
+import fu.is1304.dv.fptsocial.dao.PostDAO;
 import fu.is1304.dv.fptsocial.dao.callback.FirebaseGetCollectionCallback;
+import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreSetCallback;
 import fu.is1304.dv.fptsocial.entity.Notification;
+import fu.is1304.dv.fptsocial.entity.Post;
+import fu.is1304.dv.fptsocial.gui.PostDetailActivity;
 import fu.is1304.dv.fptsocial.gui.viewmodel.MainActivityViewModel;
 
 /**
@@ -139,7 +147,21 @@ public class NotificationFragment extends Fragment {
 
             }
         });
+        if (notification.getTitle().equals(Const.POST_NOTIFICATION_TITLE)) {
+            PostDAO.getInstance().getPostByID(notification.getPostID(), new FirestoreGetCallback() {
+                @Override
+                public void onComplete(DocumentSnapshot documentSnapshot) {
+                    Post post = DatabaseUtils.convertDocumentSnapshotToPost(documentSnapshot);
+                    Intent intent = new Intent(getContext(), PostDetailActivity.class);
+                    intent.putExtra("post", post);
+                    startActivity(intent);
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Toast.makeText(getContext(), R.string.this_content_not_existed, Toast.LENGTH_LONG).show();
+                }
+            });
+        }
     }
-
-
 }

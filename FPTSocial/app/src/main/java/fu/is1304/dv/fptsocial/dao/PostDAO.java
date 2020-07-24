@@ -171,7 +171,8 @@ public class PostDAO {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
-                            callback.onComplete(task.getResult());
+                            if (task.getResult() != null)
+                                callback.onComplete(task.getResult());
                         } else {
                             callback.onFailure(task.getException());
                         }

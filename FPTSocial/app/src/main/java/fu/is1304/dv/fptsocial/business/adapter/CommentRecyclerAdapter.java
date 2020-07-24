@@ -1,7 +1,9 @@
 package fu.is1304.dv.fptsocial.business.adapter;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.util.LruCache;
 import android.view.LayoutInflater;
@@ -11,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -20,13 +23,13 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import fu.is1304.dv.fptsocial.R;
+import fu.is1304.dv.fptsocial.business.AuthController;
 import fu.is1304.dv.fptsocial.common.DatabaseUtils;
-import fu.is1304.dv.fptsocial.common.StorageUtils;
-import fu.is1304.dv.fptsocial.dao.StorageDAO;
+import fu.is1304.dv.fptsocial.dao.PostDAO;
 import fu.is1304.dv.fptsocial.dao.UserDAO;
-import fu.is1304.dv.fptsocial.dao.callback.FirestorageGetByteCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
 import fu.is1304.dv.fptsocial.entity.Comment;
+import fu.is1304.dv.fptsocial.entity.Post;
 import fu.is1304.dv.fptsocial.entity.User;
 
 public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentRecyclerAdapter.DataViewHolder> {
@@ -92,15 +95,45 @@ public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentRecycler
                     }
                 });
                 holder.txtTime.setText(new SimpleDateFormat("dd/MM/yyyy - hh:mm").format(comment.getTime()));
-                if (comment.isBlocked())
-                    holder.txtContent.setText(context.getString(R.string.comment_is_blocked));
-                else holder.txtContent.setText(comment.getContent());
+                holder.txtContent.setText(comment.getContent());
                 if (user.getGender() == (context.getString(R.string.female))) {
                     holder.imgCmtAva.setImageDrawable(((Activity) context).getDrawable(R.drawable.nu));
                 }
                 if (user.getAvatar() != null) {
                     Glide.with(context).load(user.getAvatar()).into(holder.imgCmtAva);
                 }
+                holder.layoutCommentItem.setLongClickable(true);
+                PostDAO.getInstance().getPostByID(comment.getPostID(), new FirestoreGetCallback() {
+                    @Override
+                    public void onComplete(DocumentSnapshot documentSnapshot) {
+                        Post post = DatabaseUtils.convertDocumentSnapshotToPost(documentSnapshot);
+                        if (comment.getUid().equals(AuthController.getInstance().getUID()) || post.getUid().equals(AuthController.getInstance().getUID())) {
+                            holder.layoutCommentItem.setOnLongClickListener(new View.OnLongClickListener() {
+                                @Override
+                                public boolean onLongClick(View v) {
+                                    final CharSequence[] items = {((Activity) context).getString(R.string.delete_comment)};
+                                    AlertDialog.Builder builder = new AlertDialog.Builder((Activity) context);
+                                    builder.setItems(items, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            if (which == 0) {
+                                                onEventListener.onClickDeleteComment(comment);
+                                            }
+                                        }
+                                    });
+                                    builder.show();
+                                    return false;
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+
+                    }
+                });
+
             }
 
             @Override
@@ -119,6 +152,7 @@ public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentRecycler
 
         ImageView imgCmtAva;
         TextView txtUsername, txtContent, txtTime;
+        ConstraintLayout layoutCommentItem;
 
         public DataViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -126,11 +160,14 @@ public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentRecycler
             txtUsername = itemView.findViewById(R.id.labelUserName);
             txtContent = itemView.findViewById(R.id.labelContent);
             txtTime = itemView.findViewById(R.id.labelTime);
+            layoutCommentItem = itemView.findViewById(R.id.layoutCommentItem);
+
         }
     }
 
     public interface OnEventListener {
         public void onClickUsername(User user);
 
+        public void onClickDeleteComment(Comment comment);
     }
 }

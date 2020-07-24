@@ -124,7 +124,7 @@ public class DatabaseUtils {
         String content = (String) result.getData().get("content");
         Date time = ((Timestamp) result.getData().get("time")).toDate();
         String uid = (String) result.getData().get("uid");
-        boolean blocked = (boolean) result.getData().get("blocked");
+        String blocked = (String) result.getData().get("postID");
         comment = new Comment(id, uid, content, time, blocked);
         return comment;
     }

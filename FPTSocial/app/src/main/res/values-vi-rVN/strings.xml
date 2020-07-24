@@ -72,4 +72,10 @@
     <string name="write_comment">Viêt bình luận của bạn</string>
     <string name="btn_post">Đăng</string>
     <string name="btn_save">Lưu lại</string>
+    <string name="block_comment">Ẩn bình luận này</string>
+    <string name="unlock_comment">Hiện bình luận này</string>
+    <string name="delete_comment">Xóa bình luận</string>
+    <string name="delete_comment_failed">Xóa bình luận không thành công</string>
+    <string name="notify_comment_your_post">Đã bình luận về trạng thái của bạn</string>
+    <string name="this_content_not_existed">Nội dung này không tồn tại</string>
 </resources>

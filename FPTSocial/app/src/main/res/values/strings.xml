@@ -74,11 +74,16 @@
     <string name="dont_have_account">You don\'t have account! Register now!</string>
     <string name="email_empty">Email must be not empty</string>
     <string name="email_not_verify">Email have not verify!</string>
-    <string name="title_activity_post_detail">PostDetailActivity</string>
     <string name="comment_is_blocked">This comment was blocked</string>
     <string name="write_comment">Write your comment</string>
     <string name="btn_post">Create</string>
     <string name="btn_save">Save</string>
+    <string name="block_comment">Hide this comment</string>
+    <string name="unlock_comment">Show this comment</string>
+    <string name="delete_comment">Delete this comment</string>
+    <string name="delete_comment_failed">Delete comment was not successful</string>
+    <string name="notify_comment_your_post">commented on your status</string>
+    <string name="this_content_not_existed">This content have not existed</string>
     <!--
     This string is used for square devices and overridden by hello_world in
     values-round/strings.xml for round devices.

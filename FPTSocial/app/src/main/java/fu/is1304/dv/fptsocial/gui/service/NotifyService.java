@@ -5,6 +5,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
 
@@ -24,11 +26,15 @@ import fu.is1304.dv.fptsocial.common.DatabaseUtils;
 import fu.is1304.dv.fptsocial.dao.CountDAO;
 import fu.is1304.dv.fptsocial.dao.NotificationDAO;
 import fu.is1304.dv.fptsocial.dao.PostDAO;
+import fu.is1304.dv.fptsocial.dao.UserDAO;
 import fu.is1304.dv.fptsocial.dao.callback.FirebaseGetCollectionCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
 import fu.is1304.dv.fptsocial.entity.Notification;
 import fu.is1304.dv.fptsocial.entity.Post;
+import fu.is1304.dv.fptsocial.entity.User;
+import fu.is1304.dv.fptsocial.gui.MainActivity;
 import fu.is1304.dv.fptsocial.gui.PostDetailActivity;
+import fu.is1304.dv.fptsocial.gui.fragment.MessengerFragment;
 
 public class NotifyService extends Service {
     private int notificationCount = -1;
@@ -51,6 +57,27 @@ public class NotifyService extends Service {
                 @Override
                 public void onComplete(long count) {
                     notificationCount = (int) count;
+                    CountDAO.getInstance().getRealtimeNotificationByUID(AuthController.getInstance().getUID(), new CountDAO.OnDataChangeEvent() {
+                        @Override
+                        public void onChange(long count) {
+                            countNewNotify = (int) count - notificationCount;
+                            notificationCount = (int) count;
+                            NotificationDAO.getInstance().getNotifyByUID(AuthController.getInstance().getUID(), countNewNotify, new FirebaseGetCollectionCallback() {
+                                @Override
+                                public void onComplete(List<QueryDocumentSnapshot> documentSnapshots) {
+                                    List<Notification> list = DatabaseUtils.convertListDocSnapToListNotification(documentSnapshots);
+                                    for (Notification notification : list) {
+                                        createNotify(notification);
+                                    }
+                                }
+
+                                @Override
+                                public void onFailed(Exception e) {
+
+                                }
+                            });
+                        }
+                    });
                 }
 
                 @Override
@@ -59,28 +86,6 @@ public class NotifyService extends Service {
                 }
             });
         }
-        CountDAO.getInstance().getRealtimeNotificationByUID(AuthController.getInstance().getUID(), new CountDAO.OnDataChangeEvent() {
-            @Override
-            public void onChange(long count) {
-                countNewNotify = (int) count - notificationCount;
-                notificationCount = (int) count;
-                NotificationDAO.getInstance().getNotifyByUID(AuthController.getInstance().getUID(), countNewNotify, new FirebaseGetCollectionCallback() {
-                    @Override
-                    public void onComplete(List<QueryDocumentSnapshot> documentSnapshots) {
-                        List<Notification> list = DatabaseUtils.convertListDocSnapToListNotification(documentSnapshots);
-                        for (Notification notification : list) {
-                            createNotify(notification);
-                        }
-                    }
-
-                    @Override
-                    public void onFailed(Exception e) {
-
-                    }
-                });
-            }
-        });
-
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -91,27 +96,45 @@ public class NotifyService extends Service {
 
     private void createNotify(final Notification notification) {
 //        final Notification notification = new Notification(Const.POST_NOTIFICATION_TITLE, "Vừa đăng một trạng thái mới!", new Date(), "7Gr8EJCHFAaLrFYxz4OsenGKxoH2", "cvcNP8fMrnwVpKyoXCLA", false);
-
-        PostDAO.getInstance().getPostByID(notification.getPostID(), new FirestoreGetCallback() {
+        UserDAO.getInstance().getUserByUID(notification.getUid(), new FirestoreGetCallback() {
             @Override
             public void onComplete(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.getData() == null) return;
-                Post post = DatabaseUtils.convertDocumentSnapshotToPost(documentSnapshot);
-                Intent intent = new Intent(NotifyService.this, PostDetailActivity.class);
-                intent.putExtra("post", post);
+                final User user = DatabaseUtils.convertDocumentSnapshotToUser(documentSnapshot);
+                PostDAO.getInstance().getPostByID(notification.getPostID(), new FirestoreGetCallback() {
+                    @Override
+                    public void onComplete(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.getData() == null) return;
+                        Post post = DatabaseUtils.convertDocumentSnapshotToPost(documentSnapshot);
+                        Intent intent;
+                        if (notification.getTitle().equals(Const.POST_NOTIFICATION_TITLE)) {
+                            intent = new Intent(NotifyService.this, PostDetailActivity.class);
+                            intent.putExtra("post", post);
+                        } else {
+                            intent = new Intent(NotifyService.this, MessengerFragment.class);
+                        }
 
-                PendingIntent pendingIntent = PendingIntent.getActivity(NotifyService.this, 0, intent, 0);
+                        PendingIntent pendingIntent = PendingIntent.getActivity(NotifyService.this, 0, intent, 0);
 
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(NotifyService.this, Const.CHANEL_ID)
-                        .setSmallIcon(R.drawable.app_icon)
-                        .setContentTitle(notification.getTitle())
-                        .setContentText(notification.getMessage())
-                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                        .setContentIntent(pendingIntent)
-                        .setAutoCancel(true);
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(NotifyService.this, Const.CHANEL_ID)
+                                .setSmallIcon(R.drawable.ic_action_notification_important)
+                                .setContentTitle(notification.getTitle())
+                                .setContentText(user.getLastName() + " " + notification.getMessage())
+                                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                                .setContentIntent(pendingIntent)
+                                .setAutoCancel(true);
 
-                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(NotifyService.this);
-                notificationManager.notify(Const.POST_NOTIFY_ID, builder.build());
+                        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                        builder.setSound(alarmSound);
+
+                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(NotifyService.this);
+                        notificationManager.notify(Const.POST_NOTIFY_ID, builder.build());
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+
+                    }
+                });
             }
 
             @Override
@@ -119,6 +142,7 @@ public class NotifyService extends Service {
 
             }
         });
+
     }
 
     private void createNotificationChannel() {

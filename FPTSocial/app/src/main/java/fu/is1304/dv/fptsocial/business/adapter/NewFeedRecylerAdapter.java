@@ -146,29 +146,6 @@ public class NewFeedRecylerAdapter extends RecyclerView.Adapter<NewFeedRecylerAd
                     }
                 } else {
                     Glide.with(context).load(user.getAvatar()).into(holder.imgAva);
-//                    if (getBitmapFromMemCache(post.getUid() + "avatar") != null) {
-//                        Bitmap bitmap = getBitmapFromMemCache(post.getUid() + "avatar");
-//                        holder.imgAva.setImageBitmap(bitmap);
-//                    } else {
-//                        StorageDAO.getInstance().getImage(user.getAvatar(), new FirestorageGetByteCallback() {
-//                            @Override
-//                            public void onStart() {
-//
-//                            }
-//
-//                            @Override
-//                            public void onComplete(byte[] bytes) {
-//                                Bitmap bitmap = StorageUtils.bytesToBitMap(bytes);
-//                                addBitmapToMemoryCache(post.getUid() + "avatar", bitmap);
-//                                holder.imgAva.setImageBitmap(bitmap);
-//                            }
-//
-//                            @Override
-//                            public void onFailed(Exception e) {
-//
-//                            }
-//                        });
-//                    }
                 }
                 if (post.getImage() != null) {
                     Glide.with(context).load(post.getImage()).into(holder.imgNewfeedImage);

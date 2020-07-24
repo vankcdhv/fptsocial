@@ -1,15 +1,15 @@
 package fu.is1304.dv.fptsocial.gui;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -29,16 +29,19 @@ import java.util.List;
 import fu.is1304.dv.fptsocial.R;
 import fu.is1304.dv.fptsocial.business.AuthController;
 import fu.is1304.dv.fptsocial.business.adapter.CommentRecyclerAdapter;
+import fu.is1304.dv.fptsocial.common.Const;
 import fu.is1304.dv.fptsocial.common.DatabaseUtils;
-import fu.is1304.dv.fptsocial.common.StorageUtils;
 import fu.is1304.dv.fptsocial.dao.CommentDAO;
-import fu.is1304.dv.fptsocial.dao.StorageDAO;
+import fu.is1304.dv.fptsocial.dao.CountDAO;
+import fu.is1304.dv.fptsocial.dao.NotificationDAO;
 import fu.is1304.dv.fptsocial.dao.UserDAO;
 import fu.is1304.dv.fptsocial.dao.callback.FirebaseGetCollectionCallback;
-import fu.is1304.dv.fptsocial.dao.callback.FirestorageGetByteCallback;
+import fu.is1304.dv.fptsocial.dao.callback.FirestoreDeleteDocCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreSetCallback;
 import fu.is1304.dv.fptsocial.entity.Comment;
+import fu.is1304.dv.fptsocial.entity.Friend;
+import fu.is1304.dv.fptsocial.entity.Notification;
 import fu.is1304.dv.fptsocial.entity.Post;
 import fu.is1304.dv.fptsocial.entity.User;
 
@@ -80,6 +83,11 @@ public class PostDetailActivity extends AppCompatActivity {
             @Override
             public void onClickUsername(User user) {
 
+            }
+
+            @Override
+            public void onClickDeleteComment(Comment comment) {
+                deleteComment(comment);
             }
         });
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -185,26 +193,74 @@ public class PostDetailActivity extends AppCompatActivity {
         String content = txtCreateComment.getText().toString();
         if (content != null && content.length() > 0) {
             final Comment comment = new Comment();
-            comment.setBlocked(false);
+            comment.setPostID(currentPost.getId());
             comment.setContent(content);
             comment.setTime(new Date());
             comment.setUid(AuthController.getInstance().getUID());
+            txtCreateComment.setEnabled(false);
             CommentDAO.getInstance().createComment(currentPost.getId(), comment, new FirestoreSetCallback() {
                 @Override
                 public void onSuccess(String id) {
                     comment.setId(id);
                     comments.add(0, comment);
                     commentRecyclerAdapter.notifyDataSetChanged();
+                    txtCreateComment.setEnabled(true);
                     txtCreateComment.setText("");
+                    makeNotify();
                 }
 
                 @Override
                 public void onFailure(Exception e) {
-
+                    txtCreateComment.setEnabled(true);
                 }
             });
         }
     }
 
+    public void deleteComment(final Comment comment) {
+        CommentDAO.getInstance().deleteComment(comment, new FirestoreDeleteDocCallback() {
+            @Override
+            public void onComplete() {
+                comments.remove(comment);
+                commentRecyclerAdapter.notifyDataSetChanged();
+            }
 
+            @Override
+            public void onFailed(Exception e) {
+                Toast.makeText(PostDetailActivity.this, R.string.delete_comment_failed, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void makeNotify() {
+        String title = Const.POST_NOTIFICATION_TITLE;
+        String message = getString(R.string.notify_comment_your_post);
+        Date time = new Date();
+        String uid = AuthController.getInstance().getUID();
+        Boolean seen = false;
+        Notification notification = new Notification(title, message, time, uid, currentPost.getId(), seen);
+
+        NotificationDAO.getInstance().createNotification(currentPost.getUid(), notification, new FirestoreSetCallback() {
+            @Override
+            public void onSuccess(String notiID) {
+                CountDAO.getInstance().getCountNotificationByUID(currentPost.getUid(), new CountDAO.GetCountCallback() {
+                    @Override
+                    public void onComplete(long count) {
+                        CountDAO.getInstance().setCountNotify(currentPost.getUid(), (int) (count + 1));
+                    }
+
+                    @Override
+                    public void onFailed(Exception e) {
+                        int count = 1;
+                        CountDAO.getInstance().setCountNotify(currentPost.getUid(), count);
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+
+            }
+        });
+    }
 }
