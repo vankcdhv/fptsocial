@@ -161,23 +161,24 @@ public class ProfileFragment extends Fragment {
                 edMajor.setText(currentUser.getDepartment());
                 etDob.setText(currentUser.getDob());
                 if (currentUser.getAvatar() != null && !currentUser.getAvatar().isEmpty()) {
-                    StorageDAO.getInstance().getImage(currentUser.getAvatar(), new FirestorageGetByteCallback() {
-                        @Override
-                        public void onStart() {
-                            Glide.with(getActivity()).load(getActivity().getDrawable(R.drawable.loading_spin)).into(imgAvatar);
-                        }
-
-                        @Override
-                        public void onComplete(byte[] bytes) {
-                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                            imgAvatar.setImageBitmap(bitmap);
-                        }
-
-                        @Override
-                        public void onFailed(Exception e) {
-
-                        }
-                    });
+                    Glide.with(getActivity()).load(currentUser.getAvatar()).into(imgAvatar);
+//                    StorageDAO.getInstance().getImage(currentUser.getAvatar(), new FirestorageGetByteCallback() {
+//                        @Override
+//                        public void onStart() {
+//                            Glide.with(getActivity()).load(getActivity().getDrawable(R.drawable.loading_spin)).into(imgAvatar);
+//                        }
+//
+//                        @Override
+//                        public void onComplete(byte[] bytes) {
+//                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+//                            imgAvatar.setImageBitmap(bitmap);
+//                        }
+//
+//                        @Override
+//                        public void onFailed(Exception e) {
+//
+//                        }
+//                    });
                 } else {
                     if (currentUser.getGender().equals(getString(R.string.female))) {
                         imgAvatar.setImageDrawable(getResources().getDrawable(R.drawable.nu));
@@ -232,7 +233,9 @@ public class ProfileFragment extends Fragment {
     private void uploadImage(final User user) {
         StorageDAO.getInstance().upImage(currentUser.getAvatar(), ava, new FirestorageUploadCallback() {
             @Override
-            public void onComplete(UploadTask.TaskSnapshot taskSnapshot) {
+            public void onComplete(Uri uri) {
+                String url = uri.toString();
+                user.setAvatar(url);
                 saveInfomation(user);
             }
 

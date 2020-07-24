@@ -70,4 +70,6 @@
     <string name="email_not_verify">Email chưa xác thực! Hãy kiểm tra email của bạn!</string>
     <string name="comment_is_blocked">Bình luận bị cấm hiển thị</string>
     <string name="write_comment">Viêt bình luận của bạn</string>
+    <string name="btn_post">Đăng</string>
+    <string name="btn_save">Lưu lại</string>
 </resources>

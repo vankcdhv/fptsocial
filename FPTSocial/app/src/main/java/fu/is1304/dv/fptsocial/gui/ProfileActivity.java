@@ -57,9 +57,6 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         init();
-        if (mode.equals(Const.MODE_UPDATE_PROFILE)) {
-            setData();
-        }
     }
 
     public void init() {
@@ -84,53 +81,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         genderAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, new String[]{getString(R.string.male), getString(R.string.female)});
         spinnerGender.setAdapter(genderAdapter);
-    }
-
-    public void setData() {
-        UserDAO.getInstance().getCurrentUser(new FirestoreGetCallback() {
-            @Override
-            public void onComplete(DocumentSnapshot documentSnapshot) {
-                currentUser = DatabaseUtils.convertDocumentSnapshotToUser(documentSnapshot);
-                etCourse.setText(currentUser.getCourse() + "");
-                etFirstname.setText(currentUser.getFirstName());
-                etLastname.setText(currentUser.getLastName());
-                if (currentUser.getGender().equals(getString(R.string.male))) {
-                    spinnerGender.setSelection(0);
-                } else {
-                    spinnerGender.setSelection(1);
-                }
-                edMajor.setText(currentUser.getDepartment());
-                etDob.setText(currentUser.getDob());
-                if (currentUser.getAvatar() != null && !currentUser.getAvatar().isEmpty()) {
-                    StorageDAO.getInstance().getImage(currentUser.getAvatar(), new FirestorageGetByteCallback() {
-                        @Override
-                        public void onStart() {
-
-                        }
-
-                        @Override
-                        public void onComplete(byte[] bytes) {
-                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                            imgAvatar.setImageBitmap(bitmap);
-                        }
-
-                        @Override
-                        public void onFailed(Exception e) {
-
-                        }
-                    });
-                } else {
-                    if (currentUser.getGender().equals(getString(R.string.female))) {
-                        imgAvatar.setImageDrawable(getResources().getDrawable(R.drawable.nu));
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-
-            }
-        });
     }
 
     public void save(View view) {
@@ -176,7 +126,9 @@ public class ProfileActivity extends AppCompatActivity {
     private void uploadImage(final User user) {
         StorageDAO.getInstance().upImage(currentUser.getAvatar(), ava, new FirestorageUploadCallback() {
             @Override
-            public void onComplete(UploadTask.TaskSnapshot taskSnapshot) {
+            public void onComplete(Uri uri) {
+                String url = uri.toString();
+                user.setAvatar(url);
                 saveInfomation(user);
             }
 

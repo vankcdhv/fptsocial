@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.text.SimpleDateFormat;
@@ -99,27 +100,7 @@ public class NotificationRecyclerAdapter extends RecyclerView.Adapter<Notificati
                         holder.imgNotiAva.setImageDrawable(((Activity) context).getDrawable(R.drawable.nu));
                     }
                 } else {
-                    Bitmap bitmap = getBitmapFromMemCache(notification.getUid() + "avatar");
-                    if (bitmap != null) {
-                        holder.imgNotiAva.setImageBitmap(bitmap);
-                    } else {
-                        StorageDAO.getInstance().getImage(user.getAvatar(), new FirestorageGetByteCallback() {
-                            @Override
-                            public void onStart() {
-                            }
-
-                            @Override
-                            public void onComplete(byte[] bytes) {
-                                Bitmap bitmap = StorageUtils.bytesToBitMap(bytes);
-                                addBitmapToMemoryCache(notification.getUid() + "avatar", bitmap);
-                                holder.imgNotiAva.setImageBitmap(bitmap);
-                            }
-
-                            @Override
-                            public void onFailed(Exception e) {
-                            }
-                        });
-                    }
+                    Glide.with(context).load(user.getAvatar()).into(holder.imgNotiAva);
                 }
             }
 

@@ -9,8 +9,10 @@ import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -28,20 +30,6 @@ public class StorageDAO {
         return instance;
     }
 
-    public void getImage(String path, final FirestorageGetByteCallback callback) {
-        callback.onStart();
-        DataProvider.getInstance()
-                .getStorage()
-                .getReference()
-                .child(path)
-                .getBytes(1024 * 1024 * 20)
-                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                    @Override
-                    public void onSuccess(byte[] bytes) {
-                        callback.onComplete(bytes);
-                    }
-                });
-    }
 
     public void upImage(String path, Uri file, final FirestorageUploadCallback callback) {
         StorageReference reference = DataProvider.getInstance().getStorage().getReference().child(path);
@@ -50,7 +38,13 @@ public class StorageDAO {
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        callback.onComplete(taskSnapshot);
+                        taskSnapshot.getStorage().getDownloadUrl()
+                                .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Uri> task) {
+                                        callback.onComplete(task.getResult());
+                                    }
+                                });
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -59,24 +53,6 @@ public class StorageDAO {
                         callback.onFailure(e);
                     }
                 });
-
-//        Bitmap bmp = BitmapFactory.decodeFile(file.getPath());
-//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//        bmp.compress(Bitmap.CompressFormat.JPEG, 25, baos);
-//        byte[] data = baos.toByteArray();
-//        //uploading the image
-//        UploadTask uploadTask2 = reference.putBytes(data);
-//        uploadTask2.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//            @Override
-//            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                callback.onComplete(taskSnapshot);
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//                callback.onFailure(e);
-//            }
-//        });
 
     }
 }

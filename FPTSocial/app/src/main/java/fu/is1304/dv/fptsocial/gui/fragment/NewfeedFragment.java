@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.UploadTask;
@@ -311,24 +312,9 @@ public class NewfeedFragment extends Fragment {
         txtPostTitle.setText(post.getTitle());
         txtPostContent.setText(post.getContent());
         if (post.getImage() != null) {
-            StorageDAO.getInstance().getImage(post.getImage(), new FirestorageGetByteCallback() {
-                @Override
-                public void onStart() {
-                    Glide.with(getContext()).load(getActivity().getDrawable(R.drawable.loading)).into(imgPostImage);
-                }
-
-                @Override
-                public void onComplete(byte[] bytes) {
-                    Bitmap bitmap = StorageUtils.bytesToBitMap(bytes);
-                    imgPostImage.setImageBitmap(bitmap);
-                }
-
-                @Override
-                public void onFailed(Exception e) {
-
-                }
-            });
+            Glide.with(getActivity()).load(post.getImage()).into(imgPostImage);
         }
+        btnPost.setText(getString(R.string.btn_save));
         btnPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -387,7 +373,9 @@ public class NewfeedFragment extends Fragment {
     private void uploadImage(final Post post, final int mode) {
         StorageDAO.getInstance().upImage(statusImage, imageUri, new FirestorageUploadCallback() {
             @Override
-            public void onComplete(UploadTask.TaskSnapshot taskSnapshot) {
+            public void onComplete(Uri uri) {
+                String url = uri.toString();
+                post.setImage(url);
                 if (mode == Const.MODE_CREATE_STATUS)
                     createStatus(post);
                 else

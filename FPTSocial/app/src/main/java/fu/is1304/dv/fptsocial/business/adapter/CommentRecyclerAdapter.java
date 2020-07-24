@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.text.SimpleDateFormat;
@@ -98,27 +99,7 @@ public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentRecycler
                     holder.imgCmtAva.setImageDrawable(((Activity) context).getDrawable(R.drawable.nu));
                 }
                 if (user.getAvatar() != null) {
-                    Bitmap bitmap = getBitmapFromMemCache(comment.getUid() + "avatar");
-                    if (bitmap != null) {
-                        holder.imgCmtAva.setImageBitmap(bitmap);
-                    } else {
-                        StorageDAO.getInstance().getImage(user.getAvatar(), new FirestorageGetByteCallback() {
-                            @Override
-                            public void onStart() {
-                            }
-
-                            @Override
-                            public void onComplete(byte[] bytes) {
-                                Bitmap bitmap = StorageUtils.bytesToBitMap(bytes);
-                                addBitmapToMemoryCache(comment.getUid() + "avatar", bitmap);
-                                holder.imgCmtAva.setImageBitmap(bitmap);
-                            }
-
-                            @Override
-                            public void onFailed(Exception e) {
-                            }
-                        });
-                    }
+                    Glide.with(context).load(user.getAvatar()).into(holder.imgCmtAva);
                 }
             }
 

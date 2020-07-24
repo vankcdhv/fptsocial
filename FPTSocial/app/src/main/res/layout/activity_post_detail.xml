@@ -113,14 +113,6 @@
                     android:text="100" />
             </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_below="@+id/layoutReact"
-                android:background="@color/blackcolor"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layoutAddComment"
                 android:layout_width="match_parent"
@@ -169,14 +161,6 @@
                 android:paddingBottom="5dp" />
 
         </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/blackcolor"
-            app:layout_constraintBottom_toTopOf="@+id/layoutComment"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

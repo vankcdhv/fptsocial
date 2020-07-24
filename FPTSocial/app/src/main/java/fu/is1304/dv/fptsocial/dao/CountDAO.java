@@ -94,8 +94,10 @@ public class CountDAO {
                 .addSnapshotListener(new EventListener<DocumentSnapshot>() {
                     @Override
                     public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                        if (value.getData() != null)
-                            callback.onChange((long) value.getData().get("count"));
+                        if (value != null) {
+                            if (value.getData() != null)
+                                callback.onChange((long) value.getData().get("count"));
+                        }
                     }
                 });
     }

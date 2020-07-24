@@ -145,55 +145,33 @@ public class NewFeedRecylerAdapter extends RecyclerView.Adapter<NewFeedRecylerAd
                         holder.imgAva.setImageDrawable(((Activity) context).getDrawable(R.drawable.nu));
                     }
                 } else {
-                    if (getBitmapFromMemCache(post.getUid() + "avatar") != null) {
-                        Bitmap bitmap = getBitmapFromMemCache(post.getUid() + "avatar");
-                        holder.imgAva.setImageBitmap(bitmap);
-                    } else {
-                        StorageDAO.getInstance().getImage(user.getAvatar(), new FirestorageGetByteCallback() {
-                            @Override
-                            public void onStart() {
-
-                            }
-
-                            @Override
-                            public void onComplete(byte[] bytes) {
-                                Bitmap bitmap = StorageUtils.bytesToBitMap(bytes);
-                                addBitmapToMemoryCache(post.getUid() + "avatar", bitmap);
-                                holder.imgAva.setImageBitmap(bitmap);
-                            }
-
-                            @Override
-                            public void onFailed(Exception e) {
-
-                            }
-                        });
-                    }
+                    Glide.with(context).load(user.getAvatar()).into(holder.imgAva);
+//                    if (getBitmapFromMemCache(post.getUid() + "avatar") != null) {
+//                        Bitmap bitmap = getBitmapFromMemCache(post.getUid() + "avatar");
+//                        holder.imgAva.setImageBitmap(bitmap);
+//                    } else {
+//                        StorageDAO.getInstance().getImage(user.getAvatar(), new FirestorageGetByteCallback() {
+//                            @Override
+//                            public void onStart() {
+//
+//                            }
+//
+//                            @Override
+//                            public void onComplete(byte[] bytes) {
+//                                Bitmap bitmap = StorageUtils.bytesToBitMap(bytes);
+//                                addBitmapToMemoryCache(post.getUid() + "avatar", bitmap);
+//                                holder.imgAva.setImageBitmap(bitmap);
+//                            }
+//
+//                            @Override
+//                            public void onFailed(Exception e) {
+//
+//                            }
+//                        });
+//                    }
                 }
-                if (post.getImage() == null) {
-                } else {
-                    if (getBitmapFromMemCache(post.getId() + "image") != null) {
-                        Bitmap bitmap = getBitmapFromMemCache(post.getUid() + "image");
-                        holder.imgNewfeedImage.setImageBitmap(bitmap);
-                    } else {
-                        StorageDAO.getInstance().getImage(post.getImage() + "_900x900", new FirestorageGetByteCallback() {
-                            @Override
-                            public void onStart() {
-                                Glide.with(context).load(((Activity) context).getDrawable(R.drawable.loading)).into(holder.imgNewfeedImage);
-                            }
-
-                            @Override
-                            public void onComplete(byte[] bytes) {
-                                Bitmap bitmap = StorageUtils.bytesToBitMap(bytes);
-                                addBitmapToMemoryCache(post.getId() + "image", bitmap);
-                                holder.imgNewfeedImage.setImageBitmap(bitmap);
-                            }
-
-                            @Override
-                            public void onFailed(Exception e) {
-
-                            }
-                        });
-                    }
+                if (post.getImage() != null) {
+                    Glide.with(context).load(post.getImage()).into(holder.imgNewfeedImage);
                 }
             }
 

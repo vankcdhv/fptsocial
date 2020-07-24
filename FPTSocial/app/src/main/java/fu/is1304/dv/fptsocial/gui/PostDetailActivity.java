@@ -62,6 +62,7 @@ public class PostDetailActivity extends AppCompatActivity {
     }
 
     private void initComponents() {
+        getSupportActionBar().hide();
         txtTitle = findViewById(R.id.txtDetailNewfeedTitle);
         txtContent = findViewById(R.id.txtDetailNewfeedContent);
         txtAuthor = findViewById(R.id.txtDetailNewfeedAuthor);
@@ -141,46 +142,14 @@ public class PostDetailActivity extends AppCompatActivity {
                         imgSmallAva.setImageDrawable(getDrawable(R.drawable.nu));
                     }
                 } else {
-                    StorageDAO.getInstance().getImage(user.getAvatar(), new FirestorageGetByteCallback() {
-                        @Override
-                        public void onStart() {
-                        }
-
-                        @Override
-                        public void onComplete(byte[] bytes) {
-                            Bitmap bitmap = StorageUtils.bytesToBitMap(bytes);
-                            imgSmallAva.setImageBitmap(bitmap);
-                        }
-
-                        @Override
-                        public void onFailed(Exception e) {
-                        }
-                    });
+                    Glide.with(PostDetailActivity.this).load(user.getAvatar()).into(imgSmallAva);
                 }
 
                 if (post.getImage() == null) {
                 } else {
-
-                    StorageDAO.getInstance().getImage(post.getImage() + "_900x900", new FirestorageGetByteCallback() {
-                        @Override
-                        public void onStart() {
-                            Glide.with(PostDetailActivity.this).load(getDrawable(R.drawable.loading)).into(imgStatusImage);
-                        }
-
-                        @Override
-                        public void onComplete(byte[] bytes) {
-                            Bitmap bitmap = StorageUtils.bytesToBitMap(bytes);
-                            imgStatusImage.setImageBitmap(bitmap);
-                        }
-
-                        @Override
-                        public void onFailed(Exception e) {
-
-                        }
-                    });
+                    Glide.with(PostDetailActivity.this).load(post.getImage()).into(imgStatusImage);
                 }
             }
-
 
             @Override
             public void onFailure(Exception e) {

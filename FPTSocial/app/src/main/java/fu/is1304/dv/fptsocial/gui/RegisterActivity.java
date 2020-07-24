@@ -33,6 +33,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void initComponents() {
+        getSupportActionBar().hide();
         txtEmail = findViewById(R.id.txtRegEmail);
         txtPass = findViewById(R.id.txtRegPass);
         txtRePass = findViewById(R.id.txtRegRePass);
@@ -61,7 +62,7 @@ public class RegisterActivity extends AppCompatActivity {
                 break;
             case Const.VALIDATE_CODE_EMAIL_INCORRECT:
                 loading(false);
-                Toast.makeText(this, "Email không hợp lệ", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Email không hợp lệ (Chỉ sử dụng mail FPT)", Toast.LENGTH_LONG).show();
                 break;
             case Const.VALIDATE_CODE_NOT_MATCH:
                 loading(false);

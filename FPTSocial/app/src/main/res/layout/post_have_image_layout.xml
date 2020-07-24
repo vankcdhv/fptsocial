@@ -5,7 +5,8 @@
     android:id="@+id/layoutNewFeedItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#FFFFFF">
+    android:background="@drawable/status_item_background"
+    android:layout_marginTop="10dp">
 
     <TextView
         android:id="@+id/txtNewfeedTitle"
