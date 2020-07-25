@@ -31,6 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="Bạn có một tin nhắn mới từ ..."
+        android:textColor="@color/blackcolor"
         app:layout_constraintStart_toEndOf="@+id/imgNotiAvatar"
         app:layout_constraintTop_toTopOf="@+id/imgNotiAvatar" />
 
@@ -41,6 +42,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:text="20/07/2020 - 09:00"
+        android:textColor="@color/blackcolor"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lableNotificationMessage" />
 

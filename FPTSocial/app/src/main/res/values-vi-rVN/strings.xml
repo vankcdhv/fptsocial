@@ -78,4 +78,13 @@
     <string name="delete_comment_failed">Xóa bình luận không thành công</string>
     <string name="notify_comment_your_post">Đã bình luận về trạng thái của bạn</string>
     <string name="this_content_not_existed">Nội dung này không tồn tại</string>
+    <string name="btn_message">Nhắn tin</string>
+    <string name="permission_denied">Bạn không có quyền truy cập</string>
+    <string name="upload_image_post_failed">Tải ảnh lên không thành công! Trạng thái của bạn sẽ không được cập nhật!</string>
+    <string name="update_successfuly">Cập nhật thành công</string>
+    <string name="have_error">Có lỗi xảy ra! Vui lòng thử lại</string>
+    <string name="deleted">Đã xóa</string>
+    <string name="btn_delete">Xóa</string>
+    <string name="confirm_yes_no">Bạn chắc chắn chứ?</string>
+    <string name="btn_cancel">Hủy</string>
 </resources>

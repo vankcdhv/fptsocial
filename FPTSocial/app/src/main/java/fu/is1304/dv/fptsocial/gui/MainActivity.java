@@ -133,6 +133,11 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
+    private void openWallActivity() {
+        Intent intent = new Intent(this, WallActivity.class);
+        startActivity(intent);
+    }
+
 
     private void loadFragment(Fragment fragment) {
         // load fragment

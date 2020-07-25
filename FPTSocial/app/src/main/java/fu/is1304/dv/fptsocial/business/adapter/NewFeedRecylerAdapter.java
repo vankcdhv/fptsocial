@@ -2,6 +2,7 @@ package fu.is1304.dv.fptsocial.business.adapter;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
@@ -36,6 +37,7 @@ import fu.is1304.dv.fptsocial.dao.callback.FirestoreDeleteDocCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
 import fu.is1304.dv.fptsocial.entity.Post;
 import fu.is1304.dv.fptsocial.entity.User;
+import fu.is1304.dv.fptsocial.gui.WallActivity;
 
 public class NewFeedRecylerAdapter extends RecyclerView.Adapter<NewFeedRecylerAdapter.DataViewHolder> {
     private List<Post> posts;
@@ -131,7 +133,7 @@ public class NewFeedRecylerAdapter extends RecyclerView.Adapter<NewFeedRecylerAd
                 holder.txtAuthor.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(context, user.getFirstName() + " " + user.getLastName(), Toast.LENGTH_LONG).show();
+                        eventListener.onAuthorClick(post.getUid());
                     }
                 });
                 holder.txtTitle.setOnClickListener(new View.OnClickListener() {
@@ -149,6 +151,16 @@ public class NewFeedRecylerAdapter extends RecyclerView.Adapter<NewFeedRecylerAd
                 }
                 if (post.getImage() != null) {
                     Glide.with(context).load(post.getImage()).into(holder.imgNewfeedImage);
+                    holder.imgNewfeedImage.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Dialog viewImage = new Dialog(context);
+                            viewImage.setContentView(R.layout.dialog_view_image);
+                            ImageView image = viewImage.findViewById(R.id.imgShowImage);
+                            Glide.with(context).load(holder.imgNewfeedImage.getDrawable()).into(image);
+                            viewImage.show();
+                        }
+                    });
                 }
             }
 
@@ -194,5 +206,7 @@ public class NewFeedRecylerAdapter extends RecyclerView.Adapter<NewFeedRecylerAd
         public void onClickDelete(Post post);
 
         public void onClickTitle(Post post);
+
+        public void onAuthorClick(String uid);
     }
 }

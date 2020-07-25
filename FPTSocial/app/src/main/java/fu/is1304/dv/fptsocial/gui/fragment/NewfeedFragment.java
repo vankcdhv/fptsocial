@@ -57,6 +57,7 @@ import fu.is1304.dv.fptsocial.entity.Friend;
 import fu.is1304.dv.fptsocial.entity.Notification;
 import fu.is1304.dv.fptsocial.entity.Post;
 import fu.is1304.dv.fptsocial.gui.PostDetailActivity;
+import fu.is1304.dv.fptsocial.gui.WallActivity;
 import fu.is1304.dv.fptsocial.gui.service.NotifyService;
 import fu.is1304.dv.fptsocial.gui.viewmodel.MainActivityViewModel;
 
@@ -185,7 +186,6 @@ public class NewfeedFragment extends Fragment {
                                     public void onComplete() {
                                         Toast.makeText(getActivity(), "Đã xóa!", Toast.LENGTH_SHORT).show();
                                         countPost--;
-                                        CountDAO.getInstance().setCount(Const.POST_COLLECTION, countPost);
                                         refreshList();
                                         changePaging();
                                     }
@@ -210,6 +210,13 @@ public class NewfeedFragment extends Fragment {
             public void onClickTitle(Post post) {
                 Intent intent = new Intent(getActivity(), PostDetailActivity.class);
                 intent.putExtra("post", post);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onAuthorClick(String uid) {
+                Intent intent = new Intent(getActivity(), WallActivity.class);
+                intent.putExtra("uid", uid);
                 startActivity(intent);
             }
         });
@@ -397,7 +404,7 @@ public class NewfeedFragment extends Fragment {
                 Toast.makeText(getActivity(), "Đã đăng bài thành công", Toast.LENGTH_SHORT).show();
                 postDialog.dismiss();
                 countPost++;
-                CountDAO.getInstance().setCount(Const.POST_COLLECTION, countPost);
+                //CountDAO.getInstance().setCount(Const.POST_COLLECTION, countPost);
                 refreshList();
                 changePaging();
                 initDialog();

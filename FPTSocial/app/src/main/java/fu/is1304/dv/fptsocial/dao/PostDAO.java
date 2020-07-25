@@ -104,7 +104,7 @@ public class PostDAO {
         }
     }
 
-    public void postStatus(Post post, final FirestoreSetCallback callback) {
+    public void postStatus(final Post post, final FirestoreSetCallback callback) {
         final DocumentReference reference = DataProvider.getInstance().getDatabase()
                 .collection(Const.POST_COLLECTION)
                 .document();
@@ -112,8 +112,30 @@ public class PostDAO {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        String postID = reference.getId();
-                        callback.onSuccess(postID);
+                        final String postID = reference.getId();
+                        CountDAO.getInstance().getCount(Const.POST_COLLECTION, new CountDAO.GetCountCallback() {
+                            @Override
+                            public void onComplete(long count) {
+                                CountDAO.getInstance().setCount(Const.POST_COLLECTION, (int) (count + 1));
+                                CountDAO.getInstance().getCount(Const.POST_COLLECTION + "_" + post.getUid(), new CountDAO.GetCountCallback() {
+                                    @Override
+                                    public void onComplete(long count) {
+                                        CountDAO.getInstance().setCount(Const.POST_COLLECTION + "_" + post.getUid(), (int) (count + 1));
+                                        callback.onSuccess(postID);
+                                    }
+
+                                    @Override
+                                    public void onFailed(Exception e) {
+
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onFailed(Exception e) {
+
+                            }
+                        });
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -143,7 +165,7 @@ public class PostDAO {
                 });
     }
 
-    public void deleteStatus(Post post, final FirestoreDeleteDocCallback callback) {
+    public void deleteStatus(final Post post, final FirestoreDeleteDocCallback callback) {
         DataProvider.getInstance().getDatabase()
                 .collection(Const.POST_COLLECTION)
                 .document(post.getId())
@@ -151,7 +173,30 @@ public class PostDAO {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        callback.onComplete();
+                        CountDAO.getInstance().getCount(Const.POST_COLLECTION, new CountDAO.GetCountCallback() {
+                            @Override
+                            public void onComplete(long count) {
+                                CountDAO.getInstance().setCount(Const.POST_COLLECTION, (int) (count - 1));
+                                CountDAO.getInstance().getCount(Const.POST_COLLECTION + "_" + post.getUid(), new CountDAO.GetCountCallback() {
+                                    @Override
+                                    public void onComplete(long count) {
+                                        CountDAO.getInstance().setCount(Const.POST_COLLECTION + "_" + post.getUid(), (int) (count - 1));
+                                        callback.onComplete();
+                                    }
+
+                                    @Override
+                                    public void onFailed(Exception e) {
+
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onFailed(Exception e) {
+
+                            }
+                        });
+
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -175,6 +220,30 @@ public class PostDAO {
                                 callback.onComplete(task.getResult());
                         } else {
                             callback.onFailure(task.getException());
+                        }
+                    }
+                });
+    }
+
+    public void getPostByUID(String uid, int limit, final FirebaseGetCollectionCallback callback) {
+        DataProvider.getInstance().getDatabase()
+                .collection(Const.POST_COLLECTION)
+                .orderBy("uid")
+                .orderBy("postDate", Query.Direction.DESCENDING)
+                .startAt(uid)
+                .limit(limit)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            List<QueryDocumentSnapshot> list = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                list.add(document);
+                            }
+                            callback.onComplete(list);
+                        } else {
+                            callback.onFailed(task.getException());
                         }
                     }
                 });

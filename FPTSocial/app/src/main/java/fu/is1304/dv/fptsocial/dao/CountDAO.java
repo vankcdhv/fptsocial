@@ -34,8 +34,12 @@ public class CountDAO {
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        if (documentSnapshot.getData() != null)
+                        if (documentSnapshot.getData() != null) {
                             callback.onComplete((long) documentSnapshot.getData().get("count"));
+                        } else {
+                            callback.onComplete(0);
+                        }
+
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
