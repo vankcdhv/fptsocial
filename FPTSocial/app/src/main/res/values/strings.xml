@@ -93,6 +93,11 @@
     <string name="confirm_yes_no">Are you sure?</string>
     <string name="btn_delete">Delete</string>
     <string name="btn_cancel">Cancel</string>
+    <string name="add_friend_complete">You have add him (her) to your list friend</string>
+    <string name="delete_friend_complete">Cancel friend complete</string>
+    <string name="must_input_text">You have to enter any text</string>
+    <string name="post">Post</string>
+    <string name="people">People</string>
     <!--
     This string is used for square devices and overridden by hello_world in
     values-round/strings.xml for round devices.

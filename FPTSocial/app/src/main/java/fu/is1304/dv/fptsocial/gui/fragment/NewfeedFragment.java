@@ -177,14 +177,14 @@ public class NewfeedFragment extends Fragment {
             @Override
             public void onClickDelete(final Post post) {
                 final AlertDialog.Builder confirmDialog = new AlertDialog.Builder(getContext());
-                confirmDialog.setMessage("Bạn chắc chắn muốn xóa?")
-                        .setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
+                confirmDialog.setMessage(R.string.confirm_yes_no)
+                        .setPositiveButton(R.string.btn_delete, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 PostDAO.getInstance().deleteStatus(post, new FirestoreDeleteDocCallback() {
                                     @Override
                                     public void onComplete() {
-                                        Toast.makeText(getActivity(), "Đã xóa!", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getActivity(), R.string.deleted, Toast.LENGTH_SHORT).show();
                                         countPost--;
                                         refreshList();
                                         changePaging();
@@ -192,12 +192,12 @@ public class NewfeedFragment extends Fragment {
 
                                     @Override
                                     public void onFailed(Exception e) {
-                                        Toast.makeText(getActivity(), "Xóa không thành công!", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getActivity(), R.string.have_error, Toast.LENGTH_SHORT).show();
                                     }
                                 });
                             }
                         })
-                        .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+                        .setNegativeButton(R.string.btn_cancel, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
@@ -353,7 +353,7 @@ public class NewfeedFragment extends Fragment {
         String content = txtPostContent.getText().toString();
         String uid = AuthController.getInstance().getUID();
         Date postDate = new Date();
-        Post post = new Post(uid, title, content, statusImage, postDate);
+        Post post = new Post(uid, title, content, statusImage, postDate, 0);
         if (statusImage != null) {
             uploadImage(post, Const.MODE_CREATE_STATUS);
         } else {
@@ -368,10 +368,10 @@ public class NewfeedFragment extends Fragment {
         String uid = AuthController.getInstance().getUID();
         Date postDate = post.getPostDate();
         if (statusImage != null && statusImage != oldImage) {
-            post = new Post(post.getId(), uid, title, content, statusImage, postDate);
+            post = new Post(post.getId(), uid, title, content, statusImage, postDate, post.getCountLike());
             uploadImage(post, Const.MODE_UPDATE_STATUS);
         } else {
-            post = new Post(post.getId(), uid, title, content, post.getImage(), postDate);
+            post = new Post(post.getId(), uid, title, content, post.getImage(), postDate, post.getCountLike());
             updateStatus(post);
         }
     }

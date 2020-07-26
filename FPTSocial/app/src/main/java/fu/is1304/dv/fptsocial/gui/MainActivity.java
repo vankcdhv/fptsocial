@@ -15,6 +15,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -44,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
     private MessengerFragment messengerFragment;
     private NotificationFragment notificationFragment;
     private ProfileFragment profileFragment;
+    private EditText txtSearchKey;
+    private ImageButton btnSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +60,13 @@ public class MainActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
         loadListFriend();
 
+        txtSearchKey = findViewById(R.id.txtSearchKey);
+
         newfeedFragment = new NewfeedFragment();
         messengerFragment = new MessengerFragment();
         notificationFragment = new NotificationFragment();
         profileFragment = new ProfileFragment();
         setToolbar();
-        //Init components
 
         if (AuthController.getInstance().getCurrentUser() == null) openLoginActivity();
         if (!AuthController.getInstance().getCurrentUser().isEmailVerified()) {
@@ -163,5 +168,16 @@ public class MainActivity extends AppCompatActivity {
     public void logout(View view) {
         AuthController.getInstance().signOut();
         openLoginActivity();
+    }
+
+    public void openSearchActivity(View view) {
+        String keyword = txtSearchKey.getText().toString();
+        if (keyword != null && keyword.length() > 0) {
+            Intent intent = new Intent(this, SearchActivity.class);
+            intent.putExtra("keyword", keyword);
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, R.string.must_input_text, Toast.LENGTH_LONG).show();
+        }
     }
 }

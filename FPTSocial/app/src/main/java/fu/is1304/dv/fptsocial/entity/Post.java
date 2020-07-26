@@ -11,25 +11,29 @@ public class Post implements Serializable {
     private String content;
     private String image;
     private Date postDate;
+    private long countLike;
 
     public Post() {
     }
 
-    public Post(String id, String uid, String title, String content, String image, Date postDate) {
+
+    public Post(String id, String uid, String title, String content, String image, Date postDate, long countLike) {
         this.id = id;
         this.uid = uid;
         this.title = title;
         this.content = content;
         this.image = image;
         this.postDate = postDate;
+        this.countLike = countLike;
     }
 
-    public Post(String uid, String title, String content, String image, Date postDate) {
+    public Post(String uid, String title, String content, String image, Date postDate, long countLike) {
         this.uid = uid;
         this.title = title;
         this.content = content;
         this.image = image;
         this.postDate = postDate;
+        this.countLike = countLike;
     }
 
     public String getId() {
@@ -78,5 +82,13 @@ public class Post implements Serializable {
 
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public long getCountLike() {
+        return countLike;
+    }
+
+    public void setCountLike(long countLike) {
+        this.countLike = countLike;
     }
 }

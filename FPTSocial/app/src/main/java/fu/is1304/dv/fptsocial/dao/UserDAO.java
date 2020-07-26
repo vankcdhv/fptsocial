@@ -11,10 +11,16 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+
+import java.util.ArrayList;
+import java.util.List;
 
 import fu.is1304.dv.fptsocial.business.AuthController;
 import fu.is1304.dv.fptsocial.common.Const;
+import fu.is1304.dv.fptsocial.dao.callback.FirebaseGetCollectionCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreSetCallback;
 import fu.is1304.dv.fptsocial.entity.User;
@@ -101,6 +107,28 @@ public class UserDAO {
                             firestoreGetCallback.onComplete(snapshot);
                         } else {
                             firestoreGetCallback.onFailure(e);
+                        }
+                    }
+                });
+    }
+
+    public void searchUserByName(final String keyword, final FirebaseGetCollectionCallback callback) {
+        DataProvider.getInstance().getDatabase()
+                .collection(Const.USER_COLLECTION)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            List<QueryDocumentSnapshot> list = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                if (document.getString("lastName").contains(keyword) || document.getString("firstName").contains(keyword)) {
+                                    list.add(document);
+                                }
+                            }
+                            callback.onComplete(list);
+                        } else {
+                            callback.onFailed(task.getException());
                         }
                     }
                 });

@@ -105,7 +105,7 @@
                     android:id="@+id/btnLikePost"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:background="@drawable/icon_like" />
+                    android:background="@drawable/icon_not_like" />
 
                 <TextView
                     android:id="@+id/labelCountLike"

@@ -87,4 +87,9 @@
     <string name="btn_delete">Xóa</string>
     <string name="confirm_yes_no">Bạn chắc chắn chứ?</string>
     <string name="btn_cancel">Hủy</string>
+    <string name="add_friend_complete">Bạn đã thêm người này vào danh sách bạn bè</string>
+    <string name="delete_friend_complete">Đã hủy bạn bè! Bạn sẽ không nhận được thông báo từ người này trong tương lai</string>
+    <string name="must_input_text">Bạn phải nhập vào để thực hiện hành động này</string>
+    <string name="post">Bài viết</string>
+    <string name="people">Mọi người</string>
 </resources>

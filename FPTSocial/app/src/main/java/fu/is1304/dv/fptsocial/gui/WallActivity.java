@@ -192,23 +192,42 @@ public class WallActivity extends AppCompatActivity {
         FriendDAO.getInstance().checkIsFriend(uid, new FirebaseGetCollectionCallback() {
             @Override
             public void onComplete(List<QueryDocumentSnapshot> documentSnapshots) {
+                boolean isFriend = false;
                 List<Friend> friendList = DatabaseUtils.convertListDocSnapToListFriend(documentSnapshots);
                 for (Friend friend : friendList) {
-                    if (friend.getUid().equals(uid)) {
-                        imgAddFriend.setImageDrawable(getDrawable(R.drawable.ic_action_mobile_friendly));
-                        imgAddFriend.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-                            }
-                        });
+                    if (friend.getUid().equals(AuthController.getInstance().getUID())) {
+                        isFriend = true;
+                        setCancelFriend();
                     }
+                }
+                if (!isFriend) {
+                    setAddFriend();
                 }
             }
 
             @Override
             public void onFailed(Exception e) {
 
+            }
+        });
+    }
+
+    private void setAddFriend() {
+        imgAddFriend.setImageDrawable(getDrawable(R.drawable.ic_action_person_add));
+        imgAddFriend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addFriend();
+            }
+        });
+    }
+
+    private void setCancelFriend() {
+        imgAddFriend.setImageDrawable(getDrawable(R.drawable.ic_action_mobile_friendly));
+        imgAddFriend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cancelFriend();
             }
         });
     }
@@ -269,10 +288,10 @@ public class WallActivity extends AppCompatActivity {
         String uid = AuthController.getInstance().getUID();
         Date postDate = post.getPostDate();
         if (statusImage != null && statusImage != oldImage) {
-            post = new Post(post.getId(), uid, title, content, statusImage, postDate);
+            post = new Post(post.getId(), uid, title, content, statusImage, postDate, post.getCountLike());
             uploadImage(post);
         } else {
-            post = new Post(post.getId(), uid, title, content, post.getImage(), postDate);
+            post = new Post(post.getId(), uid, title, content, post.getImage(), postDate, post.getCountLike());
             updateStatus(post);
         }
     }
@@ -351,8 +370,34 @@ public class WallActivity extends AppCompatActivity {
     }
 
 
-    private void addFriend(){
+    private void addFriend() {
+        FriendDAO.getInstance().addFriend(uid, new FirestoreSetCallback() {
+            @Override
+            public void onSuccess(String id) {
+                Toast.makeText(WallActivity.this, R.string.add_friend_complete, Toast.LENGTH_LONG).show();
+                setCancelFriend();
+            }
 
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(WallActivity.this, R.string.have_error, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void cancelFriend() {
+        FriendDAO.getInstance().deleteFriend(uid, new FirestoreSetCallback() {
+            @Override
+            public void onSuccess(String id) {
+                Toast.makeText(WallActivity.this, R.string.delete_friend_complete, Toast.LENGTH_LONG).show();
+                setAddFriend();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(WallActivity.this, R.string.have_error, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 }

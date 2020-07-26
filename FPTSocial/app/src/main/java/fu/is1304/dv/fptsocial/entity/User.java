@@ -2,9 +2,11 @@ package fu.is1304.dv.fptsocial.entity;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.io.Serializable;
+
 
 @IgnoreExtraProperties
-public class User {
+public class User implements Serializable {
     private String uid;
     private String firstName;
     private String lastName;

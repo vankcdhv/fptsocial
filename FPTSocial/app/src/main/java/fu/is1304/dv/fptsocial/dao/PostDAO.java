@@ -18,12 +18,14 @@ import java.util.List;
 
 import fu.is1304.dv.fptsocial.business.AuthController;
 import fu.is1304.dv.fptsocial.common.Const;
+import fu.is1304.dv.fptsocial.common.DatabaseUtils;
 import fu.is1304.dv.fptsocial.dao.callback.FirebaseGetCollectionCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreDeleteDocCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreSetCallback;
 import fu.is1304.dv.fptsocial.entity.Notification;
 import fu.is1304.dv.fptsocial.entity.Post;
+import fu.is1304.dv.fptsocial.entity.User;
 
 public class PostDAO {
     private static PostDAO instance;
@@ -248,4 +250,44 @@ public class PostDAO {
                     }
                 });
     }
+
+    public void searchPost(final String keyword, final FirebaseGetCollectionCallback callback) {
+        DataProvider.getInstance().getDatabase()
+                .collection(Const.POST_COLLECTION)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull final Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            final List<QueryDocumentSnapshot> list = new ArrayList<>();
+                            final List<DocumentSnapshot> documentSnapshotList = task.getResult().getDocuments();
+                            for (final DocumentSnapshot document : documentSnapshotList) {
+                                String uid = document.getString("uid");
+                                UserDAO.getInstance().getUserByUID(uid, new FirestoreGetCallback() {
+                                    @Override
+                                    public void onComplete(DocumentSnapshot documentSnapshot) {
+                                        User user = DatabaseUtils.convertDocumentSnapshotToUser(documentSnapshot);
+                                        if (document.getString("title").contains(keyword) || document.getString("content").contains(keyword)
+                                                || user.getLastName().contains(keyword) || user.getFirstName().contains(keyword)) {
+                                            list.add((QueryDocumentSnapshot) document);
+                                        }
+                                        if (document.equals(documentSnapshotList.get(documentSnapshotList.size() - 1)))
+                                            callback.onComplete(list);
+                                    }
+
+                                    @Override
+                                    public void onFailure(Exception e) {
+                                        callback.onFailed(task.getException());
+
+                                    }
+                                });
+                            }
+                        } else {
+                            callback.onFailed(task.getException());
+                        }
+                    }
+                });
+    }
+
+
 }

@@ -28,6 +28,16 @@ public class DatabaseUtils {
         return user;
     }
 
+    //Convert document snapshot to User
+    public static List<User> convertListDocumentSnapshotToListUser(List<QueryDocumentSnapshot> documentSnapshots) {
+        final List<User> list = new ArrayList<>();
+        for (final QueryDocumentSnapshot snapshot : documentSnapshots) {
+            list.add(convertDocumentSnapshotToUser(snapshot));
+        }
+
+        return list;
+    }
+
     //Convert document snapshot to Post
     public static Post convertDocumentSnapshotToPost(DocumentSnapshot result) {
         Post post;
@@ -37,7 +47,8 @@ public class DatabaseUtils {
         String image = (String) result.getData().get("image");
         Date postDate = ((Timestamp) result.getData().get("postDate")).toDate();
         String uid = (String) result.getData().get("uid");
-        post = new Post(id, uid, title, content, image, postDate);
+        long countLike = (long) result.getData().get("countLike");
+        post = new Post(id, uid, title, content, image, postDate, countLike);
 
         return post;
     }

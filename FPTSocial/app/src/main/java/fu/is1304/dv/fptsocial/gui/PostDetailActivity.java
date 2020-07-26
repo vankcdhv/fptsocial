@@ -33,7 +33,9 @@ import fu.is1304.dv.fptsocial.common.Const;
 import fu.is1304.dv.fptsocial.common.DatabaseUtils;
 import fu.is1304.dv.fptsocial.dao.CommentDAO;
 import fu.is1304.dv.fptsocial.dao.CountDAO;
+import fu.is1304.dv.fptsocial.dao.LikeDAO;
 import fu.is1304.dv.fptsocial.dao.NotificationDAO;
+import fu.is1304.dv.fptsocial.dao.PostDAO;
 import fu.is1304.dv.fptsocial.dao.UserDAO;
 import fu.is1304.dv.fptsocial.dao.callback.FirebaseGetCollectionCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreDeleteDocCallback;
@@ -47,7 +49,7 @@ import fu.is1304.dv.fptsocial.entity.User;
 
 public class PostDetailActivity extends AppCompatActivity {
 
-    private TextView txtTitle, txtContent, txtAuthor, txtTime;
+    private TextView txtTitle, txtContent, txtAuthor, txtTime, labelCountLike;
     private ImageView imgSmallAva, imgStatusImage, btnStatusMenu;
     private ImageButton btnLikePost, btnSendComment;
     private EditText txtCreateComment;
@@ -77,12 +79,15 @@ public class PostDetailActivity extends AppCompatActivity {
         btnLikePost = findViewById(R.id.btnLikePost);
         btnSendComment = findViewById(R.id.btnSendComment);
         txtCreateComment = findViewById(R.id.txtCreateComment);
+        labelCountLike = findViewById(R.id.labelCountLike);
 
         comments = new ArrayList<>();
         commentRecyclerAdapter = new CommentRecyclerAdapter(this, comments, new CommentRecyclerAdapter.OnEventListener() {
             @Override
             public void onClickUsername(User user) {
-
+                Intent intent = new Intent(PostDetailActivity.this, WallActivity.class);
+                intent.putExtra("uid", user.getUid());
+                startActivity(intent);
             }
 
             @Override
@@ -96,6 +101,39 @@ public class PostDetailActivity extends AppCompatActivity {
         recyclerViewComment.setAdapter(commentRecyclerAdapter);
         data = getIntent();
         loadData();
+    }
+
+    public void btnLike(View view) {
+        LikeDAO.getInstance().likePost(currentPost.getId(), new FirestoreSetCallback() {
+            @Override
+            public void onSuccess(String id) {
+                int count = Integer.parseInt(id.trim());
+                currentPost.setCountLike(count);
+                labelCountLike.setText(id.trim());
+                btnLikePost.setBackground(getDrawable(R.drawable.icon_like));
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+
+            }
+        });
+    }
+    public void btnUnLike(View view) {
+        LikeDAO.getInstance().likePost(currentPost.getId(), new FirestoreSetCallback() {
+            @Override
+            public void onSuccess(String id) {
+                int count = Integer.parseInt(id.trim());
+                currentPost.setCountLike(count);
+                labelCountLike.setText(id.trim());
+                btnLikePost.setBackground(getDrawable(R.drawable.icon_like));
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+
+            }
+        });
     }
 
     private void loadData() {
@@ -145,6 +183,35 @@ public class PostDetailActivity extends AppCompatActivity {
                         //eventListener.onClickTitle(post);
                     }
                 });
+                LikeDAO.getInstance().checkIsLikePost(AuthController.getInstance().getUID(), currentPost.getId(), new FirebaseGetCollectionCallback() {
+                    @Override
+                    public void onComplete(List<QueryDocumentSnapshot> documentSnapshots) {
+                        if (documentSnapshots.size() > 0 && documentSnapshots.get(0).getBoolean("liked")) {
+                            btnLikePost.setBackground(getDrawable(R.drawable.icon_like));
+                            btnLikePost.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                }
+                            });
+                        } else {
+                            btnLikePost.setBackground(getDrawable(R.drawable.icon_not_like));
+                            btnLikePost.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    btnLike(v);
+                                }
+                            });
+                        }
+                    }
+
+
+                    @Override
+                    public void onFailed(Exception e) {
+
+                    }
+                });
+                labelCountLike.setText(currentPost.getCountLike() + "");
                 if (user.getAvatar() == null) {
                     if (user.getGender() == (getString(R.string.female))) {
                         imgSmallAva.setImageDrawable(getDrawable(R.drawable.nu));
@@ -164,7 +231,9 @@ public class PostDetailActivity extends AppCompatActivity {
 
             }
         });
+
         getListComment(post);
+
     }
 
     private void clearListComment() {
