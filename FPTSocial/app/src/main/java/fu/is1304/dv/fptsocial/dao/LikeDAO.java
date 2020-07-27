@@ -119,12 +119,12 @@ public class LikeDAO {
                     @Override
                     public void onComplete(List<QueryDocumentSnapshot> documentSnapshots) {
                         if (!(documentSnapshots == null || documentSnapshots.size() == 0 || !documentSnapshots.get(0).getBoolean("liked"))) {
-                            post.setCountLike(post.getCountLike() - 2);
+                            post.setCountLike(post.getCountLike() - 1);
                             PostDAO.getInstance().updatePost(post, new FirestoreSetCallback() {
                                 @Override
                                 public void onSuccess(String id) {
                                     Map<String, Boolean> object = new HashMap<>();
-                                    object.put("liked", true);
+                                    object.put("liked", false);
                                     DataProvider.getInstance().getDatabase()
                                             .collection(Const.POST_LIKE_COLLECTION)
                                             .document(postID)

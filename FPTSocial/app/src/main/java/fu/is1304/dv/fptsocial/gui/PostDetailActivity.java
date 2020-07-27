@@ -111,6 +111,12 @@ public class PostDetailActivity extends AppCompatActivity {
                 currentPost.setCountLike(count);
                 labelCountLike.setText(id.trim());
                 btnLikePost.setBackground(getDrawable(R.drawable.icon_like));
+                btnLikePost.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        btnUnLike(v);
+                    }
+                });
             }
 
             @Override
@@ -119,14 +125,21 @@ public class PostDetailActivity extends AppCompatActivity {
             }
         });
     }
+
     public void btnUnLike(View view) {
-        LikeDAO.getInstance().likePost(currentPost.getId(), new FirestoreSetCallback() {
+        LikeDAO.getInstance().unLikePost(currentPost.getId(), new FirestoreSetCallback() {
             @Override
             public void onSuccess(String id) {
                 int count = Integer.parseInt(id.trim());
                 currentPost.setCountLike(count);
                 labelCountLike.setText(id.trim());
-                btnLikePost.setBackground(getDrawable(R.drawable.icon_like));
+                btnLikePost.setBackground(getDrawable(R.drawable.icon_not_like));
+                btnLikePost.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        btnLike(v);
+                    }
+                });
             }
 
             @Override
@@ -191,7 +204,7 @@ public class PostDetailActivity extends AppCompatActivity {
                             btnLikePost.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-
+                                    btnUnLike(v);
                                 }
                             });
                         } else {
