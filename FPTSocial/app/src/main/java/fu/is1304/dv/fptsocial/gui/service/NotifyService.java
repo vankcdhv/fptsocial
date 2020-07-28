@@ -95,7 +95,6 @@ public class NotifyService extends Service {
     }
 
     private void createNotify(final Notification notification) {
-//        final Notification notification = new Notification(Const.POST_NOTIFICATION_TITLE, "Vừa đăng một trạng thái mới!", new Date(), "7Gr8EJCHFAaLrFYxz4OsenGKxoH2", "cvcNP8fMrnwVpKyoXCLA", false);
         UserDAO.getInstance().getUserByUID(notification.getUid(), new FirestoreGetCallback() {
             @Override
             public void onComplete(DocumentSnapshot documentSnapshot) {
@@ -152,6 +151,8 @@ public class NotifyService extends Service {
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel(Const.CHANEL_ID, name, importance);
             channel.setDescription(description);
+            channel.enableVibration(true);
+            channel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }

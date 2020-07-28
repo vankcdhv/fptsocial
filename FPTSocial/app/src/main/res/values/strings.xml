@@ -55,7 +55,7 @@
     <string name="logout">Logout</string>
 
     <string name="title_newfeed">News</string>
-    <string name="title_message">Message</string>
+    <string name="title_message">Chat</string>
     <string name="title_notification">Notification</string>
     <string name="title_profile">Profile</string>
 
@@ -98,6 +98,7 @@
     <string name="must_input_text">You have to enter any text</string>
     <string name="post">Post</string>
     <string name="people">People</string>
+    <string name="notify_like_your_post">like your status</string>
     <!--
     This string is used for square devices and overridden by hello_world in
     values-round/strings.xml for round devices.

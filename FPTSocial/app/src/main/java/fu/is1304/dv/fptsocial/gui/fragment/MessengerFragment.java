@@ -3,13 +3,33 @@ package fu.is1304.dv.fptsocial.gui.fragment;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import fu.is1304.dv.fptsocial.R;
+import fu.is1304.dv.fptsocial.business.adapter.FriendMessageAdapter;
+import fu.is1304.dv.fptsocial.common.DatabaseUtils;
+import fu.is1304.dv.fptsocial.dao.MessageDAO;
+import fu.is1304.dv.fptsocial.dao.callback.FirebaseGetCollectionCallback;
+import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
+import fu.is1304.dv.fptsocial.entity.FriendMessage;
+import fu.is1304.dv.fptsocial.entity.Message;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,7 +48,9 @@ public class MessengerFragment extends Fragment {
     private String mParam2;
 
     //Variable
-    private ListView lvMessage;
+    private List<FriendMessage> listFriendMessage;
+    private RecyclerView recyclerView;
+    private FriendMessageAdapter friendMessageAdapter;
 
     public MessengerFragment() {
         // Required empty public constructor
@@ -70,8 +92,64 @@ public class MessengerFragment extends Fragment {
         return v;
     }
 
-    public void init(View v){
+    public void init(View v) {
 
+        recyclerView = v.findViewById(R.id.recyclerListFriendMessage);
+
+        //Init adapter for recyclerview
+        listFriendMessage = new ArrayList<>();
+        friendMessageAdapter = new FriendMessageAdapter(getContext(), listFriendMessage, new FriendMessageAdapter.OnEventListener() {
+            @Override
+            public void onClickMessage(FriendMessage friendMessage) {
+                Toast.makeText(getContext(), friendMessage.getLastestMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setAdapter(friendMessageAdapter);
+
+        getData();
+    }
+
+    public void getData() {
+        MessageDAO.getInstance().getListFriendMessage(new FirestoreGetCallback() {
+            @Override
+            public void onComplete(DocumentSnapshot documentSnapshot) {
+                final List<String> listPeople = new ArrayList<>();
+                listPeople.addAll((Collection<? extends String>) documentSnapshot.getData().get("list"));
+                for (final String uid : listPeople) {
+                    MessageDAO.getInstance().getLastMessageByUID(uid, new FirebaseGetCollectionCallback() {
+                        @Override
+                        public void onComplete(List<QueryDocumentSnapshot> documentSnapshots) {
+                            List<Message> messages = DatabaseUtils.convertListDocSnapToListMessage(documentSnapshots);
+                            for (Message message : messages) {
+                                if (message.getUid().equals(uid)) {
+                                    FriendMessage friendMessage = new FriendMessage();
+                                    friendMessage.setUid(uid);
+                                    friendMessage.setLastestMessage(message.getContent());
+                                    friendMessage.setTime(message.getTimeSend());
+                                    listFriendMessage.add(friendMessage);
+                                    if (uid.equals(listPeople.get(listPeople.size() - 1))) {
+                                        friendMessageAdapter.notifyDataSetChanged();
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailed(Exception e) {
+
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+
+            }
+        });
     }
 
 

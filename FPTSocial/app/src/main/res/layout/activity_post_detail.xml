@@ -73,16 +73,15 @@
             app:layout_constraintTop_toTopOf="@+id/txtDetailNewfeedAuthor"
             app:srcCompat="@drawable/ic_action_menu" />
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imgDetailSmallAva"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:src="@drawable/nam"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/nam"
-            tools:srcCompat="@drawable/nam" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <RelativeLayout
             android:id="@+id/layoutComment"
@@ -121,9 +120,9 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layoutAddComment"
                 android:layout_width="match_parent"
-                android:layout_marginTop="5dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/layoutReact">
+                android:layout_below="@+id/layoutReact"
+                android:layout_marginTop="5dp">
 
                 <EditText
                     android:id="@+id/txtCreateComment"

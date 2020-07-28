@@ -88,7 +88,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
-                android:text="@string/remember_me" />
+                android:text="@string/remember_me"
+                android:textColor="@color/fullwhite" />
 
             <TextView
                 android:id="@+id/labelLoginForgotPass"
@@ -99,6 +100,7 @@
                 android:onClick="lableForgotPassClick"
                 android:text="@string/label_forget_pass"
                 android:textAlignment="textEnd"
+                android:textColor="@color/fullwhite"
                 tools:ignore="RtlCompat" />
 
             <Button

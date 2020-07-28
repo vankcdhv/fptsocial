@@ -5,8 +5,8 @@
     android:id="@+id/layoutNewFeedItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/status_item_background"
-    android:layout_marginTop="10dp">
+    android:layout_marginTop="10dp"
+    android:background="@drawable/status_item_background">
 
     <TextView
         android:id="@+id/txtNewfeedTitle"
@@ -70,15 +70,15 @@
         app:layout_constraintTop_toTopOf="@+id/txtNewfeedAuthor"
         app:srcCompat="@drawable/ic_action_menu" />
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imgSmallAva"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:src="@drawable/nam"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/nam"
         tools:srcCompat="@drawable/nam" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

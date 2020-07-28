@@ -92,4 +92,5 @@
     <string name="must_input_text">Bạn phải nhập vào để thực hiện hành động này</string>
     <string name="post">Bài viết</string>
     <string name="people">Mọi người</string>
+    <string name="notify_like_your_post">thích bài viết của bạn</string>
 </resources>

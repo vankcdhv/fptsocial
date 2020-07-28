@@ -25,6 +25,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import fu.is1304.dv.fptsocial.R;
 import fu.is1304.dv.fptsocial.business.AuthController;
 import fu.is1304.dv.fptsocial.common.DatabaseUtils;
@@ -183,7 +184,7 @@ public class NewFeedRecylerAdapter extends RecyclerView.Adapter<NewFeedRecylerAd
         TextView txtContent;
         ImageView imgNewfeedImage;
         TextView txtTime;
-        ImageView imgAva;
+        CircleImageView imgAva;
         ImageButton btnMenu;
         ConstraintLayout layoutItem;
 

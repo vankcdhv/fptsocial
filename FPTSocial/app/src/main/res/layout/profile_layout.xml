@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/darker_gray"
+    android:padding="5dp"
+    tools:context=".gui.WallActivity">
+
+
+    <ProgressBar
+        android:id="@+id/progressBarProfileLoading"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:translationZ="90dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/scrollView2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@drawable/area_wall"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imgAvatar"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:src="@drawable/nam" />
+
+        <TextView
+            android:id="@+id/labelFullName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="monospace"
+            android:text=""
+            android:textAlignment="center"
+            android:textColor="@color/blackcolor"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/scrollView2">
+
+        <ScrollView
+            android:id="@+id/scrollviewInfo"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/area_wall"
+            app:layout_constraintBottom_toTopOf="@+id/layoutButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:padding="20dp">
+
+                <EditText
+                    android:id="@+id/etLastname"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="32dp"
+                    android:background="@drawable/textview_border"
+                    android:ems="10"
+                    android:hint="@string/last_name"
+                    android:inputType="textPersonName"
+                    android:paddingLeft="10dp"
+                    android:textColor="@color/blackcolor"
+                    app:layout_constraintEnd_toEndOf="@+id/etFirstname"
+                    app:layout_constraintStart_toStartOf="@+id/etFirstname"
+                    app:layout_constraintTop_toBottomOf="@+id/etFirstname" />
+
+                <EditText
+                    android:id="@+id/etFirstname"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="32dp"
+                    android:background="@drawable/textview_border"
+                    android:ems="10"
+                    android:hint="@string/first_name"
+                    android:inputType="textPersonName"
+                    android:paddingLeft="10dp"
+                    android:textColor="@color/blackcolor"
+                    app:layout_constraintEnd_toEndOf="@+id/etCourse"
+                    app:layout_constraintStart_toStartOf="@+id/etCourse"
+                    app:layout_constraintTop_toBottomOf="@+id/etCourse" />
+
+                <EditText
+                    android:id="@+id/etCourse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/textview_border"
+                    android:ems="10"
+                    android:hint="K?"
+                    android:inputType="numberDecimal"
+                    android:paddingLeft="10dp"
+                    android:textColor="@color/blackcolor"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/etDob"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="32dp"
+                    android:background="@drawable/textview_border"
+                    android:ems="10"
+                    android:gravity="center_vertical"
+                    android:hint="@string/dob"
+                    android:inputType="textPersonName"
+                    android:paddingLeft="10dp"
+                    android:textColor="@color/blackcolor"
+                    app:layout_constraintEnd_toEndOf="@+id/edMajor"
+                    app:layout_constraintStart_toStartOf="@+id/edMajor"
+                    app:layout_constraintTop_toBottomOf="@+id/edMajor" />
+
+
+                <Spinner
+                    android:id="@+id/edMajor"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="32dp"
+                    android:background="@drawable/textview_border"
+                    android:ems="10"
+                    android:hint="@string/major"
+                    android:inputType="textPersonName"
+                    android:paddingLeft="10dp"
+                    android:textColor="@color/blackcolor"
+                    app:layout_constraintEnd_toEndOf="@+id/etLastname"
+                    app:layout_constraintStart_toStartOf="@+id/spinnerGender"
+                    app:layout_constraintTop_toBottomOf="@+id/spinnerGender" />
+
+                <Spinner
+                    android:id="@+id/spinnerGender"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="32dp"
+                    android:background="@drawable/textview_border"
+                    app:layout_constraintEnd_toEndOf="@+id/etLastname"
+                    app:layout_constraintStart_toStartOf="@+id/etLastname"
+                    app:layout_constraintTop_toBottomOf="@+id/etLastname" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/area_wall"
+            android:padding="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/scrollviewInfo">
+
+            <Button
+                android:id="@+id/btnProfileSave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/joinbtn"
+                android:text="@string/save"
+                android:textColor="@color/blackcolor"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btnLogout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/btnLogout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/joinbtn"
+                android:text="@string/logout"
+                android:textColor="@color/blackcolor"
+                app:layout_constraintBottom_toBottomOf="@+id/btnProfileSave"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/btnProfileSave"
+                app:layout_constraintTop_toTopOf="@+id/btnProfileSave" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

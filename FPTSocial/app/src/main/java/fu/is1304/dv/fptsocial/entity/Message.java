@@ -4,27 +4,46 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class Message implements Serializable {
-    private String sentUserId;
+    private String id;
+
+
+    private String uid;
     private String content;
-    private Date timeSent;
-    private boolean isSend;
+    private Date timeSend;
+    private boolean send;
 
     public Message() {
     }
 
     public Message(String sentUserId, String content, Date timeSent, boolean isSend) {
-        this.sentUserId = sentUserId;
+        this.uid = sentUserId;
         this.content = content;
-        this.timeSent = timeSent;
-        this.isSend = isSend;
+        this.timeSend = timeSent;
+        this.send = isSend;
     }
 
-    public String getSentUserId() {
-        return sentUserId;
+    public Message(String id, String uid, String content, Date timeSend, boolean send) {
+        this.id = id;
+        this.uid = uid;
+        this.content = content;
+        this.timeSend = timeSend;
+        this.send = send;
     }
 
-    public void setSentUserId(String sentUserId) {
-        this.sentUserId = sentUserId;
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getContent() {
@@ -35,19 +54,19 @@ public class Message implements Serializable {
         this.content = content;
     }
 
-    public Date getTimeSent() {
-        return timeSent;
+    public Date getTimeSend() {
+        return timeSend;
     }
 
-    public void setTimeSent(Date timeSent) {
-        this.timeSent = timeSent;
+    public void setTimeSend(Date timeSend) {
+        this.timeSend = timeSend;
     }
 
     public boolean isSend() {
-        return isSend;
+        return send;
     }
 
     public void setSend(boolean send) {
-        isSend = send;
+        this.send = send;
     }
 }

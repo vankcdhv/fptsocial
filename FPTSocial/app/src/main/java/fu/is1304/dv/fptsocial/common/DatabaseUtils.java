@@ -15,6 +15,7 @@ import fu.is1304.dv.fptsocial.dao.UserDAO;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
 import fu.is1304.dv.fptsocial.entity.Comment;
 import fu.is1304.dv.fptsocial.entity.Friend;
+import fu.is1304.dv.fptsocial.entity.Message;
 import fu.is1304.dv.fptsocial.entity.Notification;
 import fu.is1304.dv.fptsocial.entity.FriendMessage;
 import fu.is1304.dv.fptsocial.entity.Post;
@@ -63,21 +64,6 @@ public class DatabaseUtils {
         return list;
     }
 
-    //Convert DocumentSnapshot To FriendMessage
-    public static FriendMessage convertDocumentSnapshotToFriendMessage(DocumentSnapshot result) {
-        FriendMessage fm;
-        String uid = result.getId();
-        fm = new FriendMessage(uid, "");
-        return fm;
-    }
-
-    public static List<FriendMessage> convertListDocSnapToListFriendMessage(List<QueryDocumentSnapshot> documentSnapshots) {
-        final List<FriendMessage> list = new ArrayList<>();
-        for (final QueryDocumentSnapshot snapshot : documentSnapshots) {
-            list.add(convertDocumentSnapshotToFriendMessage(snapshot));
-        }
-        return list;
-    }
 
     //Convert document snapshot to Notification
     public static Notification convertDocumentSnapshotToNotification(DocumentSnapshot result) {
@@ -145,6 +131,28 @@ public class DatabaseUtils {
         final List<Comment> list = new ArrayList<>();
         for (final QueryDocumentSnapshot snapshot : documentSnapshots) {
             list.add(convertDocumentSnapshotToComment(snapshot));
+        }
+
+        return list;
+    }
+
+    //Convert document snapshot to Message
+    public static Message convertDocumentSnapshotToMessage(DocumentSnapshot result) {
+        Message message;
+        String id = result.getId();
+        String content = (String) result.getData().get("content");
+        Date time = ((Timestamp) result.getData().get("timeSend")).toDate();
+        String uid = (String) result.getData().get("uid");
+        boolean send = (boolean) result.getData().get("send");
+        message = new Message(id, uid, content, time, send);
+        return message;
+    }
+
+    //Convert list Query document snapshot to list Message
+    public static List<Message> convertListDocSnapToListMessage(List<QueryDocumentSnapshot> documentSnapshots) {
+        final List<Message> list = new ArrayList<>();
+        for (final QueryDocumentSnapshot snapshot : documentSnapshots) {
+            list.add(convertDocumentSnapshotToMessage(snapshot));
         }
 
         return list;

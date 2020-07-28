@@ -58,7 +58,7 @@ public class LikeDAO {
     public void likePost(final String postID, final FirestoreSetCallback callback) {
         PostDAO.getInstance().getPostByID(postID, new FirestoreGetCallback() {
             @Override
-            public void onComplete(DocumentSnapshot documentSnapshot) {
+            public void onComplete(final DocumentSnapshot documentSnapshot) {
                 final Post post = DatabaseUtils.convertDocumentSnapshotToPost(documentSnapshot);
                 checkIsLikePost(AuthController.getInstance().getUID(), postID, new FirebaseGetCollectionCallback() {
                     @Override
@@ -119,7 +119,7 @@ public class LikeDAO {
                     @Override
                     public void onComplete(List<QueryDocumentSnapshot> documentSnapshots) {
                         if (!(documentSnapshots == null || documentSnapshots.size() == 0 || !documentSnapshots.get(0).getBoolean("liked"))) {
-                            post.setCountLike(post.getCountLike() - 1);
+                            post.setCountLike(post.getCountLike() - 2);
                             PostDAO.getInstance().updatePost(post, new FirestoreSetCallback() {
                                 @Override
                                 public void onSuccess(String id) {

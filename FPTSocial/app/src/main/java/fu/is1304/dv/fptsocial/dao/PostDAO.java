@@ -218,7 +218,7 @@ public class PostDAO {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
-                            if (task.getResult() != null)
+                            if (task.getResult() != null && task.getResult().getData() != null)
                                 callback.onComplete(task.getResult());
                         } else {
                             callback.onFailure(task.getException());
@@ -228,6 +228,7 @@ public class PostDAO {
     }
 
     public void getPostByUID(String uid, int limit, final FirebaseGetCollectionCallback callback) {
+        if (limit < 1) return;
         DataProvider.getInstance().getDatabase()
                 .collection(Const.POST_COLLECTION)
                 .orderBy("uid")

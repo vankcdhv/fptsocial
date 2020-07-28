@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import fu.is1304.dv.fptsocial.R;
 import fu.is1304.dv.fptsocial.business.AuthController;
 import fu.is1304.dv.fptsocial.business.adapter.CommentRecyclerAdapter;
@@ -50,7 +51,8 @@ import fu.is1304.dv.fptsocial.entity.User;
 public class PostDetailActivity extends AppCompatActivity {
 
     private TextView txtTitle, txtContent, txtAuthor, txtTime, labelCountLike;
-    private ImageView imgSmallAva, imgStatusImage, btnStatusMenu;
+    private ImageView imgStatusImage, btnStatusMenu, btnAddFriend, btnViewImage;
+    private CircleImageView imgSmallAva;
     private ImageButton btnLikePost, btnSendComment;
     private EditText txtCreateComment;
     private Intent data;
@@ -81,6 +83,7 @@ public class PostDetailActivity extends AppCompatActivity {
         txtCreateComment = findViewById(R.id.txtCreateComment);
         labelCountLike = findViewById(R.id.labelCountLike);
 
+
         comments = new ArrayList<>();
         commentRecyclerAdapter = new CommentRecyclerAdapter(this, comments, new CommentRecyclerAdapter.OnEventListener() {
             @Override
@@ -104,11 +107,12 @@ public class PostDetailActivity extends AppCompatActivity {
     }
 
     public void btnLike(View view) {
+        btnLikePost.setEnabled(false);
         LikeDAO.getInstance().likePost(currentPost.getId(), new FirestoreSetCallback() {
             @Override
             public void onSuccess(String id) {
                 int count = Integer.parseInt(id.trim());
-                currentPost.setCountLike(count);
+                currentPost.setCountLike((long) count);
                 labelCountLike.setText(id.trim());
                 btnLikePost.setBackground(getDrawable(R.drawable.icon_like));
                 btnLikePost.setOnClickListener(new View.OnClickListener() {
@@ -117,21 +121,24 @@ public class PostDetailActivity extends AppCompatActivity {
                         btnUnLike(v);
                     }
                 });
+                btnLikePost.setEnabled(true);
+                makeNotify(getString(R.string.notify_like_your_post));
             }
 
             @Override
             public void onFailure(Exception e) {
-
+                btnLikePost.setEnabled(true);
             }
         });
     }
 
     public void btnUnLike(View view) {
+        btnLikePost.setEnabled(false);
         LikeDAO.getInstance().unLikePost(currentPost.getId(), new FirestoreSetCallback() {
             @Override
             public void onSuccess(String id) {
                 int count = Integer.parseInt(id.trim());
-                currentPost.setCountLike(count);
+                currentPost.setCountLike((long) count);
                 labelCountLike.setText(id.trim());
                 btnLikePost.setBackground(getDrawable(R.drawable.icon_not_like));
                 btnLikePost.setOnClickListener(new View.OnClickListener() {
@@ -140,11 +147,12 @@ public class PostDetailActivity extends AppCompatActivity {
                         btnLike(v);
                     }
                 });
+                btnLikePost.setEnabled(true);
             }
 
             @Override
             public void onFailure(Exception e) {
-
+                btnLikePost.setEnabled(true);
             }
         });
     }
@@ -288,7 +296,7 @@ public class PostDetailActivity extends AppCompatActivity {
                     commentRecyclerAdapter.notifyDataSetChanged();
                     txtCreateComment.setEnabled(true);
                     txtCreateComment.setText("");
-                    makeNotify();
+                    makeNotify(getString(R.string.notify_comment_your_post));
                 }
 
                 @Override
@@ -314,9 +322,9 @@ public class PostDetailActivity extends AppCompatActivity {
         });
     }
 
-    private void makeNotify() {
+    private void makeNotify(String message) {
+        if (AuthController.getInstance().getUID().equals(currentPost.getUid())) return;
         String title = Const.POST_NOTIFICATION_TITLE;
-        String message = getString(R.string.notify_comment_your_post);
         Date time = new Date();
         String uid = AuthController.getInstance().getUID();
         Boolean seen = false;

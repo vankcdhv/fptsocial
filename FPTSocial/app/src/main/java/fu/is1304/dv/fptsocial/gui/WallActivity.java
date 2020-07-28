@@ -34,6 +34,7 @@ import fu.is1304.dv.fptsocial.common.Const;
 import fu.is1304.dv.fptsocial.common.DatabaseUtils;
 import fu.is1304.dv.fptsocial.dao.CountDAO;
 import fu.is1304.dv.fptsocial.dao.FriendDAO;
+import fu.is1304.dv.fptsocial.dao.NotificationDAO;
 import fu.is1304.dv.fptsocial.dao.PostDAO;
 import fu.is1304.dv.fptsocial.dao.StorageDAO;
 import fu.is1304.dv.fptsocial.dao.UserDAO;
@@ -43,6 +44,7 @@ import fu.is1304.dv.fptsocial.dao.callback.FirestoreDeleteDocCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreSetCallback;
 import fu.is1304.dv.fptsocial.entity.Friend;
+import fu.is1304.dv.fptsocial.entity.Notification;
 import fu.is1304.dv.fptsocial.entity.Post;
 import fu.is1304.dv.fptsocial.entity.User;
 
@@ -71,6 +73,13 @@ public class WallActivity extends AppCompatActivity {
     private Uri imageUri;
     private String statusImage;
 
+    //Variable of dialog
+    private Dialog infoDialog;
+    private EditText txtCourse;
+    private EditText txtGender;
+    private EditText txtDepartment;
+    private TextView txtDob;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,17 +94,6 @@ public class WallActivity extends AppCompatActivity {
         imgAddFriend = findViewById(R.id.imgAddFriend);
         imgViewImage = findViewById(R.id.imgViewImage);
         labelFullName = findViewById(R.id.labelFullName);
-
-        imgWallAvatar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Dialog viewImage = new Dialog(WallActivity.this);
-                viewImage.setContentView(R.layout.dialog_view_image);
-                ImageView image = viewImage.findViewById(R.id.imgShowImage);
-                Glide.with(WallActivity.this).load(imgWallAvatar.getDrawable()).into(image);
-                viewImage.show();
-            }
-        });
 
         posts = new ArrayList<>();
         recylerAdapter = new NewFeedRecylerAdapter(this, posts, new NewFeedRecylerAdapter.EventListener() {
@@ -164,11 +162,16 @@ public class WallActivity extends AppCompatActivity {
         recyclerListPost.setAdapter(recylerAdapter);
         initDialog();
         getData();
+
     }
 
     private void getData() {
         data = getIntent();
         uid = data.getStringExtra("uid");
+        if (uid.equals(AuthController.getInstance().getUID())) {
+            imgAddFriend.setEnabled(false);
+            imgAddFriend.setVisibility(View.INVISIBLE);
+        }
         UserDAO.getInstance().getUserByUID(uid, new FirestoreGetCallback() {
             @Override
             public void onComplete(DocumentSnapshot documentSnapshot) {
@@ -179,6 +182,16 @@ public class WallActivity extends AppCompatActivity {
                     }
                 } else {
                     Glide.with(WallActivity.this).load(user.getAvatar()).into(imgWallAvatar);
+                    imgWallAvatar.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Dialog viewImage = new Dialog(WallActivity.this);
+                            viewImage.setContentView(R.layout.dialog_view_image);
+                            ImageView image = viewImage.findViewById(R.id.imgShowImage);
+                            Glide.with(WallActivity.this).load(user.getAvatar()).into(image);
+                            viewImage.show();
+                        }
+                    });
                 }
                 labelFullName.setText(user.getFirstName() + " " + user.getLastName());
                 getAllPost();
@@ -398,6 +411,21 @@ public class WallActivity extends AppCompatActivity {
                 Toast.makeText(WallActivity.this, R.string.have_error, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void showInfoDialog(View view) {
+        infoDialog = new Dialog(this);
+        infoDialog.setContentView(R.layout.info_layout);
+        txtCourse = infoDialog.findViewById(R.id.etCourse);
+        txtGender = infoDialog.findViewById(R.id.spinnerGender);
+        txtDepartment = infoDialog.findViewById(R.id.edMajor);
+        txtDob = infoDialog.findViewById(R.id.etDob);
+
+        txtCourse.setText(user.getCourse() + "");
+        txtGender.setText(user.getGender());
+        txtDob.setText(user.getDob());
+        txtDepartment.setText(user.getDepartment());
+        infoDialog.show();
     }
 
 }

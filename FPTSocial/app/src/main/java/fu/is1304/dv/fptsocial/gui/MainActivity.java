@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText txtSearchKey;
     private ImageButton btnSearch;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startNotifyService();
         }
+        //navigation.setSelectedItemId(R.id.navigation_profile);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -163,11 +165,6 @@ public class MainActivity extends AppCompatActivity {
                 newfeedFragment.changeImage(resultCode, data);
                 break;
         }
-    }
-
-    public void logout(View view) {
-        AuthController.getInstance().signOut();
-        openLoginActivity();
     }
 
     public void openSearchActivity(View view) {

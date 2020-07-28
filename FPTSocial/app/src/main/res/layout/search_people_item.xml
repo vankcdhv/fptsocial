@@ -23,6 +23,7 @@
         android:layout_marginStart="24dp"
         android:text="Lê Thiện Văn"
         android:textColor="@color/blackcolor"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/imgSearchAva"
         app:layout_constraintTop_toTopOf="@+id/imgSearchAva" />
 
