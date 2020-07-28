@@ -27,7 +27,7 @@
 
 
         <EditText
-            android:id="@+id/editTextTextPersonName"
+            android:id="@+id/txtChat"
             android:layout_width="0dp"
             android:layout_height="35dp"
             android:layout_marginStart="8dp"
@@ -36,7 +36,6 @@
             android:gravity="center_vertical"
             android:inputType="textPersonName"
             android:paddingStart="10dp"
-            android:text="Name"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/btnSend"
             app:layout_constraintStart_toStartOf="parent" />
@@ -54,12 +53,13 @@
             app:layout_constraintTop_toTopOf="@+id/imgAvatar" />
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/frameChat"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="10dp"
             android:padding="5dp"
-            app:layout_constraintBottom_toTopOf="@+id/editTextTextPersonName"
+            app:layout_constraintBottom_toTopOf="@+id/txtChat"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imgAvatar" />
@@ -71,10 +71,10 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="8dp"
             android:background="#00FFFFFF"
-            app:layout_constraintBottom_toBottomOf="@+id/editTextTextPersonName"
+            app:layout_constraintBottom_toBottomOf="@+id/txtChat"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/editTextTextPersonName"
-            app:layout_constraintTop_toTopOf="@+id/editTextTextPersonName"
+            app:layout_constraintStart_toEndOf="@+id/txtChat"
+            app:layout_constraintTop_toTopOf="@+id/txtChat"
             app:srcCompat="@drawable/ic_action_send" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

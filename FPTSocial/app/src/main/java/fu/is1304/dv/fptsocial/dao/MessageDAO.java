@@ -75,4 +75,28 @@ public class MessageDAO {
                 });
     }
 
+    public void getMessageByUID(String uid, final FirebaseGetCollectionCallback callback) {
+        DataProvider.getInstance().getDatabase()
+                .collection(Const.MESSAGE_COLLECTION)
+                .document(AuthController.getInstance().getUID())
+                .collection(uid)
+                .orderBy("timeSend", Query.Direction.ASCENDING)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            List<QueryDocumentSnapshot> list = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                list.add(document);
+                            }
+                            callback.onComplete(list);
+                        } else {
+                            callback.onFailed(task.getException());
+                        }
+                    }
+                });
+    }
+
+
 }

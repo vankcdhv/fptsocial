@@ -1,5 +1,6 @@
 package fu.is1304.dv.fptsocial.gui.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -30,6 +31,7 @@ import fu.is1304.dv.fptsocial.dao.callback.FirebaseGetCollectionCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
 import fu.is1304.dv.fptsocial.entity.FriendMessage;
 import fu.is1304.dv.fptsocial.entity.Message;
+import fu.is1304.dv.fptsocial.gui.ChatActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -102,7 +104,9 @@ public class MessengerFragment extends Fragment {
         friendMessageAdapter = new FriendMessageAdapter(getContext(), listFriendMessage, new FriendMessageAdapter.OnEventListener() {
             @Override
             public void onClickMessage(FriendMessage friendMessage) {
-                Toast.makeText(getContext(), friendMessage.getLastestMessage(), Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getContext(), ChatActivity.class);
+                intent.putExtra("uid", friendMessage.getUid());
+                startActivity(intent);
             }
         });
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
