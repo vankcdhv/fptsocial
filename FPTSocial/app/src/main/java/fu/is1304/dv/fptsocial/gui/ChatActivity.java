@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -22,12 +23,14 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import fu.is1304.dv.fptsocial.R;
+import fu.is1304.dv.fptsocial.business.AuthController;
 import fu.is1304.dv.fptsocial.business.adapter.ListChatAdapter;
 import fu.is1304.dv.fptsocial.common.DatabaseUtils;
 import fu.is1304.dv.fptsocial.dao.MessageDAO;
 import fu.is1304.dv.fptsocial.dao.UserDAO;
 import fu.is1304.dv.fptsocial.dao.callback.FirebaseGetCollectionCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
+import fu.is1304.dv.fptsocial.dao.callback.FirestoreSetCallback;
 import fu.is1304.dv.fptsocial.entity.Message;
 import fu.is1304.dv.fptsocial.entity.User;
 
@@ -39,6 +42,7 @@ public class ChatActivity extends AppCompatActivity {
     private EditText txtChat;
     private ImageButton btnSend;
 
+    private LinearLayoutManager layoutManager;
     private ListChatAdapter listChatAdapter;
     private List<Message> messages;
     private List<String> listPeople;
@@ -54,6 +58,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void initComp() {
+        getSupportActionBar().hide();
         imgAvatar = findViewById(R.id.imgAvatar);
         labelUserName = findViewById(R.id.labelName);
         listChat = findViewById(R.id.frameChat);
@@ -64,7 +69,7 @@ public class ChatActivity extends AppCompatActivity {
         listChatAdapter = new ListChatAdapter(this, messages, new ListChatAdapter.OnEventListener() {
         });
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         listChat.setLayoutManager(layoutManager);
         listChat.setHasFixedSize(true);
         listChat.setAdapter(listChatAdapter);
@@ -79,6 +84,20 @@ public class ChatActivity extends AppCompatActivity {
                 Intent intent = new Intent(ChatActivity.this, WallActivity.class);
                 intent.putExtra("uid", uid);
                 startActivity(intent);
+            }
+        });
+        MessageDAO.getInstance().realtimeChat(uid, new FirebaseGetCollectionCallback() {
+            @Override
+            public void onComplete(List<QueryDocumentSnapshot> documentSnapshots) {
+                List<Message> list = DatabaseUtils.convertListDocSnapToListMessage(documentSnapshots);
+                messages.addAll(list);
+                listChatAdapter.notifyDataSetChanged();
+                layoutManager.scrollToPosition(messages.size() - 1);
+            }
+
+            @Override
+            public void onFailed(Exception e) {
+
             }
         });
     }
@@ -106,7 +125,7 @@ public class ChatActivity extends AppCompatActivity {
                         List<Message> list = DatabaseUtils.convertListDocSnapToListMessage(documentSnapshots);
                         messages.addAll(list);
                         listChatAdapter.notifyDataSetChanged();
-
+                        layoutManager.scrollToPosition(messages.size() - 1);
                     }
 
                     @Override
@@ -125,13 +144,38 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     public void send(View v) {
+
         String content = txtChat.getText().toString();
         if (!content.isEmpty()) {
-            Message message = new Message();
-            message.setContent(content);
-            message.setSend(true);
-            message.setTimeSend(new Date());
-            message.setUid(uid);
+            txtChat.setEnabled(false);
+            btnSend.setEnabled(false);
+            final Message message_send = new Message();
+            Message message_receive = new Message();
+
+            message_send.setContent(content);
+            message_send.setSend(true);
+            message_send.setTimeSend(new Date());
+            message_send.setUid(uid);
+
+            message_receive.setContent(content);
+            message_receive.setSend(false);
+            message_receive.setTimeSend(new Date());
+            message_receive.setUid(AuthController.getInstance().getUID());
+            MessageDAO.getInstance().sendMessage(message_send, message_receive, new FirestoreSetCallback() {
+                @Override
+                public void onSuccess(String id) {
+                    txtChat.setEnabled(true);
+                    btnSend.setEnabled(true);
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Toast.makeText(ChatActivity.this, R.string.have_error, Toast.LENGTH_LONG).show();
+                    txtChat.setEnabled(true);
+                    btnSend.setEnabled(true);
+                }
+            });
         }
+        txtChat.setText("");
     }
 }

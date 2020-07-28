@@ -1,28 +1,31 @@
 package fu.is1304.dv.fptsocial.dao;
 
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import fu.is1304.dv.fptsocial.business.AuthController;
 import fu.is1304.dv.fptsocial.common.Const;
-import fu.is1304.dv.fptsocial.common.DatabaseUtils;
 import fu.is1304.dv.fptsocial.dao.callback.FirebaseGetCollectionCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreSetCallback;
-import fu.is1304.dv.fptsocial.entity.FriendMessage;
 import fu.is1304.dv.fptsocial.entity.Message;
 
 public class MessageDAO {
@@ -102,7 +105,7 @@ public class MessageDAO {
                 });
     }
 
-    public void checkExistedChat(final String uid, final CheckCallback callback) {
+    public void getListPeopleChat(final String uid, final FirestoreGetCallback callback) {
         DataProvider.getInstance().getDatabase()
                 .collection(Const.MESSAGE_COLLECTION)
                 .document(AuthController.getInstance().getUID())
@@ -110,16 +113,13 @@ public class MessageDAO {
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        List<String> listPeople = new ArrayList<>();
-                        listPeople.addAll((Collection<? extends String>) documentSnapshot.getData().get("list"));
-                        if (listPeople.contains(uid)) callback.onSuccess(true);
-                        else callback.onSuccess(false);
+                        callback.onComplete(documentSnapshot);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        callback.onFailed(e);
+                        callback.onFailure(e);
                     }
                 });
 
@@ -127,63 +127,109 @@ public class MessageDAO {
 
     public void sendMessage(final Message message_send, final Message message_receive, final FirestoreSetCallback callback) {
 
-        checkExistedChat(message_send.getUid(), new CheckCallback() {
+        getListPeopleChat(message_send.getUid(), new FirestoreGetCallback() {
             @Override
-            public void onSuccess(boolean result) {
-                if (result) {
-                    final DocumentReference reference_send = DataProvider.getInstance().getDatabase()
-                            .collection(Const.MESSAGE_COLLECTION)
-                            .document(AuthController.getInstance().getUID())
-                            .collection(message_send.getUid())
-                            .document();
-                    reference_send.set(message_send)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    callback.onSuccess(reference_send.getId());
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    callback.onFailure(e);
-                                }
-                            });
-                    final DocumentReference reference_receive = DataProvider.getInstance().getDatabase()
-                            .collection(Const.MESSAGE_COLLECTION)
-                            .document(message_send.getUid())
-                            .collection(AuthController.getInstance().getUID())
-                            .document();
+            public void onComplete(DocumentSnapshot documentSnapshot) {
+                final List<String> listPeople = new ArrayList<>();
+                if (documentSnapshot.getData() != null) {
+                    listPeople.addAll((Collection<? extends String>) documentSnapshot.getData().get("list"));
+                }
+                DataProvider.getInstance().getDatabase()
+                        .collection(Const.MESSAGE_COLLECTION)
+                        .document(AuthController.getInstance().getUID())
+                        .collection(message_send.getUid())
+                        .document()
+                        .set(message_send)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                callback.onSuccess(null);
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                callback.onFailure(e);
+                            }
+                        });
+                DataProvider.getInstance().getDatabase()
+                        .collection(Const.MESSAGE_COLLECTION)
+                        .document(message_send.getUid())
+                        .collection(AuthController.getInstance().getUID())
+                        .document()
+                        .set(message_receive)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                            }
+                        });
 
-                    reference_receive.set(message_receive)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    //callback.onSuccess(reference_receive.getId());
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    //callback.onFailure(e);
-                                }
-                            });
+                if (!listPeople.contains(message_send.getUid())) {
+                    setListPeople(message_send.getUid(), AuthController.getInstance().getUID());
+                    setListPeople(AuthController.getInstance().getUID(), message_send.getUid());
                 }
             }
 
             @Override
-            public void onFailed(Exception e) {
+            public void onFailure(Exception e) {
 
             }
+
+
         });
 
 
     }
 
-    public interface CheckCallback {
-        public void onSuccess(boolean result);
+    public void setListPeople(final String friendUid, final String uid) {
+        getListPeopleChat(uid, new FirestoreGetCallback() {
+            @Override
+            public void onComplete(DocumentSnapshot documentSnapshot) {
+                final List<String> listPeople = new ArrayList<>();
+                if (documentSnapshot.getData() != null) {
+                    listPeople.addAll((Collection<? extends String>) documentSnapshot.getData().get("list"));
+                }
+                listPeople.add(friendUid);
+                HashMap<String, Object> list = new HashMap<>();
+                list.put("list", listPeople);
+                DataProvider.getInstance().getDatabase()
+                        .collection(Const.MESSAGE_COLLECTION)
+                        .document(uid)
+                        .set(list);
+            }
 
-        public void onFailed(Exception e);
+            @Override
+            public void onFailure(Exception e) {
+                e.getCause();
+            }
+        });
+    }
+
+    public void realtimeChat(String uid, final FirebaseGetCollectionCallback callback) {
+        DataProvider.getInstance().getDatabase()
+                .collection(Const.MESSAGE_COLLECTION)
+                .document(AuthController.getInstance().getUID())
+                .collection(uid)
+                .orderBy("timeSend", Query.Direction.ASCENDING)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if (error != null) {
+                            callback.onFailed(error);
+                        } else {
+                            List<QueryDocumentSnapshot> list = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : value) {
+                                list.add(document);
+                            }
+                            callback.onComplete(list);
+                        }
+                    }
+                });
     }
 
 }

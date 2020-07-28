@@ -94,7 +94,15 @@ public class WallActivity extends AppCompatActivity {
         imgAddFriend = findViewById(R.id.imgAddFriend);
         imgViewImage = findViewById(R.id.imgViewImage);
         labelFullName = findViewById(R.id.labelFullName);
-
+        btnMessage = findViewById(R.id.btnMessage);
+        btnMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(WallActivity.this, ChatActivity.class);
+                intent.putExtra("uid", uid);
+                startActivity(intent);
+            }
+        });
         posts = new ArrayList<>();
         recylerAdapter = new NewFeedRecylerAdapter(this, posts, new NewFeedRecylerAdapter.EventListener() {
             @Override
