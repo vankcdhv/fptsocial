@@ -90,6 +90,8 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onComplete(List<QueryDocumentSnapshot> documentSnapshots) {
                 List<Message> list = DatabaseUtils.convertListDocSnapToListMessage(documentSnapshots);
+                messages.clear();
+                listChatAdapter.notifyDataSetChanged();
                 messages.addAll(list);
                 listChatAdapter.notifyDataSetChanged();
                 layoutManager.scrollToPosition(messages.size() - 1);
@@ -122,10 +124,10 @@ public class ChatActivity extends AppCompatActivity {
                 MessageDAO.getInstance().getMessageByUID(uid, new FirebaseGetCollectionCallback() {
                     @Override
                     public void onComplete(List<QueryDocumentSnapshot> documentSnapshots) {
-                        List<Message> list = DatabaseUtils.convertListDocSnapToListMessage(documentSnapshots);
-                        messages.addAll(list);
-                        listChatAdapter.notifyDataSetChanged();
-                        layoutManager.scrollToPosition(messages.size() - 1);
+//                        List<Message> list = DatabaseUtils.convertListDocSnapToListMessage(documentSnapshots);
+//                        messages.addAll(list);
+//                        listChatAdapter.notifyDataSetChanged();
+//                        layoutManager.scrollToPosition(messages.size() - 1);
                     }
 
                     @Override
