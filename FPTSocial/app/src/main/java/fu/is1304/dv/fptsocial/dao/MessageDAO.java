@@ -108,7 +108,7 @@ public class MessageDAO {
     public void getListPeopleChat(final String uid, final FirestoreGetCallback callback) {
         DataProvider.getInstance().getDatabase()
                 .collection(Const.MESSAGE_COLLECTION)
-                .document(AuthController.getInstance().getUID())
+                .document(uid)
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
@@ -127,7 +127,7 @@ public class MessageDAO {
 
     public void sendMessage(final Message message_send, final Message message_receive, final FirestoreSetCallback callback) {
 
-        getListPeopleChat(message_send.getUid(), new FirestoreGetCallback() {
+        getListPeopleChat(AuthController.getInstance().getUID(), new FirestoreGetCallback() {
             @Override
             public void onComplete(DocumentSnapshot documentSnapshot) {
                 final List<String> listPeople = new ArrayList<>();

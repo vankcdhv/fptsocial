@@ -3,6 +3,8 @@ package fu.is1304.dv.fptsocial.business;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -10,6 +12,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import fu.is1304.dv.fptsocial.dao.callback.FirebaseAuthCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirebaseAuthActionCallBack;
+import fu.is1304.dv.fptsocial.dao.callback.FirestoreSetCallback;
 
 public class AuthController {
     private static AuthController instance;
@@ -94,5 +97,22 @@ public class AuthController {
                 }
             }
         });
+    }
+
+    public void changePass(String password, final FirestoreSetCallback callback) {
+        getCurrentUser()
+                .updatePassword(password)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        callback.onSuccess(null);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        callback.onFailure(e);
+                    }
+                });
     }
 }

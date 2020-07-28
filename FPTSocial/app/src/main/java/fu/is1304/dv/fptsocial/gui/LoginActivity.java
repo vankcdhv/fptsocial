@@ -8,22 +8,16 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
-import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import fu.is1304.dv.fptsocial.R;
@@ -34,13 +28,11 @@ import fu.is1304.dv.fptsocial.dao.UserDAO;
 import fu.is1304.dv.fptsocial.dao.callback.FirebaseAuthCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
 import fu.is1304.dv.fptsocial.entity.User;
-import fu.is1304.dv.fptsocial.gui.fragment.ChangePassFragment;
 import fu.is1304.dv.fptsocial.gui.fragment.LoginFragment;
 
 public class LoginActivity extends AppCompatActivity {
     private ActionBar actionBar;
     private LoginFragment loginFragment;
-    private ChangePassFragment changePassFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

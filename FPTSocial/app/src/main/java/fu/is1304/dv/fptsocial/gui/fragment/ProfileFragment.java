@@ -52,6 +52,7 @@ import fu.is1304.dv.fptsocial.dao.callback.FirestorageUploadCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreSetCallback;
 import fu.is1304.dv.fptsocial.entity.User;
+import fu.is1304.dv.fptsocial.gui.ChangePassActivity;
 import fu.is1304.dv.fptsocial.gui.LoginActivity;
 import fu.is1304.dv.fptsocial.gui.ProfileActivity;
 import fu.is1304.dv.fptsocial.gui.fragmentcallback.ProfileCallBack;
@@ -81,6 +82,7 @@ public class ProfileFragment extends Fragment {
     private ArrayAdapter genderAdapter;
     private ProgressBar pbLoading;
     private boolean isListening;
+    private Button btnChangePass;
 
     private ArrayAdapter<String> departmentAdapter;
     private List<String> listDepartment;
@@ -150,6 +152,14 @@ public class ProfileFragment extends Fragment {
         btnSave = view.findViewById(R.id.btnProfileSave);
         btnLogout = view.findViewById(R.id.btnLogout);
         pbLoading = view.findViewById(R.id.progressBarProfileLoading);
+        btnChangePass = view.findViewById(R.id.btnChangePass);
+
+        btnChangePass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btnChangePass(v);
+            }
+        });
 
 
         listDepartment = new ArrayList<>();
@@ -396,5 +406,10 @@ public class ProfileFragment extends Fragment {
             getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         }
 
+    }
+
+    public void btnChangePass(View v) {
+        Intent intent = new Intent(getContext(), ChangePassActivity.class);
+        startActivity(intent);
     }
 }

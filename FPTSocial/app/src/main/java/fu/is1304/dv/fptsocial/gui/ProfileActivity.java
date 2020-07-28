@@ -61,7 +61,7 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView etDob;
     private User currentUser;
     private CircleImageView imgAvatar;
-    private Button btnBack, btnSave;
+    private Button btnBack, btnSave, btnChangePass;
     private Uri ava;
     private ArrayAdapter<String> genderAdapter;
     private ProgressBar pbLoading;
@@ -92,6 +92,8 @@ public class ProfileActivity extends AppCompatActivity {
         btnSave = findViewById(R.id.btnProfileSave);
         labelFullName = findViewById(R.id.labelFullName);
         pbLoading = findViewById(R.id.progressBarProfileLoading);
+        btnChangePass = findViewById(R.id.btnChangePass);
+        btnChangePass.setVisibility(View.INVISIBLE);
 
         btnBack.setVisibility(View.INVISIBLE);
         edMajor.setEnabled(true);
