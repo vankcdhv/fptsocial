@@ -96,8 +96,9 @@ public class MessengerFragment extends Fragment {
 
         recyclerView = v.findViewById(R.id.recyclerListFriendMessage);
 
-        //Init adapter for recyclerview
         listFriendMessage = new ArrayList<>();
+
+        //Init adapter for recyclerview
         friendMessageAdapter = new FriendMessageAdapter(getContext(), listFriendMessage, new FriendMessageAdapter.OnEventListener() {
             @Override
             public void onClickMessage(FriendMessage friendMessage) {
@@ -150,6 +151,9 @@ public class MessengerFragment extends Fragment {
 
             }
         });
+    }
+
+    private void changeData() {
     }
 
 

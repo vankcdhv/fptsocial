@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -63,7 +64,14 @@ public class FriendMessageAdapter extends RecyclerView.Adapter<FriendMessageAdap
                 }
                 holder.labelChatUsername.setText(user.getFirstName() + " " + user.getLastName());
                 holder.labelPreviewContent.setText(friendMessage.getLastestMessage().substring(0, Math.min(20, friendMessage.getLastestMessage().length() - 1)));
+
                 holder.labelChatTime.setText(new SimpleDateFormat("dd/MM/yyyy - hh:mm").format(friendMessage.getTime()));
+                holder.layoutChatItem.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onEventListener.onClickMessage(friendMessage);
+                    }
+                });
             }
 
             @Override
@@ -76,7 +84,7 @@ public class FriendMessageAdapter extends RecyclerView.Adapter<FriendMessageAdap
 
     @Override
     public int getItemCount() {
-        return 0;
+        return friendMessages.size();
     }
 
     public static class DataViewHolder extends RecyclerView.ViewHolder {
