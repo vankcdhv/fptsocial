@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -21,9 +22,12 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 import fu.is1304.dv.fptsocial.R;
 import fu.is1304.dv.fptsocial.common.DatabaseUtils;
+import fu.is1304.dv.fptsocial.dao.MessageDAO;
 import fu.is1304.dv.fptsocial.dao.UserDAO;
+import fu.is1304.dv.fptsocial.dao.callback.FirebaseGetCollectionCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
 import fu.is1304.dv.fptsocial.entity.FriendMessage;
+import fu.is1304.dv.fptsocial.entity.Message;
 import fu.is1304.dv.fptsocial.entity.User;
 
 public class FriendMessageAdapter extends RecyclerView.Adapter<FriendMessageAdapter.DataViewHolder> {
@@ -76,6 +80,20 @@ public class FriendMessageAdapter extends RecyclerView.Adapter<FriendMessageAdap
 
             @Override
             public void onFailure(Exception e) {
+
+            }
+        });
+        MessageDAO.getInstance().realtimeChat(friendMessage.getUid(), new FirebaseGetCollectionCallback() {
+            @Override
+            public void onComplete(List<QueryDocumentSnapshot> documentSnapshots) {
+                List<Message> list = DatabaseUtils.convertListDocSnapToListMessage(documentSnapshots);
+                String content = list.get(list.size() - 1).getContent();
+                holder.labelPreviewContent.setText(content.substring(0, Math.min(50, content.length())));
+                holder.labelChatTime.setText(new SimpleDateFormat("dd/MM/yyyy - hh:mm").format(list.get(list.size() - 1).getTimeSend()));
+            }
+
+            @Override
+            public void onFailed(Exception e) {
 
             }
         });
