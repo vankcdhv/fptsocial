@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -16,6 +17,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -39,6 +41,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private ListChatAdapter listChatAdapter;
     private List<Message> messages;
+    private List<String> listPeople;
     private Intent intent;
     private String uid;
     private User user;
@@ -66,6 +69,18 @@ public class ChatActivity extends AppCompatActivity {
         listChat.setHasFixedSize(true);
         listChat.setAdapter(listChatAdapter);
         getData();
+        setEvent();
+    }
+
+    private void setEvent() {
+        labelUserName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ChatActivity.this, WallActivity.class);
+                intent.putExtra("uid", uid);
+                startActivity(intent);
+            }
+        });
     }
 
     private void getData() {
@@ -91,6 +106,7 @@ public class ChatActivity extends AppCompatActivity {
                         List<Message> list = DatabaseUtils.convertListDocSnapToListMessage(documentSnapshots);
                         messages.addAll(list);
                         listChatAdapter.notifyDataSetChanged();
+
                     }
 
                     @Override
@@ -106,5 +122,16 @@ public class ChatActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public void send(View v) {
+        String content = txtChat.getText().toString();
+        if (!content.isEmpty()) {
+            Message message = new Message();
+            message.setContent(content);
+            message.setSend(true);
+            message.setTimeSend(new Date());
+            message.setUid(uid);
+        }
     }
 }

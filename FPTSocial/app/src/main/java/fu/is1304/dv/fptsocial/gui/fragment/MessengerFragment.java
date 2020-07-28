@@ -122,6 +122,7 @@ public class MessengerFragment extends Fragment {
             @Override
             public void onComplete(DocumentSnapshot documentSnapshot) {
                 final List<String> listPeople = new ArrayList<>();
+                if (documentSnapshot.getData() == null) return;
                 listPeople.addAll((Collection<? extends String>) documentSnapshot.getData().get("list"));
                 for (final String uid : listPeople) {
                     MessageDAO.getInstance().getLastMessageByUID(uid, new FirebaseGetCollectionCallback() {
