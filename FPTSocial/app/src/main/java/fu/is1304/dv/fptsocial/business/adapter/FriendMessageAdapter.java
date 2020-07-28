@@ -88,7 +88,7 @@ public class FriendMessageAdapter extends RecyclerView.Adapter<FriendMessageAdap
             public void onComplete(List<QueryDocumentSnapshot> documentSnapshots) {
                 List<Message> list = DatabaseUtils.convertListDocSnapToListMessage(documentSnapshots);
                 String content = list.get(list.size() - 1).getContent();
-                holder.labelPreviewContent.setText(content.substring(0, Math.min(50, content.length())));
+                holder.labelPreviewContent.setText(content.substring(0, Math.min(20, content.length())));
                 holder.labelChatTime.setText(new SimpleDateFormat("dd/MM/yyyy - hh:mm").format(list.get(list.size() - 1).getTimeSend()));
             }
 
