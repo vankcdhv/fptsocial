@@ -268,7 +268,7 @@ public class PostDAO {
                                     @Override
                                     public void onComplete(DocumentSnapshot documentSnapshot) {
                                         User user = DatabaseUtils.convertDocumentSnapshotToUser(documentSnapshot);
-                                        if (document.getString("title").contains(keyword) || document.getString("content").contains(keyword)
+                                        if ((document.getString("title").toLowerCase()).contains(keyword.toLowerCase()) || (document.getString("content").toLowerCase()).contains(keyword.toLowerCase())
                                                 || user.getLastName().contains(keyword) || user.getFirstName().contains(keyword)) {
                                             list.add((QueryDocumentSnapshot) document);
                                         }

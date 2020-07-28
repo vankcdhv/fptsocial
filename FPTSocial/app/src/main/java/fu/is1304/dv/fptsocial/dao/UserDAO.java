@@ -122,7 +122,7 @@ public class UserDAO {
                         if (task.isSuccessful()) {
                             List<QueryDocumentSnapshot> list = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                if (document.getString("lastName").contains(keyword) || document.getString("firstName").contains(keyword)) {
+                                if ((document.getString("lastName").toLowerCase()).contains(keyword.toLowerCase()) || (document.getString("firstName").toLowerCase()).contains(keyword.toLowerCase())) {
                                     list.add(document);
                                 }
                             }
