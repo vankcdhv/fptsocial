@@ -19,18 +19,26 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import fu.is1304.dv.fptsocial.R;
+import fu.is1304.dv.fptsocial.business.AuthController;
 import fu.is1304.dv.fptsocial.business.adapter.FriendMessageAdapter;
+import fu.is1304.dv.fptsocial.common.Const;
 import fu.is1304.dv.fptsocial.common.DatabaseUtils;
+import fu.is1304.dv.fptsocial.dao.CountDAO;
 import fu.is1304.dv.fptsocial.dao.MessageDAO;
+import fu.is1304.dv.fptsocial.dao.NotificationDAO;
 import fu.is1304.dv.fptsocial.dao.callback.FirebaseGetCollectionCallback;
 import fu.is1304.dv.fptsocial.dao.callback.FirestoreGetCallback;
+import fu.is1304.dv.fptsocial.dao.callback.FirestoreSetCallback;
+import fu.is1304.dv.fptsocial.entity.Friend;
 import fu.is1304.dv.fptsocial.entity.FriendMessage;
 import fu.is1304.dv.fptsocial.entity.Message;
+import fu.is1304.dv.fptsocial.entity.Notification;
 import fu.is1304.dv.fptsocial.gui.ChatActivity;
 
 /**
@@ -156,10 +164,6 @@ public class MessengerFragment extends Fragment {
 
             }
         });
-    }
-
-    private void changeData() {
-
     }
 
 

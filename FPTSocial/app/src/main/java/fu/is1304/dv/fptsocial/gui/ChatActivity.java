@@ -121,20 +121,6 @@ public class ChatActivity extends AppCompatActivity {
                     Glide.with(ChatActivity.this).load(user.getAvatar()).into(imgAvatar);
                 }
                 labelUserName.setText(user.getFirstName() + " " + user.getLastName());
-                MessageDAO.getInstance().getMessageByUID(uid, new FirebaseGetCollectionCallback() {
-                    @Override
-                    public void onComplete(List<QueryDocumentSnapshot> documentSnapshots) {
-//                        List<Message> list = DatabaseUtils.convertListDocSnapToListMessage(documentSnapshots);
-//                        messages.addAll(list);
-//                        listChatAdapter.notifyDataSetChanged();
-//                        layoutManager.scrollToPosition(messages.size() - 1);
-                    }
-
-                    @Override
-                    public void onFailed(Exception e) {
-
-                    }
-                });
 
             }
 

@@ -116,6 +116,7 @@ public class LoginActivity extends AppCompatActivity {
             loading(false);
             Toast.makeText(this, getString(R.string.email_not_verify), Toast.LENGTH_LONG).show();
             AuthController.getInstance().signOut();
+            loadFragment(loginFragment);
             return;
         }
         UserDAO.getInstance().getCurrentUser(new FirestoreGetCallback() {

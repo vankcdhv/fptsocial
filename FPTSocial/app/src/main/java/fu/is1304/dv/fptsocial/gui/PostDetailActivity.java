@@ -195,7 +195,9 @@ public class PostDetailActivity extends AppCompatActivity {
                 txtAuthor.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(PostDetailActivity.this, user.getFirstName() + " " + user.getLastName(), Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(PostDetailActivity.this, WallActivity.class);
+                        intent.putExtra("uid", post.getUid());
+                        startActivity(intent);
                     }
                 });
                 txtTitle.setOnClickListener(new View.OnClickListener() {
